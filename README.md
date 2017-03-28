@@ -1,7 +1,7 @@
 # Unofficial-pfSense-packages
 Unofficial packages for pfSense software
 
-As many people knows, Netgate has trimed a lot of packages from official repo since pfSense 2.3. 
+As many people knows, Netgate has trimed a lot of packages from official repo since pfSense® 2.3. 
 
 This repo updates some packages for newer pfSense software versions with manual procedure installs.
 
