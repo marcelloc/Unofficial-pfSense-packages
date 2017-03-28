@@ -23,11 +23,14 @@ ASSUME_ALWAYS_YES=YES
 export ASSUME_ALWAYS_YES
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
-prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/pkg-postfix/files
+prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-postfix/files
 
 # /etc/inc files
 file=/etc/inc/priv/postfix.priv.inc
 fetch -q -o $file $prefix/$file
+
+check_service_file=check_postfix_service.php
+fetch -q -o /root/$check_service_file $prefix/$check_service_file
 
 # /usr/local files
 
@@ -49,7 +52,7 @@ for file in 	bin/adexport.pl pkg/postfix.inc pkg/postfix.xml pkg/postfix_acl.xml
 		www/postfix.php www/postfix_about.php www/postfix_queue.php www/postfix_recipients.php www/postfix_search.php \
 		www/postfix_view_config.php www/shortcuts/pkg_postfix.inc www/widgets/widgets/postfix.widget.php \
 		pkg/postfix_dkim.inc $dtdir/se-1.2.0.zip $dtdir/css/jquery.dataTables.min.css \
-		$dtdir/js/jquery.dataTables.min.js $dtdir/images/sort_both.png $dtdir/images/sort_asc.png
+		$dtdir/js/jquery.dataTables.min.js
 do
 	echo "fetching  /usr/local/$file from github"
 	fetch -q -o /usr/local/$file $prefix/usr/local/$file
@@ -59,6 +62,9 @@ done
 chmod +x /usr/local/bin/adexport.pl 
 chmod +x /usr/local/www/postfix.php
 
+#other minor fixes
+cp /usr/local/$dtdir/DataTables-1.10.13/images/sort_both.png /usr/local/$dtdir/images/sort_both.png
+cp /usr/local/$dtdir/DataTables-1.10.13/images/sort_asc.png /usr/local/$dtdir/images/sort_asc.png
 
 # Enable freebsd Repo
 repo1=/usr/local/etc/pkg/repos/FreeBSD.conf
@@ -86,11 +92,11 @@ cp /root/FreeBSD.bkp.conf $repo1
 
 
 #install services and menus
-php /root/check_php_service.php
+php /root/check_postfix_service.php
 
 # unzip datagrid modules
 cd /usr/local/$dtdir
-/usr/bin/unzip se-1.2.0.zip 
+/usr/bin/unzip -o se-1.2.0.zip 
 cd -
 
 fi
