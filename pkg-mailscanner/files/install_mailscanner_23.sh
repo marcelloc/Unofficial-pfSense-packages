@@ -53,14 +53,6 @@ cp /tmp/pfSense.conf $repo2
 # Install mailscanner package
 pkg install mailscanner bash dcc-dccd spamassassin
 
-
-##fetch https://e-sac.websiteseguro.com/mailscanner/spamassassin-3.4.1_6.txz
-##pkg delete spamassassin
-##pkg add spamassassin-3.4.1_6.txz
-##pkg install mailscanner
-##fetch https://e-sac.websiteseguro.com/mailscanner/mk.tar.gz &&
-##tar -xvzf mk.tar.gz -C /
-
 # update spamassassin database
 rehash
 /usr/local/bin/sa-update -D
