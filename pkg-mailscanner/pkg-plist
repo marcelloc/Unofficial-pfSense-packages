@@ -1,0 +1,14 @@
+pkg/mailscanner.conf.template
+pkg/mailscanner.inc
+pkg/mailscanner.xml
+pkg/mailscanner_alerts.xml
+pkg/mailscanner_antispam.xml
+pkg/mailscanner_antivirus.xml
+pkg/mailscanner_attachments.xml
+pkg/mailscanner_content.xml
+pkg/mailscanner_report.xml
+pkg/mailscanner_sync.xml
+www/mailscanner_about.php
+www/shortcuts/pkg_mailscanner.inc
+%%DATADIR%%/info.xml
+
