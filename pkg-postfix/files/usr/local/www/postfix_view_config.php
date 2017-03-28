@@ -87,7 +87,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
     <ul class="nav navbar-nav">
       <li><a href="#" onClick="get_postfix_file('main');">main.cf</a></li>
       <li><a href="#" onClick="get_postfix_file('master');">master.cf</a></li>
-      <li><a href="#" onClick="get_postfix_file('relay');">relay_recipients</a></li>
+      <li><a href="#" onClick="get_postfix_file('recipients');">relay_recipients</a></li>
       <li><a href="#" onClick="get_postfix_file('header');">heade_check</a></li>
       <li><a href="#" onClick="get_postfix_file('mime');">mime_check</a></li>
       <li><a href="#" onClick="get_postfix_file('body');">body_check</a></li>
