@@ -23,11 +23,7 @@ ASSUME_ALWAYS_YES=YES
 export ASSUME_ALWAYS_YES
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
-prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-postfix/files
-
-# /etc/inc files
-# file=/etc/inc/priv/mailscanner.priv.inc
-# fetch -q -o $file $prefix/$file
+prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-mailscanner/files
 
 check_service_file=check_mailscanner_service.php
 fetch -q -o /root/$check_service_file $prefix/$check_service_file
@@ -64,5 +60,9 @@ pkg install mailscanner bash dcc-dccd spamassassin
 ##pkg install mailscanner
 ##fetch https://e-sac.websiteseguro.com/mailscanner/mk.tar.gz &&
 ##tar -xvzf mk.tar.gz -C /
+
+# update spamassassin database
+rehash
+/usr/local/bin/sa-update -D
 
 fi
