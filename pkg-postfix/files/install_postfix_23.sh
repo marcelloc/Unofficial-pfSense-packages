@@ -1,0 +1,96 @@
+#!/bin/sh
+
+# *
+# * install_postfix_23.sh
+# *
+# * part of unofficial packages for pfSense(R) software
+# * Copyright (c) 2011-2017 Marcello Coutinho
+# * All rights reserved.
+# *
+# * Licensed under the Apache License, Version 2.0 (the "License");
+# * you may not use this file except in compliance with the License.
+# * You may obtain a copy of the License at
+# *
+# * http://www.apache.org/licenses/LICENSE-2.0
+# *
+# * Unless required by applicable law or agreed to in writing, software
+# * distributed under the License is distributed on an "AS IS" BASIS,
+# * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# * See the License for the specific language governing permissions and
+# * limitations under the License.
+
+ASSUME_ALWAYS_YES=YES
+export ASSUME_ALWAYS_YES
+
+if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
+prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/pkg-postfix/files
+
+# /etc/inc files
+file=/etc/inc/priv/postfix.priv.inc
+fetch -q -o $file $prefix/$file
+
+# /usr/local files
+
+#datatable files
+dtdir=www/vendor/datatable
+
+for share_dir in /usr/local/share/pfSense-pkg-postfix/ \
+		/usr/local/www/vendor/datatable/css \
+		/usr/local/www/vendor/datatable/js \
+		/usr/local/www/vendor/datatable/images
+   do 
+	if [ ! -d $share_dir ];then
+		mkdir -p $share_dir
+	fi
+   done
+
+for file in 	bin/adexport.pl pkg/postfix.inc pkg/postfix.xml pkg/postfix_acl.xml pkg/postfix_antispam.xml \
+		pkg/postfix_domains.xml pkg/postfix_recipients.xml pkg/postfix_sync.xml share/pfSense-pkg-postfix/info.xml \
+		www/postfix.php www/postfix_about.php www/postfix_queue.php www/postfix_recipients.php www/postfix_search.php \
+		www/postfix_view_config.php www/shortcuts/pkg_postfix.inc www/widgets/widgets/postfix.widget.php \
+		pkg/postfix_dkim.inc $dtdir/se-1.2.0.zip $dtdir/css/jquery.dataTables.min.css \
+		$dtdir/js/jquery.dataTables.min.js $dtdir/images/sort_both.png $dtdir/images/sort_asc.png
+do
+	echo "fetching  /usr/local/$file from github"
+	fetch -q -o /usr/local/$file $prefix/usr/local/$file
+done
+
+#fix some permissions
+chmod +x /usr/local/bin/adexport.pl 
+chmod +x /usr/local/www/postfix.php
+
+
+# Enable freebsd Repo
+repo1=/usr/local/etc/pkg/repos/FreeBSD.conf
+repo2=/usr/local/etc/pkg/repos/pfSense.conf
+cp $repo1 /root/FreeBSD.bkp.conf
+echo "FreeBSD: { enabled: yes  }" > $repo1
+
+cp $repo2 /root/pfSense.bkp.conf
+cp /usr/local/etc/pkg/repos/pfSense.conf /root/pfSense.bkp.conf
+cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
+cp /tmp/pfSense.conf $repo2
+
+# Install postfix package
+pkg install postfix libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap
+
+# restore repository configuration state
+cp /root/pfSense.bkp.conf $repo2
+cp /root/FreeBSD.bkp.conf $repo1
+
+#check some libs
+ if [ ! -f /usr/local/lib/libmilter.so.5 ];then
+  ln -s /usr/local/lib/libmilter.so.6 /usr/local/lib/libmilter.so.5
+ fi
+
+
+
+#install services and menus
+php /root/check_php_service.php
+
+# unzip datagrid modules
+cd /usr/local/$dtdir
+/usr/bin/unzip se-1.2.0.zip 
+cd -
+
+fi

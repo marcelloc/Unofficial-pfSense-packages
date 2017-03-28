@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE packagegui SYSTEM "./schema/packages.dtd">
+<?xml-stylesheet type="text/xsl" href="./xsl/package.xsl"?>
+<packagegui>
+	<copyright>
+	<![CDATA[
+/* $Id$ */
+/*
+ * postfix_domains.xml
+ *
+ * part of Unofficial packages for pfSense(R) softwate
+ * Copyright (c) 2011-2017 Marcello Coutinho
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* ========================================================================== */
+	]]>
+	</copyright>
+	<description>Describe your package here</description>
+	<requirements>Describe your package requirements here</requirements>
+	<faq>Currently there are no FAQ items provided.</faq>
+	<name>postfixdomains</name>
+	<version>1.0</version>
+	<title>Services: Postfix relay and antispam</title>
+	<include_file>/usr/local/pkg/postfix.inc</include_file>
+	<menu>
+		<name>Postfix Forwarder</name>
+		<tooltiptext>Configure Postfix Forwarder</tooltiptext>
+		<section>Services</section>
+		<url>pkg_edit.php?xml=postfix.xml&amp;id=0</url>
+	</menu>
+	<menu>
+		<name>Search Email</name>
+		<tooltiptext>Search postfix logs</tooltiptext>
+		<section>Diagnostics</section>
+		<url>/postfix_search.php</url>
+	</menu>
+<tabs>
+		<tab>
+			<text>General</text>
+			<url>/pkg_edit.php?xml=postfix.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Domains</text>
+			<url>/pkg_edit.php?xml=postfix_domains.xml&amp;id=0</url>
+			<active/>
+		</tab>
+		<tab>
+			<text>Recipients</text>
+			<url>/pkg_edit.php?xml=postfix_recipients.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Access Lists</text>
+			<url>/pkg_edit.php?xml=postfix_acl.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Antispam</text>
+			<url>/pkg_edit.php?xml=postfix_antispam.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Sync</text>
+			<url>/pkg_edit.php?xml=postfix_sync.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>View config</text>
+			<url>/postfix_view_config.php</url>
+		</tab>
+		<tab>
+			<text>Search mail</text>
+			<url>/postfix_search.php</url>
+		</tab>
+		<tab>
+			<text>Queue</text>
+			<url>/postfix_queue.php</url>
+		</tab>
+		<tab>
+			<text>About</text>
+			<url>/postfix_about.php</url>
+		</tab>
+
+</tabs>
+	<fields>
+		<field>
+			<name>Domains to Forward</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>Forwarding</fielddescr>
+			<fieldname>none</fieldname>
+			<type>rowhelper</type>
+			<rowhelper>
+			<rowhelperfield>
+				<fielddescr>Domain</fielddescr>
+				<fieldname>domain</fieldname>
+				<description>Enter the domain here (ex: example.com)</description>
+				<type>input</type>
+				<size>27</size>
+			</rowhelperfield>
+			<rowhelperfield>
+				<fielddescr>Mail Server IP</fielddescr>
+				<fieldname>mailserverip</fieldname>
+				<description>Enter the mail server IP to forward to here.</description>
+				<type>input</type>
+				<size>25</size>
+			</rowhelperfield>
+                        <rowhelperfield>
+                                <fielddescr>DKIM</fielddescr>
+                                <fieldname>dkim</fieldname>
+                                <description>Sign outgoin mail from this domain.</description>
+                                <type>select</type>
+                                <options>
+                                <option><name>Do not sign outgoing mail (Default)</name><value>no</value></option>
+                                <option><name>Sign outgoing mail</name><value>yes</value></option>
+                                <option><name>Show Public key</name><value>public</value></option>
+                                <option><name>Change DKIM keys</name><value>reset</value></option>
+                                </options>
+                        </rowhelperfield>
+                         <rowhelperfield>
+                                <fielddescr>key size</fielddescr>
+                                <fieldname>bits</fieldname>
+                                <description>bits to use on key.</description>
+                                <type>select</type>
+                                <options>
+                                <option><name>1024</name><value>1024</value></option>
+                                <option><name>2048</name><value>2048</value></option>
+                                </options>
+                        </rowhelperfield>
+
+                         </rowhelper>
+                        <description><![CDATA[<br>While using DKIM, do not forget to include public key info on your domain's DNS config.<br>
+                                      <b>DKIM public key dir example:</b>
+                                        /home/mailnull/keys/your_domain/default.txt ]]></description>
+		</field>
+	</fields>
+        <custom_php_command_before_form>
+                postfix_check_dkim();
+        </custom_php_command_before_form>
+	<custom_php_install_command>
+		postfix_php_install_command();
+	</custom_php_install_command>
+	<custom_php_deinstall_command>
+		postfix_php_deinstall_command();
+	</custom_php_deinstall_command>
+	<custom_php_validation_command>
+		postfix_domain_validate_input($_POST, $input_errors);
+	</custom_php_validation_command>	
+	<custom_php_resync_config_command>
+		sync_package_postfix();
+	</custom_php_resync_config_command>
+</packagegui>
