@@ -61,7 +61,7 @@ pkg install e2guardian polipo
 pkg remove e2guardian
 
 # install 3.5.1 package with ssl support
-pkg add $prefix e2guardian-3.5.1.txz
+pkg add $prefix/e2guardian-3.5.1.txz
 
 # restore repository configuration state
 cp /root/pfSense.bkp.conf $repo2
