@@ -54,8 +54,14 @@ cp /usr/local/etc/pkg/repos/pfSense.conf /root/pfSense.bkp.conf
 cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
 cp /tmp/pfSense.conf $repo2
 
-# Install postfix package
+# Install e2guardian freebsd package and deps
 pkg install e2guardian polipo
+
+# remove non ssl e2guardian packages after deps install
+pkg remove e2guardian
+
+# install 3.5.1 package with ssl support
+pkg add $prefix e2guardian-3.5.1.txz
 
 # restore repository configuration state
 cp /root/pfSense.bkp.conf $repo2

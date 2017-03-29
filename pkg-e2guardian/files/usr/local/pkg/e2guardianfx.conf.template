@@ -20,7 +20,7 @@
  */
 
 $dgf= <<<EOF
-# DansGuardian filter group config file for version 2.12.0
+# e2guardian filter group config file for version 3.5.1
 
 
 # Filter group mode
@@ -46,12 +46,28 @@ groupmode = {$e2guardian_groups['mode']}
 # Defaults to empty string
 groupname = '{$e2guardian_groups['name']}'
 
+# Enable legacy (DG) ssl logic								TODO INCLUDE ON GUI
+#
+# Note that the logic for handling SSL is changed. In DG when either blanket block (or SSL blanket block)
+# was active then an SSL site would not be blocked if site name matched either exceptionsitelist or greysitelist.
+# In e2guardian with blanket block (or SSL blanket block) active an SSL site will only be allowed if it matches
+# exceptionsitelist or greysslsitelist. This ensures that only trusted sites can be accessed via SSL.
+# The greysslsitelist is used in order to allow a site to drop through so that it's domain can be mangled via urlregexplist,
+# e.g. To use the Google mechanism for prevention of https Google search, or to allow an SSL site whilst blocking the corresponding http: site.
+#
+# Default off (logic as above)
+# For legacy (DG style) logic then set ssllegacylogic to on
+# Note that MITM cannot work with this flag set
+# ssllegacylogic = off
+
+
 # Content filtering files location
 bannedphraselist = '{$e2_dir}/etc/e2guardian/lists/bannedphraselist.g_{$e2guardian_groups['name']}'
 weightedphraselist = '{$e2_dir}/etc/e2guardian/lists/weightedphraselist.g_{$e2guardian_groups['name']}'
 exceptionphraselist = '{$e2_dir}/etc/e2guardian/lists/exceptionphraselist.g_{$e2guardian_groups['name']}'
 bannedsitelist = '{$e2_dir}/etc/e2guardian/lists/bannedsitelist.g_{$e2guardian_groups['name']}'
 greysitelist = '{$e2_dir}/etc/e2guardian/lists/greysitelist.g_{$e2guardian_groups['name']}'
+# bannedsslsitelist = '/usr/local/etc/e2guardian/lists/bannedsslsitelist'			TODO INCLUDE ON GUI
 exceptionsitelist = '{$e2_dir}/etc/e2guardian/lists/exceptionsitelist.g_{$e2guardian_groups['name']}'
 bannedurllist = '{$e2_dir}/etc/e2guardian/lists/bannedurllist.g_{$e2guardian_groups['name']}'
 greyurllist = '{$e2_dir}/etc/e2guardian/lists/greyurllist.g_{$e2guardian_groups['name']}'
@@ -63,9 +79,35 @@ contentregexplist = '{$e2_dir}/etc/e2guardian/lists/contentregexplist.g_{$e2guar
 urlregexplist = '{$e2_dir}/etc/e2guardian/lists/urlregexplist.g_{$e2guardian_groups['name']}'
 authexceptionsitelist = '{$e2_dir}/etc/e2guardian/lists/authexceptionsitelist'
 authexceptionurllist = '{$e2_dir}/etc/e2guardian/lists/authexceptionurllist'
+# refererexceptionsitelist = '/usr/local/etc/e2guardian/lists/refererexceptionsitelist'		TODO INCLUDE ON GUI
+# refererexceptionurllist = '/usr/local/etc/e2guardian/lists/refererexceptionurllist'		
+# embededreferersitelist = '/usr/local/etc/e2guardian/lists/embededreferersitelist'
+# embededrefererurllist = '/usr/local/etc/e2guardian/lists/embededrefererurllist'
+# urlredirectregexplist = '/usr/local/etc/e2guardian/lists/urlredirectregexplist'
+
+# local versions of lists (where LOCAL_LISTS enabled)						TODO INCLUDE ON GUI
+# enablelocallists = on/off
+#localbannedsitelist = '/usr/local/etc/e2guardian/lists/localbannedsitelist'
+#localgreysitelist = '/usr/local/etc/e2guardian/lists/localgreysitelist'
+#localexceptionsitelist = '/usr/local/etc/e2guardian/lists/localexceptionsitelist'
+#localbannedurllist = '/usr/local/etc/e2guardian/lists/localbannedurllist'
+#localgreyurllist = '/usr/local/etc/e2guardian/lists/localgreyurllist'
+#localexceptionurllist = '/usr/local/etc/e2guardian/lists/localexceptionurllist'
+#localbannedsslsitelist = '/usr/local/etc/e2guardian/lists/localbannedsslsitelist'
+#localgreysslsitelist = '/usr/local/etc/e2guardian/lists/localgreysslsitelist'
+#localbannedsearchlist = '/usr/local/etc/e2guardian/lists/localbannedsearchlist'
+
+#!! Not compiled !! authexceptionsitelist = '/usr/local/etc/e2guardian/lists/authexceptionsitelist'	TODO COMPILE
+#!! Not compiled !! authexceptionurllist = '/usr/local/etc/e2guardian/lists/authexceptionurllist'
+
 
 # Filetype filtering
 #
+# Allow bannedregexpurllist with grey list mode						TODO INCLUDE ON GUI
+# bannedregexpheaderlist and bannedregexpurllist
+#
+# bannedregexwithblanketblock = off
+
 # Blanket download blocking
 # If enabled, all files will be blocked, unless they match the
 # exceptionextensionlist or exceptionmimetypelist.
@@ -91,6 +133,18 @@ bannedmimetypelist = '{$e2_dir}/etc/e2guardian/lists/bannedmimetypelist.g_{$e2gu
 exceptionfilesitelist = '{$e2_dir}/etc/e2guardian/lists/exceptionfilesitelist.g_{$e2guardian_groups['name']}'
 exceptionfileurllist = '{$e2_dir}/etc/e2guardian/lists/exceptionfileurllist.g_{$e2guardian_groups['name']}'
 
+# POST protection (web upload and forms)					TODO CHANGE CODE FROM GENERAL TO GROUP
+# does not block forms without any file upload, i.e. this is just for
+# blocking or limiting uploads
+# measured in kibibytes after MIME encoding and header bumph
+# use 0 for a complete block
+# use higher (e.g. 512 = 512Kbytes) for limiting
+# use -1 for no blocking
+#maxuploadsize = 512
+#maxuploadsize = 0
+maxuploadsize = -1
+
+
 # Categorise without blocking:
 # Supply categorised lists here and the category string shall be logged against
 # matching requests, but matching these lists does not perform any filtering
@@ -110,11 +164,20 @@ logregexpurllist = '{$e2_dir}/etc/e2guardian/lists/logregexpurllist.g_{$e2guardi
 # Use for example, to remove cookies or prevent certain user-agents.
 headerregexplist = '{$e2_dir}/etc/e2guardian/lists/headerregexplist.g_{$e2guardian_groups['name']}'
 bannedregexpheaderlist = '{$e2_dir}/etc/e2guardian/lists/bannedregexpheaderlist.g_{$e2guardian_groups['name']}'
+# addheaderregexplist = '/usr/local/etc/e2guardian/lists/addheaderregexplist'			TODO INCLUDE ON GUI
 
-# Weighted phrase mode
-# Optional; overrides the weightedphrasemode option in e2guardian.conf
-# for this particular group.  See documentation for supported values in
-# that file.
+# Phrase filtering additional mime types (by default text/*)					TODO INLCUDE ON GUI
+# textmimetypes = 'application/xhtml+xml,application/xml,application/json,application/javascript,application/x-javascript'
+
+# Weighted phrase mode										TODO CHECK IF GUI MATCHES THIS CONF
+# 0 = off = do not use the weighted phrase feature.
+# 1 = on, normal = normal weighted phrase operation.
+# 2 = on, singular = each weighted phrase found only counts once on a page.
+# IMPORTANT: Note that setting this to "0" turns off all features which
+# extract phrases from page content, including banned & exception
+# phrases (not just weighted), search term filtering, and scanning for
+# links to banned URLs.
+# Defaults to 1.
 weightedphrasemode = {$e2guardian_groups['weightedphrasemode']}
 
 # Naughtiness limit
@@ -127,17 +190,46 @@ weightedphrasemode = {$e2guardian_groups['weightedphrasemode']}
 naughtynesslimit = {$e2guardian_groups['naughtynesslimit']}
 
 # Search term blocking
-# Search terms can be extracted from search URLs and filtered using the
+# Search terms can be extracted from search URLs and filtered using one or
+# both of two different methods.
+
+# Method 1 is that developed by Protex where specific
+# search terms are contained in a bannedsearchlist.
+# (localbannedsearchlist and bannedsearchoveridelist can be used to supplement
+# and override this list as required.)
+# These lists contain banned search words combinations on each line.
+# Words are separated by '+' and must be in sorted order within a line.
+#    so to block 'sexy girl' then the list must contain the line
+#       girl+sexy
+#    and this will block both 'sexy girl' and 'girl sexy'
+# To use this method, the searchregexplist must be enabled and the bannedsearchlist(s) defined
+
+# Method 2 is uses the
 # bannedphraselist, weightedphraselist and exceptionphraselist, with a separate
 # threshold for blocking than that used for normal page content.
-# To do this, the first two options below must be enabled.
+# The bannedsearchoveridelist can be used to overide the phrase blocking.
+
+# For method 2, the searchregexplist must be enabled and searchtermlimit
+# must be greater than 0.
+
 #
-# Search engine regular expression list
+# Search engine regular expression list (need for both options)
 # List of regular expressions for matching search engine URLs.  It is assumed
-# that the search terms themselves will be contained within the first submatch
-# of each expression.
+# that the search terms themselves will be contained in the
+# of output of each expression.
 searchregexplist = '{$e2_dir}/etc/e2guardian/lists/searchengineregexplist.g_{$e2guardian_groups['name']}'
 #
+#
+# Override list - overrides both bannedsearchlist and searchterm limit			TODO INCLUDE ON GUI
+# Similar to exception list but only on the search term.  The actual
+# returned content of the page may still be content checked.
+#bannedsearchoveridelist = '/usr/local/etc/e2guardian/lists/bannedsearchoveridelist'
+
+
+# Banned Search Term list(s) for option 1
+#bannedsearchlist = '/usr/local/etc/e2guardian/lists/bannedsearchlist'
+
+
 # Search term limit
 # The limit over which requests will be blocked for containing search terms
 # which match the weightedphraselist.  This should usually be lower than the
@@ -281,6 +373,21 @@ deepurlanalysis = {$e2guardian_groups['deepurlanalysis']}
 # accessdeniedaddress = 'http://YOURSERVER.YOURDOMAIN/cgi-bin/e2guardian.pl'
 {$groupaccessdeniedaddress}
 
+# sslaccessdeniedaddress is the address of your web server to which the static page		TODO INCLUDE ON GUI
+# e2guardian reporting was copied.
+
+# With ssldeniedrewrite 'off' it works only with firefox
+# With ssldeniedrewrite 'on' there are several limitations, SSL warning, basic page, etc, eg this webserver can't be listed as an
+# exception in your browser's proxy configuration.
+# Keep in mind, this is only a trick to avoid blank page, the best way still to use SSLMITM
+#
+# sslaccessdeniedaddress = 'http://YOURSERVER.YOURDOMAIN/denyssl.htm'
+
+# Break SSL protocol and redirect to another HTTPS website for denied page (sslaccessdeniedaddress url)
+
+#ssldeniedrewrite = 'on'
+
+
 # HTML Template override
 # If defined, this specifies a custom HTML template file for members of this
 # filter group, overriding the global setting in e2guardian.conf. This is
@@ -297,6 +404,16 @@ deepurlanalysis = {$e2guardian_groups['deepurlanalysis']}
 #htmltemplate = 'custom.html'
 
 # Email reporting - original patch by J. Gauthier
+
+# Non standard delimiter (only used with accessdeniedaddress)			TODO INCLUDE ON GUI
+# To help preserve the full banned URL, including parameters, the variables
+# passed into the access denied CGI are separated using non-standard
+# delimiters. This can be useful to ensure correct operation of the filter
+# bypass modes. Parameters are split using "::" in place of "&", and "==" in
+# place of "=".
+# Default is enabled, but to go back to the standard mode, disable it.
+
+#nonstandarddelimiter = off
 
 # Use SMTP
 # If on, will enable system wide events to be reported by email.
@@ -361,6 +478,12 @@ deepurlanalysis = {$e2guardian_groups['deepurlanalysis']}
 # notification will be sent.
 #!! Not compiled !!threshold = 0
 
+#SSL site rewriting (i.e. CNAME)				TODO INCLUDE ON GUI
+# Rewrite hostname in ssl connect
+# better than adding CNAME records to DNS
+# Use to enforce Youtube restricted mode
+# sslsiteregexplist = '/usr/local/etc/e2guardian/lists/sslsiteregexplist'
+
 #SSL certificate checking
 # Check that ssl certificates for servers on https connections are valid
 # and signed by a ca in the configured path
@@ -370,7 +493,26 @@ sslcheckcert = {$e2guardian_groups['sslcheckcert']}
 # Forge ssl certificates for all sites, decrypt the data then re encrypt it
 # using a different private key. Used to filter ssl sites
 sslmitm = {$e2guardian_groups['sslmitm']}
-{$e2guardian_groups['mitmkey']}
+
+#Limit SSL MITM to sites in greysslsitelist(s)
+# ignored if  sslmitm is off
+# SSL sites not matching greysslsitelist will be treat as if sslmitm is off.
+onlymitmsslgrey = off
+
+# Enable MITM site certificate checking
+# ignored if  sslmitm is off
+# default (recommended) is 'on'
+mitmcheckcert = on
+
+#{$e2guardian_groups['mitmkey']}			TODO CHECK ALL THESE SSL OPTIONS
+
+#Do not check ssl certificates for sites listed		TOD INCLUDE ON GUI
+# Can be used to allow sites with self-signed or invalid certificates
+# or to reduced CPU load by not checking certs on heavily used sites (e.g. Google, Bing)
+# Use with caution!
+# Ignored if mitmcheckcert is 'off'
+# nocheckcertsitelist = '/usr/local/etc/e2guardian/lists/nocheckcertsitelist'
+
 
 EOF;
 

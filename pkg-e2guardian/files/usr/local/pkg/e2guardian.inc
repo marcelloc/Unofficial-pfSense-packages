@@ -144,7 +144,7 @@ print "<PRE>inicio";
 			'report_language' => 'ukenglish',
 			'report_options' => 'showweightedfound,usecustombannedimage,nonstandarddelimiter',
 			'logging_options' => 'logconnectionhandlingerrors',
-			'loglevel' => '2',
+			'loglevel' => '3',
 			'logexceptionhits' => '2',
 			'logfileformat' => '1');
 	}

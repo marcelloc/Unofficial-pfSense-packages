@@ -21,18 +21,7 @@
 
 #create e2guardian.conf
 	$dg=<<<EOF
-# E2guardian config file for version 3.1.2
-
-# removido
-# Web Access Denied Reporting (does not affect logging)
-#
-# -1 = log, but do not block - Stealth mode
-#  0 = just say 'Access Denied'
-#  1 = report why but not what denied phrase
-#  2 = report fully
-#  3 = use HTML template file (accessdeniedaddress ignored) - recommended
-#
-#reportinglevel = {$reportlevel}
+# E2guardian config file for version 3.5.1
 
 # Language dir where languages are stored for internationalisation.
 # The HTML template within this dir is only used when reportinglevel
@@ -67,13 +56,19 @@ logexceptionhits = {$logexceptionhits}
 # 4 = Tab delimited
 logfileformat = {$logfileformat}
 
+# Log a specific value from header //To be included on gui
+# low case only
+# only used with logs: 1,5 and 6
+# logheadervalue = 'proxy-authorization:'
+
 # truncate large items in log lines
-# 0 = no truncating (default)
-#maxlogitemlength = 0
+# allowable values 10 to 32000
+# default 2000
+# unlimited not longer allowed - 0 will now set default of 2000
+#maxlogitemlength = 2000
 
 # anonymize logs (blank out usernames & IPs)
 anonymizelogs = {$anonymizelogs}
-
 
 # Syslog logging
 #
@@ -81,12 +76,16 @@ anonymizelogs = {$anonymizelogs}
 # at the defined or built-in "loglocation"
 #logsyslog = off
 
+#Suffix to append to program name when logging through syslog
+# Default is the e2Guardian instance number
+#namesuffix = $z
+
 # Log file location
 #
 # Defines the log directory and filename.
 loglocation = '/var/log/e2guardian/access.log'
 
-# POST protection (web upload and forms)
+# POST protection (web upload and forms) 		 					TODO REMOVE FROM GUI
 # does not block forms without any file upload, i.e. this is just for
 # blocking or limiting uploads
 # measured in kibibytes after MIME encoding and header bumph
@@ -95,7 +94,22 @@ loglocation = '/var/log/e2guardian/access.log'
 # use -1 for no blocking
 #maxuploadsize = 512
 #maxuploadsize = 0
-maxuploadsize = {$maxuploadsize}
+# maxuploadsize = {$maxuploadsize}
+
+# Dymamic statistics log file location
+#
+# Defines the dstats file directory and filename.
+# Once every 'dstatinterval' seconds, stats on number of children, in use and free, number of
+# connections and connections per second are written to this
+# file. Format is similar to sar.
+# Default is not to write stats.
+dstatlocation = '/var/log/e2guardian/dstats.log'
+
+# Interval between stats output
+# Default 300 = 5 mins
+# Minimum 60
+# Maximum 3600 = 1 hour
+dstatinterval = 300  # = 5 minutes
 
 # Statistics log file location
 #
@@ -140,6 +154,12 @@ proxyport = {$proxyport}
 
 proxytimeout = {$proxytimeout}
 
+#Proxy failure log interval
+# The interval between log status entries when proxy is not responding
+# minimum is proxytimeout - maximum 3600 (= 1 hour)
+# default = 600  (= 10 mins)
+#proxyfailureloginterval = 600
+
 # Proxy header exchange
 # Set timeout between the Proxy and E2guardian
 # Min 20 - Max 300
@@ -166,7 +186,20 @@ pcontimeout = 55
 # on (default) | off
 #!! Not compiled !! originalip = on
 
-# accessdeniedaddress is the address of your web server to which the cgi
+# Banned image replacement
+# Images that are banned due to domain/url/etc reasons including those
+# in the adverts blacklists can be replaced by an image.  This will,
+# for example, hide images from advert sites and remove broken image
+# icons from banned domains.
+# on (default) | off
+usecustombannedimage = {$usecustombannedimage}
+custombannedimagefile = '{$e2_dir}/share/e2guardian/transparent1x1.gif'
+
+#Banned flash replacement
+usecustombannedflash = {$usecustombannedflash}
+{$custombannedflashfile}
+
+# accessdeniedaddress is the address of your web server to which the cgi 		TODO REMOVE OR FIND NEW PLACE
 # e2guardian reporting script was copied. Only used in reporting levels 1 and 2.
 #
 # This webserver must be either:
@@ -179,32 +212,18 @@ pcontimeout = 55
 # Individual filter groups can override this setting in their own configuration.
 #
 #accessdeniedaddress = 'http://YOURSERVER.YOURDOMAIN/cgi-bin/e2guardian.pl'
-{$accessdeniedaddress}
+#{$accessdeniedaddress}
 
-# Non standard delimiter (only used with accessdeniedaddress)
+# Non standard delimiter (only used with accessdeniedaddress) 				TODO REMOVE OR FIND NEW PLACE
 # To help preserve the full banned URL, including parameters, the variables
 # passed into the access denied CGI are separated using non-standard
 # delimiters. This can be useful to ensure correct operation of the filter
 # bypass modes. Parameters are split using "::" in place of "&", and "==" in
 # place of "=".
 # Default is enabled, but to go back to the standard mode, disable it.
-nonstandarddelimiter = {$nonstandarddelimiter}
+# nonstandarddelimiter = {$nonstandarddelimiter}
 
 
-
-# Banned image replacement
-# Images that are banned due to domain/url/etc reasons including those
-# in the adverts blacklists can be replaced by an image.  This will,
-# for example, hide images from advert sites and remove broken image
-# icons from banned domains.
-# on (default) | off
-usecustombannedimage = {$usecustombannedimage}
-custombannedimagefile = '{$e2_dir}/share/e2guardian/transparent1x1.gif'
-
-
-#Banned flash replacement
-usecustombannedflash = {$usecustombannedflash}
-{$custombannedflashfile}
 
 # Filter groups options
 # filtergroups sets the number of filter groups. A filter group is a set of content
@@ -234,7 +253,7 @@ perroomblockingdirectory = '{$e2guardian_dir}/lists/bannedrooms/'
 # high enough, reported. on | off
 showweightedfound = {$showweightedfound}
 
-# Weighted phrase mode
+# Weighted phrase mode									TODO REMOVE FROM GUI
 # There are 3 possible modes of operation:
 # 0 = off = do not use the weighted phrase feature.
 # 1 = on, normal = normal weighted phrase operation.
@@ -245,7 +264,7 @@ showweightedfound = {$showweightedfound}
 # phrases (not just weighted), search term filtering, and scanning for
 # links to banned URLs.
 #
-weightedphrasemode = {$weightedphrasemode}
+# weightedphrasemode = {$weightedphrasemode}
 
 
 
@@ -482,7 +501,7 @@ trickledelay = {$trickledelay}
 # and other matching mechanisms.
 #
 downloadmanager = '{$e2guardian_dir}/downloadmanagers/fancy.conf'
-##!! Not compiled !! downloadmanager = '{$e2guardian_dir}/downloadmanagers/trickle.conf'
+downloadmanager = '{$e2guardian_dir}/downloadmanagers/trickle.conf'
 downloadmanager = '{$e2guardian_dir}/downloadmanagers/default.conf'
 
 
@@ -534,8 +553,16 @@ contentscanexceptions = {$contentscanexceptions}
 #authplugin = '{$e2guardian_dir}/authplugins/proxy-ntlm.conf'
 #authplugin = '{$e2guardian_dir}/authplugins/ident.conf'
 #authplugin = '{$e2guardian_dir}/authplugins/ip.conf'
+#authplugin = '/etc/e2guardian/authplugins/proxy-header.conf'
 {$authplugin}
 
+# Map auth to ports										TODO INCLUDE ON GUI
+# If enabled map auth plugins to ips/ports - number of authplugins must then be same as
+# number of ports
+# If disabled scan authplugins on all ports - number of authplugins can then be different
+#  to number of ports
+# on (default) | off
+#mapauthtoports = off
 
 # Re-check replaced URLs
 # As a matter of course, URLs undergo regular expression search/replace (urlregexplist)
@@ -563,12 +590,23 @@ forwardedfor = {$forwardedfor}
 # Warning - headers are easily spoofed. on | off
 usexforwardedfor = {$usexforwardedfor}
 
+# as mentioned above, the headers can be easily spoofed in order to fake the		TODO INCLUDE ON GUI
+# request origin by setting the X-Forwarded-For header. If you have the
+# "usexforwardedfor" option enabled, you may want to specify the IPs from which
+# this kind of header is allowed, such as another upstream proxy server for
+# instance If you want authorize multiple IPs, specify each one on an individual
+# xforwardedforfilterip line.
+# xforwardedforfilterip =
 
 # if on it logs some debug info regarding fork()ing and accept()ing which
 # can usually be ignored.  These are logged by syslog.  It is safe to leave
 # it on or off
 logconnectionhandlingerrors = {$logconnectionhandlingerrors}
 
+# If on it logs detailed error info regarding SSL error returns.
+# These are logged by syslog. Default is off.
+#
+logsslerrors = off
 
 
 # Fork pool options
@@ -687,7 +725,9 @@ softrestart = {$softrestart}
 
 #SSL certificate checking path
 #Path to CA certificates used to validate the certificates of https sites.
-sslcertificatepath = '/usr/local/share/certs/'
+# if left blank openssl default ca certificate bundle will be used
+#Leave as default unless you want to load non-default cert bundle
+#sslcertificatepath = ''  OLD PKG VERSION VALUE '/usr/local/share/certs/'
 
 #SSL man in the middle
 #CA certificate path
@@ -709,13 +749,50 @@ sslcertificatepath = '/usr/local/share/certs/'
 #Generated cert path
 #The location where generated certificates will be saved for future use.
 #(must be writable by the dg user)
+# default is blank - required if ssl_mitm is enabled.
 #generatedcertpath = '/home/stephen/dginstall/generatedcerts/'
 {$generatedcertpath}
-#Generated link path = ''
+
+#Warning: if you change the cert start/end time from default on a running
+#         system you will need to clear the generated certificate
+#         store and also may get problems on running client browsers
+
+#Generated cert start time (in unix time) - optional
+# defaults to 1417872951 = 6th Dec 2014
+# generatedcertstart = 1417872951
+
+#Generated cert end time (in unix time) - optional
+# defaults to generatedcertstart + 10 years
+#genratedcertend =
+# generatedcertstart =
+
+
 #The location where symlinks to certificates will be created.
 #(must be writable by the dg user)
 #generatedlinkpath = '/home/stephen/dginstall/generatedlinks/'
-{$generatedlinkpath}
+#{$generatedlinkpath}								TODO REMOVE FROM e2guardian.inc
+
+# monitor helper path								TODO INLCUDE ON GUI or INC
+# If defined this script/binary will be called with start or stop appended as follows:-
+#
+# At start after e2guardian has started monitorstart children with ' start' appended
+# When e2guardian is stopping with ' stop' appended
+# If cache stops responding with ' stop' appended
+# When cache resumes with ' start' appended
+# monitorhelper = '/usr/local/bin/mymonitor'
+
+# monitor flag prefix path							
+# If defined path will be used to generate flag files as follows:-
+#
+# At start after e2guardian has started monitorstart children with 'running' appended
+# When e2guardian is stopping with 'paused' appended
+# If cache stops responding with 'paused' appended
+# When cache resumes with 'running' appended
+# monitorflagprefix = '/tmp/e2g_run_flag_'					TODO INLCUDE ON GUI or INC
+
+# monitorstart - defaults to minchildren
+# valid values between 1 and minchildren
+# monitorstart = 0
 
 EOF;
 ?>

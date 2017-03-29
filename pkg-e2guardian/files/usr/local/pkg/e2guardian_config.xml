@@ -103,6 +103,7 @@
 				<option><name>Proxy-Ntlm</name><value>/usr/local/etc/e2guardian/authplugins/proxy-ntlm.conf</value></option>
 				<option><name>Ident</name><value>/usr/local/etc/e2guardian/authplugins/ident.conf</value></option>
 				<option><name>Ip Address</name><value>/usr/local/etc/e2guardian/authplugins/ip.conf</value></option>
+				<option><name>Proxy-Header</name><value>/usr/local/etc/e2guardian/authplugins/proxy-header.conf</value></option>
 				<option><name>none</name><value>none</value></option>
 			</options>
 			<multiple/>

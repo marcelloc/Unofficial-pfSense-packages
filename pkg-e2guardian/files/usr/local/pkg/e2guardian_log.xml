@@ -194,8 +194,8 @@
 			<description><![CDATA[Web Access Denied Reporting (does not affect logging)]]></description>
 			<type>select</type>
 			<options>
-				<option><name>All text based (default)</name><value>2</value></option>
-				<option><name>All requests</name><value>3</value></option>
+				<option><name>All requests(Default)</name><value>3</value></option>
+				<option><name>All text based</name><value>2</value></option>
 				<option><name>Just denied</name><value>1</value></option>
 				<option><name>None</name><value>0</value></option>
 			</options>
@@ -222,6 +222,9 @@
 				<option><name>CSV-style format</name><value>2</value></option>
 				<option><name>Squid Log File Format</name><value>3</value></option>
 				<option><name>Tab delimited</name><value>4</value></option>
+				<option><name>Protex format full</name><value>5</value></option>
+				<option><name>Protex format standart</name><value>6</value></option>
+				<option><name>Squid Log File Format Secure extension</name><value>7</value></option>
 			</options>
 		</field>
 	</fields>
