@@ -8,10 +8,10 @@ This is not supported by Netgate or pfSense team. Use it at your own risk.
 
 Feedbacks and contributions are always welcome.
 
-#####################
-Install instructions
-#####################
+# Install instructions
 
 cd /root
+
 fetch https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-e2guardian/files/install_e2guardian_23.sh
+
 sh ./install_e2guardian_23.sh
