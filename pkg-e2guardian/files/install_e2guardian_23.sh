@@ -37,7 +37,7 @@ for file in 	pkg/e2guardian.xml pkg/e2guardian_antivirus_acl.xml pkg/e2guardian_
 		pkg/e2guardian_url_acl.xml pkg/e2guardian.inc pkg/pkg_e2guardian.inc pkg/e2guardian.conf.template \
 		pkg/e2guardian_ips_header.template pkg/e2guardian_rc.template pkg/e2guardian_users_footer.template \
 		pkg/e2guardian_users_header.template pkg/e2guardianfx.conf.template www/e2guardian.php \
-		www/e2guardian_about.php www/e2guardian_ldap.php www/shortcuts/pkg_e2guardian.inc	
+		www/e2guardian_about.php www/e2guardian_ldap.php www/shortcuts/pkg_e2guardian.inc pkg/inc/polipo.inc	
 do
 	echo "fetching  /usr/local/$file from github"
 	fetch -q -o /usr/local/$file $prefix/usr/local/$file
