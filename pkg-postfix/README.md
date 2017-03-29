@@ -13,7 +13,9 @@ Feedbacks and contributions are always welcome.
 Under console/ssh, fetch the install script, check what it does if you want and then execute it.
 
 cd /root
+
 fetch https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-postfix/files/install_postfix_23.sh
+
 sh ./install_postfix_23.sh
 
 Once it finishes, all must be in place. If you do not see the menu after it finishes, try to install any pfSense package from GUI, like cron for example.

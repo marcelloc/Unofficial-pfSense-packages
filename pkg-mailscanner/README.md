@@ -13,8 +13,11 @@ Feedbacks and contributions are always welcome.
 Under console/ssh, fetch the install script, check what it does if you want and then execute it.
 
 cd /root
+
 fetch https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-mailscanner/files/install_mailscanner_23.sh
+
 sh ./install_mailscanner_23.sh
+
 
 Once you install, some cpan modules will be still missing . I consider they important to spamassassin to work properly but to install it on freebsd or pfSense, you will need gcc and other compile stuff installed.
 
@@ -28,7 +31,9 @@ Mar 28 17:15:48.931 [92279] dbg: diag: [...] module not installed: Net::Patricia
 If you decide to complete spamassassin features, run this second script to pfSense be able to compile cpan modules.
 
 cd /root
+
 fetch https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-mailscanner/files/install_cpan_modules_23.sh
+
 sh ./install_cpan_modules_23.sh
 
 
