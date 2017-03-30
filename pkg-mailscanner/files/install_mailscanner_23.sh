@@ -53,6 +53,9 @@ cp /tmp/pfSense.conf $repo2
 # Install mailscanner package
 pkg install mailscanner bash dcc-dccd spamassassin
 
+#install services and menus
+php /root/check_mailscanner_service.php
+
 # update spamassassin database
 rehash
 /usr/local/bin/sa-update -D
