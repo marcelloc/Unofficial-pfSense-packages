@@ -37,7 +37,7 @@ for file in 	pkg/e2guardian.xml pkg/e2guardian_antivirus_acl.xml pkg/e2guardian_
 		pkg/e2guardian_url_acl.xml pkg/e2guardian.inc pkg/pkg_e2guardian.inc pkg/e2guardian.conf.template \
 		pkg/e2guardian_ips_header.template pkg/e2guardian_rc.template pkg/e2guardian_users_footer.template \
 		pkg/e2guardian_users_header.template pkg/e2guardianfx.conf.template www/e2guardian.php \
-		www/e2guardian_about.php www/e2guardian_ldap.php www/shortcuts/pkg_e2guardian.inc pkg/polipo.inc	
+		www/e2guardian_about.php www/e2guardian_ldap.php www/shortcuts/pkg_e2guardian.inc pkg/tinyproxy.inc	
 do
 	echo "fetching  /usr/local/$file from github"
 	fetch -q -o /usr/local/$file $prefix/usr/local/$file
@@ -55,7 +55,7 @@ cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
 cp /tmp/pfSense.conf $repo2
 
 # Install e2guardian freebsd package and deps
-pkg install e2guardian polipo ca_root_nss
+pkg install e2guardian tinyproxy ca_root_nss
 
 # remove non ssl e2guardian packages after deps install
 pkg remove e2guardian

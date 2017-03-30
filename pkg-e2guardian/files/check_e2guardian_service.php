@@ -29,7 +29,7 @@ foreach ($config['installedpackages']['service'] as $service) {
 	if ($service['name'] == 'e2guardian') {
 		$found[3]++;
 	}
-	if ($service['name'] == 'polipo') {
+	if ($service['name'] == 'tinyproxy') {
                 $found[4]++;
         }
 
@@ -44,9 +44,9 @@ if ( $found[3] == 0 ) {
 
 if ( $found[4] == 0 ) {
         $write_config++;
-        $config['installedpackages']['service'][]=array('name' => 'polipo',
-                                                        'rcfile' => 'polipo',
-                                                        'executable' => 'polipo',
+        $config['installedpackages']['service'][]=array('name' => 'tinyproxy',
+                                                        'rcfile' => 'tinyproxy',
+                                                        'executable' => 'tinyproxy',
                                                         'description' => 'Light http proxy');
 }
 

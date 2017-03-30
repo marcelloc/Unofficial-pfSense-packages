@@ -28,7 +28,7 @@ require_once("services.inc");
 require_once("util.inc");
 require_once("xmlrpc.inc");
 require_once("xmlrpc_client.inc");
-require_once("polipo.inc");
+require_once("tinyproxy.inc");
 $shortcut_section = "e2guardian";
 
 $pf_version = substr(trim(file_get_contents("/etc/version")), 0, 3);
@@ -1160,7 +1160,7 @@ EOF;
 	file_put_contents($e2guardian_dir . "/e2guardian.conf", $dg, LOCK_EX);
 
 	//configure local proxy server
-	sync_polipo();
+	sync_tinyproxy();
 
 	//check virus_scanner options
 	$libexec_dir = E2GUARDIAN_DIR . "/libexec/e2guardian/";
@@ -1259,7 +1259,7 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 	if ($config['installedpackages']['e2guardian']['config'][0]['enable'] == "on") {
 		copy('/usr/local/pkg/e2guardian_rc.template', $script);
 		chmod ($script, 0755);
-		start_polipo();
+		start_tinyproxy();
 		if (is_process_running('e2guardian')) {
 			log_error('Reloading E2guardian');
 			exec("/usr/local/sbin/e2guardian -r");
@@ -1268,7 +1268,7 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 			mwexec("$script start");
 		}
 	} else {
-		stop_polipo();
+		stop_tinyproxy();
 		if (is_process_running('e2guardian')) {
 			log_error('E2guardian is disabled, stopping process...');
 			mwexec("$script stop");
