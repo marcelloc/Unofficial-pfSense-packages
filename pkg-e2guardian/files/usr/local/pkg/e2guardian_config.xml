@@ -204,16 +204,6 @@
 			<source_value>refid</source_value>
 		</field>
 		<field>
-			<fielddescr>Cert</fielddescr>
-			<fieldname>dcert</fieldname>
-			<description><![CDATA[Select Certificate pair to use when SSL filtering is enabled on Group options<br>
-				To create a Certificate on pfsense, go to <strong>system -> Cert Manager<strong>]]></description>
-			<type>select_source</type>
-			<source><![CDATA[$config['cert']]]></source>
-			<source_name>descr</source_name>
-			<source_value>refid</source_value>
-		</field>
-		<field>
 			<name>Content Scanner</name>
 			<type>listtopic</type>
 		</field>

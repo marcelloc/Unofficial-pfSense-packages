@@ -606,7 +606,7 @@ logconnectionhandlingerrors = {$logconnectionhandlingerrors}
 # If on it logs detailed error info regarding SSL error returns.
 # These are logged by syslog. Default is off.
 #
-logsslerrors = off
+logsslerrors = {$logsslerrors}
 
 
 # Fork pool options

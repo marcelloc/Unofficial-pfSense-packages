@@ -252,7 +252,7 @@ print "<PRE>inicio";
 	$nologger = (preg_match('/nologger/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$logadblocks = (preg_match('/logadblocks/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$anonymizelogs = (preg_match('/anonymizelogs/', $e2guardian_log['logging_options']) ? "on" : "off");
-
+	$logsslerrors = (preg_match('/logsslerrors/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$loglevel = ($e2guardian_log['loglevel'] ? $e2guardian_log['loglevel'] : "2");
 	$logexceptionhits = ($e2guardian_log['logexceptionhits'] ? $e2guardian_log['logexceptionhits'] : "2");
 	$logfileformat = ($e2guardian_log['logfileformat'] ? $e2guardian_log['logfileformat'] : "1");
@@ -336,6 +336,12 @@ print "<PRE>inicio";
 			$generatedcertpath= "generatedcertpath = '" . $e2guardian_dir . "/ssl/generatedcerts'";
 			$generatedlinkpath= "generatedlinkpath = '" . $e2guardian_dir . "/ssl/generatedlinks'";
 		}
+		$certprivatekeypath='/etc/ssl/demoCA/private/serverkey.pem';
+		if (! file_exists($certprivatekeypath)) {
+			system("openssl genrsa 4096 > $certprivatekeypath");		
+		}
+		$cert_key = "certprivatekeypath = '{$certprivatekeypath}' ";
+		/*
 		$svr_cert = lookup_cert($e2guardian_config["dcert"]);
 		if ($svr_cert != false) {
 			if (base64_decode($svr_cert['prv'])) {
@@ -343,6 +349,7 @@ print "<PRE>inicio";
 				$cert_key = "certprivatekeypath = '/etc/ssl/demoCA/private/serverkey.pem' ";
 			}
 		}
+		*/
 	}
 
 	//contentscanners preg_replace patterns
