@@ -513,19 +513,38 @@ smtpd_recipient_restrictions = permit_mynetworks,
 
 EOF;
 	}
-#check spf option
+	#check spf option
+	$spf_helo_reject="No_Check";
+	$spf_mail_reject="False";
 	switch ($antispam['postfix_spf']) {
-		case 'spf_mark_only':
-			$postfix_main.= "spf_mark_only = yes\n";
-			$spf = "reject_spf_invalid_sender,\n\t\t\t\t";
-			break;
-		case 'disable':
-			$spf = "";
-			break;
-		default:
-			$spf=$antispam['postfix_spf'].",\n\t\t\t\t";
-			break;
+		case '':
+        	case 'disable':
+        	case 'No_Check':
+                	$spf="";
+                	$spf_helo_reject="No_Check";
+                	break;
+        	default:
+                	$spf_helo_reject=$antispam['postfix_spf'];
+                	//$postfix_main.= "spf-policy_time_limit = 3600\n";
+                	$spf="check_policy_service unix:private/spf-policy,\n\t\t\t\t";
+                	break;
 	}
+	
+	switch($antispam['postfix_spf_mail']){
+        	case '':
+        	case 'disable':
+        	case 'No_Check':
+                	$spf="";
+                	$spf_mail_reject="No_Check";
+                	break;
+        	default:
+                	$spf_mail_reject=$antispam['postfix_spf_mail'];
+                	//$postfix_main.= "spf-policy_time_limit = 3600\n";
+                	$spf="check_policy_service unix:private/spf-policy,\n\t\t\t\t";
+                	break;
+	}
+
+	
 	$postfix_main  = preg_replace("/SPFSPFSPF/",$spf,$postfix_main);
 	$postfix_main .= $postfix_main_antispam.$check_debug;
 	switch ($antispam['zombie_blocker']) {
@@ -614,6 +633,8 @@ EOF;
 smtpd     pass  -       -       n       -       -       smtpd
 dnsblog   unix  -       -       n       -       0       dnsblog
 tlsproxy  unix  -       -       n       -       0       tlsproxy
+spf-policy unix -       n       n       -       0       spawn
+          user=nobody argv=/usr/local/bin/policyd-spf
 
 MASTEREOF;
 		$rbl2 = "";
@@ -681,9 +702,24 @@ scache    unix  -       -       n       -       1       scache
 
 MASTEREOF2;
 
+$policyd_spf = <<<SPF
+#  /usr/local/etc/postfix-policyd-spf-python/policyd-spf.conf
+#  For a fully commented sample config file see policyd-spf.conf.commented
+# or http://www.filewatcher.com/p/postfix-policyd-spf-python_1.0-2_all.deb.37100/usr/share/doc/postfix-policyd-spf-python/policyd-spf.conf.commented.html
+
+debugLevel = {$antispam['postfix_spf_debug']}
+defaultSeedOnly = 1
+
+HELO_reject = {$spf_helo_reject}
+Mail_From_reject = {$spf_mail_reject}
+skip_addresses = 127.0.0.0/8,::ffff:127.0.0.0/104,::1
+
+SPF;
+
 	conf_mount_rw();
 
 	log_error("Writing out configuration");
+	file_put_contents(POSTFIX_LOCALBASE."/etc/postfix-policyd-spf-python/policyd-spf.conf", $policyd_spf,LOCK_EX);
 	file_put_contents(POSTFIX_LOCALBASE . "/etc/postfix/main.cf", $postfix_main, LOCK_EX);
 	file_put_contents(POSTFIX_LOCALBASE . "/etc/postfix/master.cf", $postfix_master, LOCK_EX);
 	file_put_contents(POSTFIX_LOCALBASE . "/etc/postfix/transport", $transport, LOCK_EX);
