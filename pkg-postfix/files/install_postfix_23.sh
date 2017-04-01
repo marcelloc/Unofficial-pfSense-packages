@@ -52,7 +52,7 @@ for file in 	bin/adexport.pl pkg/postfix.inc pkg/postfix.xml pkg/postfix_acl.xml
 		www/postfix.php www/postfix_about.php www/postfix_queue.php www/postfix_recipients.php www/postfix_search.php \
 		www/postfix_view_config.php www/shortcuts/pkg_postfix.inc www/widgets/widgets/postfix.widget.php \
 		pkg/postfix_dkim.inc $dtdir/se-1.2.0.zip $dtdir/css/jquery.dataTables.min.css \
-		$dtdir/js/jquery.dataTables.min.js
+		$dtdir/js/jquery.dataTables.min.js www/postfix.sql.php
 do
 	echo "fetching  /usr/local/$file from github"
 	fetch -q -o /usr/local/$file $prefix/usr/local/$file
