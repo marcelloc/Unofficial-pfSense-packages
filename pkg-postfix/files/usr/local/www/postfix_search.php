@@ -174,9 +174,9 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
                         	<option value="50" selected="selected">50</option>
 							<option value="150">150</option>
 							<option value="250">250</option>
-							<option value="250">500</option>
-							<option value="250">1000</option>
-							<option value="250">Unlimited</option>
+							<option value="500">500</option>
+							<option value="1000">1000</option>
+							<option value="unlimited">Unlimited</option>
 						</select>
 			<br>
 			<span class="vexpl">

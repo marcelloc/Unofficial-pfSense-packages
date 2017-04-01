@@ -204,7 +204,7 @@ function check_sid_day($sid,$grep_day){
 }
 
 function grep_log(){
-	global $postfix_dir,$postfix_arg,$config,$g,$sa;
+	global $postfix_dir,$postfix_arg,$config,$g,$sa,$argv;
 
 	$total_lines=0;
 	$days=array();
@@ -247,36 +247,6 @@ function grep_log(){
 	  	$lists=array();
 	  	exec("/usr/bin/grep -E " . escapeshellarg("^{$grep}") . " {$maillog_filename}", $lists);
 	  	foreach ($lists as $line) {
-			
-
-			/*
-	  		// some mails take more then one day to deliver, so it's necessary to 
-			// check where is first mail record
-	  		if (preg_match("/ delay=(\d+)/",$line,$delay)){
-	  			$day=date("Y-m-d",strtotime("-".$delay[1]." second",$log_time));
-	  			if (! in_array($day,$days)){
-	  				$days[]=$day;
-	  				//create_db($day.".db");
-	  				print "Found logs to $day.db\n";
-	  				$stm_queue[$day]="";
-	  				$stm_noqueue[$day]="";
-	  			}
-			// messages without delay info on record
-	  		} else {
-		  		$day=date("Y-m-d",strtotime($postfix_arg['time'],$curr_time));
-		  		if (! in_array($day,$days)) {
-	  				$days[]=$day;
-	  				//create_db($day.".db");
-	  				print "Found logs to $day.db\n";
-	  				$stm_queue[$day]="";
-	  				$stm_noqueue[$day]="";
-		  		}
-	  		}
-			*/
-	
-			//$stm_queue[$day]="";
-                        //$stm_noqueue[$day]="";
-			
 			$status=array();
 			$total_lines++;
 			#Nov  8 09:31:50 srvch011 postfix/smtpd[43585]: 19C281F59C8: client=pm03-974.auinmem.br[177.70.0.3]
@@ -289,11 +259,16 @@ function grep_log(){
 				${$email[3]}=$email[3];
 			}
 			#Dec  2 22:21:18 pfsense MailScanner[60670]: Requeue: 8DC3BBDEAF.A29D3 to 5AD9ABDEB5
+			#Apr 01 05:49:05 smgsc2 MailScanner[48506]: Requeue: 4C256286A6E.A2F06 to E89B5286BD6
 			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) MailScanner.*Requeue: (\w+)\W\w+ to (\w+)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
 				check_sid_day($email[4],$sa[$email[3]]);
+				print "REQUEUE {$email[3]} {$email[4]} grep_day{$grep_day} e3_day {$sa[$email[3]]} e4_day {$sa[$email[3]]}\n";
 				$stm_update_sa .= "update or ignore sid_date set sid='".$email[4]."' where sid='".$email[3]."';\n";
-				$stm_queue[$sa[$email[4]]].= "update or ignore mail_from set sid='".$email[4]."' where sid='".$email[3]."';\n";
+				$stm_queue[$sa[$email[3]]].= "update or ignore mail_from set sid='".$email[4]."' where sid='".$email[3]."';\n";
+				//make sure db will not have duplicate entries with old and new sid
+				$stm_queue[$sa[$email[3]]].= "delete from mail_to where from_id in (select id from mail_from where sid='".$email[3]."');\n";
+				$stm_queue[$sa[$email[3]]].= "delete from mail_from  where sid='".$email[3]."';\n";
 			}
 			#Dec  5 14:06:10 srvchunk01 MailScanner[19589]: Message 775201F44B1.AED2C from 209.185.111.50 (marcellocoutinho@mailtest.com) to sede.mail.test.com is spam, SpamAssassin (not cached, escore=99.202, requerido 6, autolearn=spam, DKIM_SIGNED 0.10, DKIM_VALID -0.10, DKIM_VALID_AU -0.10, FREEMAIL_FROM 0.00, HTML_MESSAGE 0.00, RCVD_IN_DNSWL_LOW -0.70, WORM_TEST2 100.00)
 			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) MailScanner\W\d+\W+\w+\s+(\w+).* is spam, (.*)/",$line,$email)) {
@@ -385,30 +360,22 @@ function grep_log(){
 				$stm_noqueue[$day].='insert or ignore into mail_noqueue(date,status,status_info,fromm,too,helo,server) values ('.$values.');'."\n";
 			}
 			if ($total_lines%1500 == 0){
-				#save log in database
+				print "Save partial logs in database($line)...\n";
 				var_dump($stm_noqueue);
 				var_dump($stm_queue);
-				write_db($stm_noqueue,"noqueue",$days);
-				write_db($stm_queue,"from",$days);
-				//foreach ($days as $d){
-					$stm_noqueue=array(); //[$d]="";
-					$stm_queue=array(); //[$d]="";
-				//}
-				print "$line\n";
+				write_db($stm_noqueue,"noqueue");
+				write_db($stm_queue,"from");
+				$stm_noqueue=array();
+			        $stm_queue=array();
 			}
 		}
 	#save log in database
 	var_dump($stm_noqueue);
         var_dump($stm_queue);
-	write_db($stm_noqueue,"noqueue",$days);
-	write_db($stm_queue,"from",$days);
+	write_db($stm_noqueue,"noqueue");
+	write_db($stm_queue,"from");
 	$stm_noqueue=array();
 	$stm_queue=array();
-/*	foreach ($days as $d){
-		$stm_noqueue[$d]="";
-		$stm_queue[$d]="";
-		}
-*/
 	}
 
 	$config=parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
@@ -431,14 +398,12 @@ function grep_log(){
 
 }
 
-function write_db($stm, $table, $days=0) {
+function write_db($stm, $table) {
 	global $postfix_dir, $config, $g;
 	conf_mount_rw();
 	$do_sync = array();
 	print "writing to database...";
-	//foreach ($days as $day) {
 	foreach ($stm as $day => $sql) {
-	//parei aqui
 		if ((strlen($day) > 8)) {
 			if ($config['installedpackages']['postfixsync']['config'][0]) {
 				foreach ($config['installedpackages']['postfixsync']['config'] as $rs) {
@@ -643,95 +608,93 @@ if ($_REQUEST['files']!= ""){
 		$stm="select * from mail_noqueue";
 		$last_next=" where ";
 	}
-	$limit_prefix=(preg_match("/\d+/",$_REQUEST['limit'])?"limit ":"");
-	$limit=(preg_match("/\d+/",$_REQUEST['limit'])?$_REQUEST['limit']:"");
+	$limit_prefix=(preg_match("/\d+/",$_REQUEST['limit']) ? "limit " : "" );
+	$limit=(preg_match("/\d+/",$_REQUEST['limit']) ? $_REQUEST['limit'] : "" );
 	$files= explode(",", $_REQUEST['files']);
 	$stm_fetch=array();
 	$total_result=0;
-	foreach ($files as $postfix_db)
-		if (file_exists($postfix_dir.'/'.$postfix_db)){
-			$dbhandle = new SQLite3($postfix_dir.'/'.$postfix_db);
-			if ($_REQUEST['from']!= ""){
-				$next=($last_next==" and "?" and ":" where ");
-				$last_next=" and ";
-				if (preg_match('/\*/',$_REQUEST['from']))
-					$stm .=$next."fromm like '".preg_replace('/\*/','%',$_REQUEST['from'])."'";
-				else
-					$stm .=$next."fromm in('".$_REQUEST['from']."')";
-				}
-			if ($_REQUEST['to']!= ""){
-				$next=($last_next==" and "?" and ":" where ");
-				$last_next=" and ";
-				if (preg_match('/\*/',$_REQUEST['to']))
-					$stm .=$next."too like '".preg_replace('/\*/','%',$_REQUEST['to'])."'";
-				else
-					$stm .=$next."too in('".$_REQUEST['to']."')";
-				}
-			if ($_REQUEST['sid']!= "" && $_REQUEST['queue']=="QUEUE"){
-				$next=($last_next==" and "?" and ":" where ");
-				$last_next=" and ";
-				$stm .=$next."sid in('".$_REQUEST['sid']."')";
-				}
-			if ($_REQUEST['relay']!= "" && $_REQUEST['queue']=="QUEUE"){
-				$next=($last_next==" and "?" and ":" where ");
-				$last_next=" and ";
-				if (preg_match('/\*/',$_REQUEST['subject']))
-					$stm .=$next."relay like '".preg_replace('/\*/','%',$_REQUEST['relay'])."'";
-				else
-					$stm .=$next."relay = '".$_REQUEST['relay']."'";
-				}
-			if ($_REQUEST['subject']!= "" && $_REQUEST['queue']=="QUEUE"){
-				$next=($last_next==" and "?" and ":" where ");
-				$last_next=" and ";
-				if (preg_match('/\*/',$_REQUEST['subject']))
-					$stm .=$next."subject like '".preg_replace('/\*/','%',$_REQUEST['subject'])."'";
-				else
-					$stm .=$next."subject = '".$_REQUEST['subject']."'";
-				}
-			if ($_REQUEST['msgid']!= "" && $_REQUEST['queue']=="QUEUE"){
-				$next=($last_next==" and "?" and ":" where ");
-				$last_next=" and ";
-				if (preg_match('/\*/',$_REQUEST['msgid']))
-					$stm .=$next."msgid like '".preg_replace('/\*/','%',$_REQUEST['msgid'])."'";
-				else
-					$stm .=$next."msgid = '".$_REQUEST['msgid']."'";
-				}
-			if ($_REQUEST['server']!= "" ){
-				$next=($last_next==" and "?" and ":" where ");
-				$last_next=" and ";
-				if( $_REQUEST['queue']=="QUEUE")
-					$stm .=$next."mail_from.server = '".$_REQUEST['server']."'";
-				else
-					$stm .=$next."server = '".$_REQUEST['server']."'";
-				}
+	if ($_REQUEST['from']!= ""){
+		$next=($last_next==" and "?" and ":" where ");
+		$last_next=" and ";
+		if (preg_match('/\*/',$_REQUEST['from'])) {
+			$stm .=$next . "fromm like '".preg_replace('/\*/','%',$_REQUEST['from']) . "'";
+		} else {
+			$stm .=$next . "fromm in('" . preg_replace("/\s+/","','",$_REQUEST['from']) . "')";
+		}
+	}
+	if ($_REQUEST['to']!= ""){
+		$next=($last_next==" and "?" and ":" where ");
+		$last_next=" and ";
+		if (preg_match('/\*/',$_REQUEST['to'])) {
+			$stm .=$next."too like '".preg_replace('/\*/','%',$_REQUEST['to'])."'";
+		} else {
+			$stm .=$next . "too in('" . preg_replace("/\s+/","','",$_REQUEST['to']) . "')";
+		}
+	}
+	if ($_REQUEST['sid']!= "" && $_REQUEST['queue']=="QUEUE"){
+		$next=($last_next==" and "?" and ":" where ");
+		$last_next=" and ";
+		$stm .=$next . "sid in('" . preg_replace("/\s+/","','",$_REQUEST['sid']) . "')";
+	}
+	if ($_REQUEST['relay']!= "" && $_REQUEST['queue']=="QUEUE"){
+		$next=($last_next==" and "?" and ":" where ");
+		$last_next=" and ";
+		if (preg_match('/\*/',$_REQUEST['subject'])) {
+			$stm .=$next . "relay like '".preg_replace('/\*/','%',$_REQUEST['relay'])."'";
+		} else {
+			$stm .=$next . "relay = '".$_REQUEST['relay']."'";
+		}
+	}
+	if ($_REQUEST['subject']!= "" && $_REQUEST['queue']=="QUEUE"){
+		$next=($last_next==" and "?" and ":" where ");
+		$last_next=" and ";
+		if (preg_match('/\*/',$_REQUEST['subject'])) {
+			$stm .=$next . "subject like '".preg_replace('/\*/','%',$_REQUEST['subject'])."'";
+		} else {
+			$stm .=$next . "subject = '".$_REQUEST['subject']."'";
+		}
+	}
+	if ($_REQUEST['msgid']!= "" && $_REQUEST['queue']=="QUEUE") {
+		$next=($last_next==" and "?" and ":" where ");
+		$last_next=" and ";
+		if (preg_match('/\*/',$_REQUEST['msgid'])) {
+			$stm .=$next."msgid like '".preg_replace('/\*/','%',$_REQUEST['msgid'])."'";
+		} else {
+			$stm .=$next."msgid = '".$_REQUEST['msgid']."'";
+		}
+	}
+	if ($_REQUEST['server']!= "" ){
+		$next=($last_next==" and "?" and ":" where ");
+		$last_next=" and ";
+		if( $_REQUEST['queue']=="QUEUE") {
+			$stm .=$next."mail_from.server = '".$_REQUEST['server']."'";
+		} else {
+			$stm .=$next."server = '".$_REQUEST['server']."'";
+		}
+	}
 
-		if ($_REQUEST['status']!= ""){
-				$next=($last_next==" and "?" and ":" where ");
-				$last_next=" and ";
-				$stm .=$next."mail_status.info = '".$_REQUEST['status']."'";
-				}
-					#print "<pre>".$stm;
-				#$stm = "select * from mail_to,mail_status where mail_to.status=mail_status.id";
-				$result= $dbhandle->query($stm . " order by date desc $limit_prefix $limit ");
-				//var_dump($result);
-				//$result = sqlite_query($dbhandle, $stm." order by date desc $limit_prefix $limit ");
-				#$result = sqlite_query($dbhandle, $stm."  $limit_prefix $limit ");
-			#print "<PRE>";
-			#var_dump( $stm);
-			if (preg_match("/\d+/",$_REQUEST['limit'])){
-				for ($i = 1; $i <= $limit; $i++) {
-					$row= $result->fetchArray(SQLITE3_ASSOC);
-					//var_dump($row);
-					//old///$row = sqlite_fetch_array($result, SQLITE_ASSOC);
-					if (is_array($row))
+	if ($_REQUEST['status']!= "") {
+		$next=($last_next==" and "?" and ":" where ");
+		$last_next=" and ";
+		$stm .=$next."mail_status.info = '".$_REQUEST['status']."'";
+	}
+	//$stm_fetch=array();
+	
+	foreach ($files as $postfix_db) {
+              if (file_exists($postfix_dir.'/'.$postfix_db)) {
+			$dbhandle = new SQLite3($postfix_dir.'/'.$postfix_db);
+			#print "<pre>".$stm;
+			#$stm = "select * from mail_to,mail_status where mail_to.status=mail_status.id";
+			$result= $dbhandle->query($stm . " order by date desc $limit_prefix $limit ");
+			if ($result){
+				//var_dump($result->fetchArray(SQLITE3_ASSOC));
+				while($row=$result->fetchArray(SQLITE3_ASSOC)) {
+					if (is_array($row)) {
 						$stm_fetch[]=$row;
-					}
+                               	 	}
+				}
 			}
-			else{
-				$stm_fetch = sqlite_fetch_all($result, SQLITE_ASSOC);
-			}
-			//var_dump($stm_fetch);
-			$dbhandle->close();
+	   }
 	}
 	$fields= explode(",", $_REQUEST['fields']);
 		//to see examples, and select datatable modules to download see
