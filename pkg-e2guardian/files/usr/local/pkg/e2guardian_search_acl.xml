@@ -82,65 +82,25 @@
 			<text>Help</text>
 			<url>/e2guardian_about.php</url>
 		</tab>
-		<tab>
-			<text>Antivirus</text>
-			<url>/pkg_edit.php?xml=e2guardian_antivirus_acl.xml&amp;id=0</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Pics</text>
-			<url>/pkg.php?xml=e2guardian_pics_acl.xml&amp;id=0</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Phrase Lists</text>
-			<url>/pkg.php?xml=e2guardian_phrase_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Site Lists</text>
-			<url>/pkg.php?xml=e2guardian_site_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>URL Lists</text>
-			<url>/pkg.php?xml=e2guardian_url_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Extension Lists</text>
-			<url>/pkg.php?xml=e2guardian_file_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Content Lists</text>
-			<url>/pkg.php?xml=e2guardian_content_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Header</text>
-			<url>/pkg.php?xml=e2guardian_header_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Search Engine</text>
-			<url>/pkg.php?xml=e2guardian_search_acl.xml</url>
-			<tab_level>2</tab_level>
-			<active/>
-		</tab>
 	</tabs>
 	<adddeleteeditpagefields>
 		<columnitem>
-			<fielddescr>Access List Name</fielddescr>
+			<fielddescr>Search Engine List Name</fielddescr>
 			<fieldname>name</fieldname>
 		</columnitem>
 		<columnitem>
-			<fielddescr>Access List Description</fielddescr>
+			<fielddescr>Search Engine List Description</fielddescr>
 			<fieldname>description</fieldname>
 		</columnitem>
 		<movable>on</movable>
 	</adddeleteeditpagefields>
 	<fields>
+		<filed>
+			<name><![CDATA[<a href="/firewall_aliases.php">Firewall Alias</a>&emsp;
+                                <a href="/firewall_rules.php">Firewall Rules</a>&emsp;<a href="status_logs_filter.php">Firewall Logs</a>]]>
+</name>
+			<type>listtoppic</type>
+		</field>
 		<field>
 			<name>Description</name>
 			<type>listtopic</type>
@@ -237,6 +197,7 @@
 	</fields>
 	<custom_php_command_before_form>
 		e2guardian_check_config();
+		e2guardian_acl_submenu_print();
 	</custom_php_command_before_form>
 	<custom_php_install_command>
 		e2guardian_php_install_command();

@@ -41,6 +41,54 @@ if ($uname['machine'] == 'amd64') {
 	ini_set('memory_limit', '250M');
 }
 
+function e2guardian_acl_submenu_print(){
+
+$s_menu=array(	'antivirus' => array('pkg_edit','Antivirus'),
+		'pics' => array('pkg','Pics'),
+		'phrase' => array('pkg','Phrase Lists'),
+		'site' => array('pkg','Site Lists'),
+		'url'  => array('pkg','Url Lists'),
+		'file' => array('pkg','Extension List'),
+		'content' => array('pkg','Content Lists'),
+		'header' => array('pkg','Header'),
+		'search' => array('pkg','Search Engine'));
+
+?>
+<script src="/vendor/jquery/jquery-1.12.0.min.js"></script>
+<script>
+submenu= '<nav class="navbar navbar-inverse">';
+submenu= submenu + '<div class="container-static">'; 
+submenu= submenu + '<ul class="nav navbar-nav">';
+<?php
+foreach ($s_menu as $xml=>$info) {
+	$active="";
+	print "submenu= submenu + \"<li><a href='/{$info[0]}.php?xml=e2guardian_{$xml}_acl.xml&id=0'>{$info[1]}</a></li>\";\n";
+}
+?>
+submenu = submenu + '</ul></div></nav>';
+
+$( document ).ready(function(){
+	$("#mainarea").prepend(submenu);
+	});
+
+</script>
+
+<?
+/*
+      <li><a href="https://192.168.1.2/pkg_edit.php?xml=e2guardian_antivirus_acl.xml&id=0" onClick="get_postfix_file('main');">main.cf</a></li>
+      <li><a href="#" onClick="get_postfix_file('master');" >master.cf</a></li>
+      <li><a href="#" onClick="get_postfix_file('relay');">relay_recipients</a></li>
+      <li><a href="#" onClick="get_postfix_file('header');">heade_check</a></li>
+      <li><a href="#" onClick="get_postfix_file('mime');">mime_check</a></li>
+      <li><a href="#" onClick="get_postfix_file('body');">body_check</a></li>
+      <li><a href="#" onClick="get_postfix_file('cidr');">client CIDR</a></li>
+      <li><a href="#"onClick="get_postfix_file('pcre');">Client PCRE</a></li>
+    </ul>
+  </div>
+</nav>
+<div><br></div>
+*/
+}
 function e2_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
 }

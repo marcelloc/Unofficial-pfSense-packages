@@ -82,52 +82,6 @@
 			<text>Help</text>
 			<url>/e2guardian_about.php</url>
 		</tab>
-		<tab>
-			<text>Antivirus</text>
-			<url>/pkg_edit.php?xml=e2guardian_antivirus_acl.xml&amp;id=0</url>
-			<active/>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Pics</text>
-			<url>/pkg.php?xml=e2guardian_pics_acl.xml&amp;id=0</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Phrase Lists</text>
-			<url>/pkg.php?xml=e2guardian_phrase_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Site Lists</text>
-			<url>/pkg.php?xml=e2guardian_site_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>URL Lists</text>
-			<url>/pkg.php?xml=e2guardian_url_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Extension Lists</text>
-			<url>/pkg.php?xml=e2guardian_file_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Content Lists</text>
-			<url>/pkg.php?xml=e2guardian_content_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Header</text>
-			<url>/pkg.php?xml=e2guardian_header_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
-		<tab>
-			<text>Search Engine</text>
-			<url>/pkg.php?xml=e2guardian_search_acl.xml</url>
-			<tab_level>2</tab_level>
-		</tab>
 	</tabs>
 	<fields>
 		<field>
@@ -213,6 +167,7 @@
 	</fields>
 	<custom_php_command_before_form>
 		e2guardian_check_config();
+		e2guardian_acl_submenu_print();
 	</custom_php_command_before_form>
 	<custom_php_install_command>
 		e2guardian_php_install_command();

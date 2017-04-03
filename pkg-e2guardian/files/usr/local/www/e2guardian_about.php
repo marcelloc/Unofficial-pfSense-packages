@@ -60,8 +60,16 @@ display_top_tabs($tab_array);
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Whatis");?></td>
-							<td width="78%" class="vtable"><?=gettext("<a target=_new href='http://e2guardian.org/'>What is E2guardian</a><br><br>");?>
+							<td width="78%" class="vtable"><a target=_new href='http://e2guardian.org/'><?=gettext("What is E2guardian</a><br><br>");?>
 						</tr>
+                                                <tr>
+                                                        <td width="22%" valign="top" class="vncell"><?=gettext("Configuration");?></td>
+                                                        <td width="78%" class="vtable"><a target=_new href='https://github.com/e2guardian/e2guardian/wiki/Configuration'><?=gettext("How to configure")?></a><br><br>
+                                                </tr>
+                                                <tr>
+                                                        <td width="22%" valign="top" class="vncell"><?=gettext("Wiki");?></td>
+                                                        <td width="78%" class="vtable"><a target=_new href='https://github.com/e2guardian/e2guardian/wiki/Configuration'><?=gettext("Configuration Wiki");?></a><br><br>
+                                                </tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Credits ");?></td>
 							<td width="78%" class="vtable"><?=gettext("Package Created by <a target=_new href='http://forum.pfsense.org/index.php?action=profile;u=4710'>Marcello Coutinho</a><br><br>");?></td>
