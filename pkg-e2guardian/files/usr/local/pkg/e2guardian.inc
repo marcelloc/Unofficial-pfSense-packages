@@ -68,7 +68,11 @@ foreach ($s_menu as $xml=>$info) {
 submenu = submenu + '</ul></div></nav>';
 
 $( document ).ready(function(){
-	$("#mainarea").prepend(submenu);
+	if ($("#submenu").length) {
+		$("#submenu").prepend(submenu);
+	} else {
+		$("#mainarea").prepend(submenu);
+	}
 	});
 
 </script>
