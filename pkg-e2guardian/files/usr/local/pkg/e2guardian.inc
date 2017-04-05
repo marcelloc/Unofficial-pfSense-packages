@@ -62,7 +62,10 @@ submenu= submenu + '<ul class="nav navbar-nav">';
 <?php
 foreach ($s_menu as $xml=>$info) {
 	$active="";
-	print "submenu= submenu + \"<li><a href='/{$info[0]}.php?xml=e2guardian_{$xml}_acl.xml&id=0'>{$info[1]}</a></li>\";\n";
+	if (preg_match("/{$xml}_acl.xml/",$_SERVER['REQUEST_URI'])) {
+	 	$active="class='active'";
+	}
+	print "submenu= submenu + \"<li {$active}><a href='/{$info[0]}.php?xml=e2guardian_{$xml}_acl.xml&id=0'>{$info[1]}</a></li>\";\n";
 }
 ?>
 submenu = submenu + '</ul></div></nav>';

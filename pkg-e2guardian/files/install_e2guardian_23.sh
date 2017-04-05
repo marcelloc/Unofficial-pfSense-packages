@@ -70,4 +70,6 @@ cp /root/FreeBSD.bkp.conf $repo1
 #install services and menus
 php /root/$check_service_file
 
+#patch pkg_edit.php to restore or include #mainarea div necessary for submenu
+fetch -o - -q $prefix/pkg_edit.patch | patch -N -b -p0
 fi
