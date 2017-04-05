@@ -104,15 +104,26 @@
 			<fielddescr>Update frequency</fielddescr>
 			<fieldname>cron</fieldname>
 			<description><![CDATA[Default:<strong>Never</strong><br>
-				Select how often pfsense will re download Blacklist files]]></description>
+				Select how often pfsense will download and apply Blacklist files<br>
+				<b>Important.</b> Save config before trying to download or re-apply blacklist.
+				<br>
+				<button class='btn btn-success btn-sm' name='force_download' id='force_download' type='submit' value='force_download'>
+				<i class="fa fa-download icon-embed-btn"></i>
+				Download BlackList
+				</button>
+				 
+				<button class="btn btn-success btn-sm" name='force_update' id='force_update' type='submit' value='force_update'>
+				<i class="fa fa-refresh icon-embed-btn"></i>
+				Re-apply current BlackList
+				</button>
+			]]>
+			</description>
 			<type>select</type>
 			<options>
 				<option><name>Never</name><value>never</value></option>
 				<option><name>Every day</name><value>day</value></option>
 				<option><name>Every 2 days</name><value>02days</value></option>
 				<option><name>Once a week</name><value>week</value></option>
-				<option><name>Download and update Now</name><value>force_download</value></option>
-				<option><name>Reapply downloaded list Now</name><value>force_update</value></option>
 			</options>
 		</field>
 		<field>
@@ -126,6 +137,7 @@
 		<field>
 			<name>Custom update script</name>
 			<type>listtopic</type>
+			<collapse>closed</collapse>
 		</field>
 		<field>
 			<fielddescr>Enable</fielddescr>

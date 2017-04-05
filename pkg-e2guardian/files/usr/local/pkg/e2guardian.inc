@@ -148,7 +148,7 @@ function check_ca_hashes() {
 	}
 }
 function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
-	global $config, $g;
+	global $config, $g, $savemsg;
 print "<PRE>inicio";
 
 	# detect boot process
@@ -1016,18 +1016,19 @@ EOF;
 		fetch_blacklist(false, true);
 		update_output_window("Blacklist check done, continuing package config sync.");
 	} else {
-		if ($e2guardian_blacklist['cron'] == "force_download") {
+		file_put_contents("/root/e2guardian_custom.script", base64_decode($e2guardian_blacklist['custom_script']), LOCK_EX);
+		if ($_POST["force_download"]) {
 			log_error("Blacklist update process started");
 			file_notice("E2guardian",$error,"E2guardian - " . gettext("Blacklist update process started"), "");
-			file_put_contents("/root/e2guardian_custom.script", base64_decode($e2guardian_blacklist['custom_script']), LOCK_EX);
-			if ($e2guardian_blacklist['enable_custom_script'] && $e2guardian_blacklist['custom_script'] != "") {
+			if ($e2guardian_blacklist['enable_custom_script']) {
 				mwexec_bg("/root/e2guardian_custom.script");
 			} else {
 				mwexec_bg("/usr/local/bin/php /usr/local/www/e2guardian.php fetch_blacklist");
 			}
 		}
+	
 		//update xml categories from downloaded file
-		if ($e2guardian_blacklist['cron'] == "force_update") {
+		if ($_POST["force_update"]) {
 			$config['installedpackages']['e2guardianblacklist']['config'][0]['cron'] = "never";
 			mwexec_bg("/usr/local/bin/php /usr/local/www/e2guardian.php update_lists");
 		}
@@ -1276,8 +1277,9 @@ EOF;
 		}
 	}
 	//mark config changes
-	mark_subsystem_dirty('e2guardian');
-
+	if (!$_POST["force_update"] && !$_POST["force_download"]) {
+		mark_subsystem_dirty('e2guardian');
+	}
 }
 
 function e2guardian_check_config() {
@@ -1395,6 +1397,13 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 }
 
 function e2guardian_validate_input($post, &$input_errors) {
+	/* Manual update blacklist */
+        if ($post['update_av'] == 'Update Blacklist') {
+		//parei aqui
+                squid_update_clamav();
+                return;
+        }
+
 	foreach ($post as $key => $value) {
 		if (preg_match("/^(name|description)$/", $key) && $value == "") {
 			$input_errors[] = "{$key} could not be empty.";
