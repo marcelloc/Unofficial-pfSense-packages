@@ -1,10 +1,11 @@
---- /usr/local/www/pkg_edit.orig.php        2017-04-05 16:25:04.960401000 +0000
-+++ /usr/local/www/pkg_edit.php 2017-04-03 22:56:33.184313000 +0000
-@@ -651,6 +651,7 @@
+--- /usr/local/www/pkg_edit.orig.php	2017-04-05 17:12:56.478730000 -0300
++++ /usr/local/www/pkg_edit.php	2017-04-05 17:13:51.614222000 -0300
+@@ -651,7 +651,7 @@
  if ($savehelp) {
-        $savebutton->setHelp($savehelp);
+ 	$savebutton->setHelp($savehelp);
  }
+-
 +?><div id='mainarea'></div><?
  $form = new Form($savebutton);
-
+ 
  $form->addGlobal(new Form_Input(
