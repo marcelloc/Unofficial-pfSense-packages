@@ -1,5 +1,5 @@
---- pkg_edit.orig.php        2017-04-05 16:25:04.960401000 +0000
-+++ pkg_edit.php 2017-04-03 22:56:33.184313000 +0000
+--- /usr/local/www/pkg_edit.orig.php        2017-04-05 16:25:04.960401000 +0000
++++ /usr/local/www/pkg_edit.php 2017-04-03 22:56:33.184313000 +0000
 @@ -651,6 +651,7 @@
  if ($savehelp) {
         $savebutton->setHelp($savehelp);
