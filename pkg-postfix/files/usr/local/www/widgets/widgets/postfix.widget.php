@@ -30,7 +30,8 @@ $uname=posix_uname();
 if ($uname['machine']=='amd64')
         ini_set('memory_limit', '250M');
 
-$dbc=array('bounced','deferred','hold','incoming','reject','spam','sent');
+//$dbc=array('bounced','deferred','hold','incoming','reject','spam','sent','total');
+$dbc=array('bounced','deferred','reject','spam','sent','total');
 
 function open_table($thead=""){
 	echo "<table border=1 class='table table-striped table-hover table-condensed'>\n";
@@ -88,14 +89,24 @@ global $config;
 
 
 $size=$config['installedpackages']['postfix']['config'][0]['widget_size'];
-if (preg_match('/\d+/',$config['installedpackages']['postfix']['config'][0]['widget_days']))
-	$days=$config['installedpackages']['postfix']['config'][0]['widget_days'] * -1;
-else
+$days=$config['installedpackages']['postfix']['config'][0]['widget_days'];
+$dbc_list=$config['installedpackages']['postfix']['config'][0]['widget_fields'];
+
+if (preg_match ('/\w+/',$dbc_list)) {
+	$dbc=explode(",",$dbc_list);
+} else {
+	$dbc=array('bounced','deferred','reject','spam','sent','total');
+}
+if (preg_match('/\d+/',$days)) {
+	$days=$days * -1;
+} else {
 	$days=-3;
-if (preg_match('/\d+/',$config['installedpackages']['postfix']['config'][0]['widget_size']))
-	$size=$config['installedpackages']['postfix']['config'][0]['widget_size'];
-else
+}
+
+if (!preg_match('/\d+/',$size)) {
 	$size='100000000';#100mb
+}
+
 
 $postfix_dir="/var/db/postfix/";
 $curr_time = time();
@@ -113,7 +124,7 @@ if (file_exists($postfix_dir.'/'.$postfix_db.".db")) {
 	if (@filesize($postfix_dir.'/'.$postfix_db.".db")< $size) {
 		$stm="select count(*) as total from mail_noqueue";
 		$row_noqueue = postfix_read_db($stm,$postfix_db.".db");
-
+		$total=0;
 		//queue
 		$stm="select mail_status.info as status,count(*) as total from mail_to,mail_status where mail_to.status=mail_status.id group by status order by mail_status.info";
 		$result = postfix_read_db($stm,$postfix_db.".db");
@@ -124,12 +135,14 @@ if (file_exists($postfix_dir.'/'.$postfix_db.".db")) {
 			if (is_array($row)) {
 				if (preg_match("/\w+/",$row['status'])) {
 					$c[$row['status']] = $row['total'];
+					$c['total']= $c['total'] + $row['total'];
 				 	if ($row['status']=="reject") {
 						$c[$row['status']]=+$row_noqueue[0]['total']; 
 				 	}
 				 }
 			}
 		}
+		
 		if(count($result) > 0) {
 			if ($head_count==0) {
 				open_table_header();

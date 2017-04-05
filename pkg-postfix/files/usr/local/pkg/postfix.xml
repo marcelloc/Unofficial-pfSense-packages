@@ -253,6 +253,24 @@
 				The maximun size in bytes sqlite file we get stats. Default is 100000000 (100mb).
 			</description>
 		</field>
+		 <field>
+                        <fielddescr>Widget Columns</fielddescr>
+                        <fieldname>widget_fields</fieldname>
+			<multiple/>
+			<size>8</size>
+                        <type>select</type>
+                                <options>
+                                <option><name>Bounced - Permanent deliver/accept error on message</name><value>bounced</value></option>
+                                <option><name>Deferred - Temporary deliver/accept error on message</name><value>defferred</value></option>
+                                <option><name>Hold - Message on mailscanner queue</name><value>hold</value></option>
+                                <option><name>Incoming - Message is incoming</name><value>incoming</value></option>
+                                <option><name>Reject - Permanent reject error</name><value>reject</value></option>
+                                <option><name>Spam - Message marked as spam by third part spam tool</name><value>spam</value></option>
+                                <option><name>Sent - Message was sent</name><value>sent</value></option>
+                                <option><name>Total - Sum of all status</name><value>total</value></option>
+                                </options>
+                        <description>What to show on widget. Leave empty for default widget show options</description>
+                </field>
 	</fields>
 	<custom_php_install_command>
 		postfix_php_install_command();
