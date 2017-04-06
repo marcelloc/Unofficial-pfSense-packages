@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS "db_version"(
 
 insert or ignore into db_version ('value') VALUES ('2.3.1');
 
-CREATE INDEX IF NOT EXISTS "noqueue_unique" on mail_noqueue (date ASC, fromm ASC, too ASC);
+CREATE UNIQUE INDEX IF NOT EXISTS "noqueue_unique" on mail_noqueue (date ASC, fromm ASC, too ASC);
 CREATE INDEX IF NOT EXISTS "noqueue_helo" on mail_noqueue (helo ASC);
 CREATE INDEX IF NOT EXISTS "noqueue_too" on mail_noqueue (too ASC);
 CREATE INDEX IF NOT EXISTS "noqueue_fromm" on mail_noqueue (fromm ASC);
