@@ -188,32 +188,6 @@ custombannedimagefile = '{$e2_dir}/share/e2guardian/transparent1x1.gif'
 usecustombannedflash = {$usecustombannedflash}
 {$custombannedflashfile}
 
-# accessdeniedaddress is the address of your web server to which the cgi 		TODO REMOVE OR FIND NEW PLACE
-# e2guardian reporting script was copied. Only used in reporting levels 1 and 2.
-#
-# This webserver must be either:
-#  1. Non-proxied. Either a machine on the local network, or listed as an exception
-#     in your browser's proxy configuration.
-#  2. Added to the exceptionsitelist. Option 1 is preferable; this option is
-#     only for users using both transparent proxying and a non-local server
-#     to host this script.
-#
-# Individual filter groups can override this setting in their own configuration.
-#
-#accessdeniedaddress = 'http://YOURSERVER.YOURDOMAIN/cgi-bin/e2guardian.pl'
-#{$accessdeniedaddress}
-
-# Non standard delimiter (only used with accessdeniedaddress) 				TODO REMOVE OR FIND NEW PLACE
-# To help preserve the full banned URL, including parameters, the variables
-# passed into the access denied CGI are separated using non-standard
-# delimiters. This can be useful to ensure correct operation of the filter
-# bypass modes. Parameters are split using "::" in place of "&", and "==" in
-# place of "=".
-# Default is enabled, but to go back to the standard mode, disable it.
-# nonstandarddelimiter = {$nonstandarddelimiter}
-
-
-
 # Filter groups options
 # filtergroups sets the number of filter groups. A filter group is a set of content
 # filtering options you can apply to a group of users.  The value must be 1 or more.

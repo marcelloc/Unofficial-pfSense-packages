@@ -266,7 +266,8 @@
 			<fielddescr>Access Denied cgi</fielddescr>
 			<fieldname>reportingcgi</fieldname>
 			<description><![CDATA[While using Report Level (report fully) or (Report why but not what denied phrase), specify here the url link to your access denied cgi script
-				ex:http://YOURSERVER.YOURDOMAIN/cgi-bin/e2guardian.pl]]></description>
+				ex:http://YOURSERVER.YOURDOMAIN/cgi-bin/e2guardian.pl<br>
+				Leave empty to use default value set on reporting tab.]]></description>
 			<type>input</type>
 			<size>70</size>
 		</field>
