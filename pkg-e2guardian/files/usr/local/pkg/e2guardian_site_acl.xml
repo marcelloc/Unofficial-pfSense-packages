@@ -110,7 +110,15 @@
 			<fielddescr>description</fielddescr>
 			<fieldname>description</fieldname>
 			<type>input</type>
-			<size>80</size>
+                        <size>80</size>
+                        <description><![CDATA[
+			<strong><span class="text-info">Tip: To convert you list on a time based list, add a time set on the top of config field.</span></strong>
+                                <div class="infoblock blockopen">
+				For example, to deny sites on working hours from monday to friday, use:<br>
+				<b>#time: 9 0 17 0 01234</b><br>
+				site.com<br>othersite.net<br>
+				For every day, use  0123456.</div>]]> 
+			</description>
 		</field>
 		<field>
 			<name>Banned</name>
@@ -125,7 +133,7 @@
 		<field>
 			<fielddescr>Include</fielddescr>
 			<fieldname>banned_includes</fieldname>
-			<description><![CDATA[Select Include files to banned phrase filter.]]></description>
+			<description><![CDATA[<span class="text-info">Select Include files to banned phrase filter.</span>]]></description>
 			<type>select_source</type>
 			<source><![CDATA[$config['installedpackages']['e2guardianblacklistsdomains']['config']]]></source>
 			<source_name>descr</source_name>
@@ -136,8 +144,8 @@
 		<field>
 			<fielddescr>Config</fielddescr>
 			<fieldname>banned_sitelist</fieldname>
-			<description><![CDATA[Enter Banned Site List for this group.<br>
-				Leave empty to load e2guardian defaults]]></description>
+			<description><![CDATA[<span class="text-info">Enter Banned Site List for this group.<br>
+				Leave empty to load e2guardian defaults</span>]]></description>
 			<type>textarea</type>
 			<cols>80</cols>
 			<rows>10</rows>
@@ -156,8 +164,8 @@
 		<field>
 			<fielddescr>Config</fielddescr>
 			<fieldname>grey_sitelist</fieldname>
-			<description><![CDATA[Enter Weighted Site List for this group.<br>
-				Leave empty to load e2guardian defaults]]></description>
+			<description><![CDATA[<span class="text-info">Enter Weighted Site List for this group.<br>
+				Leave empty to load e2guardian defaults</span>]]></description>
 			<type>textarea</type>
 			<cols>80</cols>
 			<rows>10</rows>
@@ -176,7 +184,7 @@
 		<field>
 			<fielddescr>Include</fielddescr>
 			<fieldname>exception_includes</fieldname>
-			<description><![CDATA[Select Include files to exception site lists.]]></description>
+			<description><![CDATA[<span class="text-info">Select Include files to exception site lists.</span>]]></description>
 			<type>select_source</type>
 			<source><![CDATA[$config['installedpackages']['e2guardianwhitelistsdomains']['config']]]></source>
 			<source_name>descr</source_name>
@@ -187,8 +195,8 @@
 		<field>
 			<fielddescr>Config</fielddescr>
 			<fieldname>exception_sitelist</fieldname>
-			<description><![CDATA[Enter exception Site List for this group.<br>
-				Leave empty to load e2guardian defaults]]></description>
+			<description><![CDATA[<span class="text-info">Enter exception Site List for this group.<br>
+				Leave empty to load e2guardian defaults</span>]]></description>
 			<type>textarea</type>
 			<cols>80</cols>
 			<rows>10</rows>
@@ -197,8 +205,8 @@
 		<field>
 			<fielddescr>File</fielddescr>
 			<fieldname>exceptionfile_sitelist</fieldname>
-			<description><![CDATA[Enter exception File Site List for this group.<br>
-				Leave empty to load e2guardian defaults]]></description>
+			<description><![CDATA[<span class="text-info">Enter exception File Site List for this group.<br>
+				Leave empty to load e2guardian defaults</span>]]></description>
 			<type>textarea</type>
 			<cols>80</cols>
 			<rows>10</rows>
@@ -217,8 +225,8 @@
 		<field>
 			<fielddescr>Config</fielddescr>
 			<fieldname>log_sitelist</fieldname>
-			<description><![CDATA[Enter log only site List for this group.<br>
-				Leave empty to load e2guardian defaults]]></description>
+			<description><![CDATA[<span class="text-info">Enter log only site List for this group.<br>
+				Leave empty to load e2guardian defaults</div>]]></description>
 			<type>textarea</type>
 			<cols>80</cols>
 			<rows>10</rows>
