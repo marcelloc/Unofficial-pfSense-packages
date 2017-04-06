@@ -538,7 +538,7 @@ forwardedfor = {$forwardedfor}
 # Warning - headers are easily spoofed. on | off
 usexforwardedfor = {$usexforwardedfor}
 
-# as mentioned above, the headers can be easily spoofed in order to fake the		TODO INCLUDE ON GUI
+# as mentioned above, the headers can be easily spoofed in order to fake the
 # request origin by setting the X-Forwarded-For header. If you have the
 # "usexforwardedfor" option enabled, you may want to specify the IPs from which
 # this kind of header is allowed, such as another upstream proxy server for
