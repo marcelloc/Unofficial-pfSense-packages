@@ -716,10 +716,6 @@ softrestart = {$softrestart}
 # generatedcertstart =
 
 
-#The location where symlinks to certificates will be created.
-#(must be writable by the dg user)
-#generatedlinkpath = '/home/stephen/dginstall/generatedlinks/'
-#{$generatedlinkpath}								TODO REMOVE FROM e2guardian.inc
 
 # monitor helper path								TODO INLCUDE ON GUI or INC
 # If defined this script/binary will be called with start or stop appended as follows:-

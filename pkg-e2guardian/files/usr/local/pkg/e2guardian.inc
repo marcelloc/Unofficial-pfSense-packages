@@ -401,7 +401,6 @@ print "<PRE>inicio";
 			file_put_contents("/usr/local/share/certs/" . $cert_hash[0] . ".0", base64_decode($ca_cert['crt']));
 			$ca_pem = "cacertificatepath = '/etc/ssl/demoCA/cacert.pem'";
 			$generatedcertpath= "generatedcertpath = '" . $e2guardian_dir . "/ssl/generatedcerts'";
-			$generatedlinkpath= "generatedlinkpath = '" . $e2guardian_dir . "/ssl/generatedlinks'";
 		}
 		$certprivatekeypath='/etc/ssl/demoCA/private/serverkey.pem';
 		if (! file_exists($certprivatekeypath)) {
