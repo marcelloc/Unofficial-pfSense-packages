@@ -212,9 +212,9 @@ function grep_log(){
         $stm_noqueue=array();
 	$stm_update_sa="";
 	$grep="(MailScanner|postfix.cleanup|postfix.smtp|postfix.error|postfix.qmgr)";
-	/*
 	$curr_time = time();
 	$log_time=strtotime($postfix_arg['time'],$curr_time);
+	/*
 	$m=date('M',strtotime($postfix_arg['time'],$curr_time));
 	$j=substr(" (0| )".date('j',strtotime($postfix_arg['time'],$curr_time)),-7);
 	*/
@@ -270,12 +270,13 @@ function grep_log(){
 				$stm_queue[$sa[$email[3]]].= "delete from mail_to where from_id in (select id from mail_from where sid='".$email[3]."');\n";
 				$stm_queue[$sa[$email[3]]].= "delete from mail_from  where sid='".$email[3]."';\n";
 			}
+			#Apr 05 03:32:20 zonk MailScanner[4802]: Message 8193A1496BBE.AE19A from 195.62.13.253 (info@testdomain.com) to wwtest.com is spam, SpamAssassin (nicht zwischen gespeichert, Wertung=13.592, benoetigt 3, BAYES_50 0.80, BLACKLIST_SOURCE_COUNTRY 0.50, DIGEST_MULTIPLE 0.29, DKIM_SIGNED 0.10, DKIM_VALID -0.10, DKIM_VALID_AU -0.10, FROM_IS_REPLY_TO -0.50, HS_HEADER_821 5.00, PYZOR_CHECK 1.39, RAZOR2_CF_RANGE_51_100 0.50, RAZOR2_CF_RANGE_E8_51_100 1.89, RAZOR2_CHECK 0.92, RP_MATCHES_RCVD -0.10, SPF_PASS -0.00, ZONK_21394 3.00)
 			#Dec  5 14:06:10 srvchunk01 MailScanner[19589]: Message 775201F44B1.AED2C from 209.185.111.50 (marcellocoutinho@mailtest.com) to sede.mail.test.com is spam, SpamAssassin (not cached, escore=99.202, requerido 6, autolearn=spam, DKIM_SIGNED 0.10, DKIM_VALID -0.10, DKIM_VALID_AU -0.10, FREEMAIL_FROM 0.00, HTML_MESSAGE 0.00, RCVD_IN_DNSWL_LOW -0.70, WORM_TEST2 100.00)
 			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) MailScanner\W\d+\W+\w+\s+(\w+).* is spam, (.*)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
-				$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('spam');\n";
+				$stm_queue[$sa[$email[3]]] .= "insert or ignore into mail_status (info) values ('spam');\n";
 				print "\n#######################################\nSPAM:".$email[4].$email[3].$email[2]."\n#######################################\n";
-				$stm_queue[$sa[$email[3]]].= "update or ignore mail_to set status=(select id from mail_status where info='spam'), status_info='".preg_replace("/(\<|\>|\s+|\'|\")/"," ",$email[4])."' where from_id in (select id from mail_from where sid='".$email[3]."' and server='".$email[2]."');\n";
+				$stm_queue[$sa[$email[3]]] .= "update or ignore mail_to set status=(select id from mail_status where info='spam'), status_info='".preg_replace("/(\<|\>|\s+|\'|\")/"," ",$email[4])."' where from_id in (select id from mail_from where sid='".$email[3]."' and server='".$email[2]."');\n";
 			}
 			#Nov 14 09:29:32 srvch011 postfix/error[58443]: 2B8EB1F5A5A: to=<hildae.sva@pi.email.com>, relay=none, delay=0.66, delays=0.63/0/0/0.02, dsn=4.4.3, status=deferred (delivery temporarily suspended: Host or domain name not found. Name service error for name=mail.pi.test.com type=A: Host not found, try again)
 			#Nov  3 21:45:32 srvch011 postfix/smtp[18041]: 4CE321F4887: to=<viinil@vitive.com.br>, relay=smtpe1.eom[81.00.20.9]:25, delay=1.9, delays=0.06/0.01/0.68/1.2, dsn=2.0.0, status=sent (250 2.0.0 Ok: queued as 2C33E2382C8)
@@ -345,28 +346,37 @@ function grep_log(){
 					$stm_queue[$sa[$email[3]]].="update or ignore mail_to set status=(select id from mail_status where info='".$email[4]."'), status_info='".$status['status_info']."', too='".strtolower($status['to'])."' where from_id in (select id from mail_from where sid='".$status['sid']."' and server='".$email[2]."');\n";
 				}
 			}
+			#Apr  5 00:58:45 zonk postfix/postscreen[87711]: NOQUEUE: reject: RCPT from [103.230.152.124]:21574: 450 4.7.1 Service unavailable; client [103.230.152.124] blocked using zen.spamhaus.org; from=<walterpaulflechtner@excite.fr>, to=<litigates@janus-tv.de>, proto=ESMTP, helo=<[103.230.152.124]>
+			#Apr  6 00:00:00 zonk postfix/smtpd[96233]: NOQUEUE: reject: RCPT from mx6.test.com[217.182.51.86]: 550 5.1.1 <nvcvgegax@test.de>: Recipient address rejected: User unknown in relay recipient table; from=<tekavqrqx_mz3@test.com> to=<nvcvgegax@test.de> proto=ESMTP helo=<mx6.test.com>
+			#Apr  5 00:05:40 zonk postfix/postscreen[87711]: NOQUEUE: reject: RCPT from [191.101.155.227]:60197: 450 4.7.1 Service unavailable; client [191.101.155.227] blocked using zen.spamhaus.org; from=<service@test.de>, to=<user.sirname@test.de>, proto=ESMTP, helo=<itcorhost.ru>
 			#Nov  9 02:14:34 srvch011 postfix/smtpd[38129]: NOQUEUE: reject: RCPT from unknown[201.36.0.7]: 450 4.7.1 Client host rejected: cannot find your hostname, [201.36.98.7]; from=<maladireta@esadcos.com.br> to=<sexec.09vara@go.domain.test.com> proto=ESMTP helo=<capri0.wb.com.br>
-			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.smtpd\W\d+\W+NOQUEUE:\s+(\w+): (.*); from=\<(.*)\> to=\<(.*)\>.*helo=\<(.*)\>/",$line,$email)){
+			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.(postscreen|smtpd)\W\d+\W+NOQUEUE:\s+(\w+): (.*); from=\<(.*)\>\W+to=\<(.*)\>.*helo=\<(.*)\>/",$line,$email)){
 				$status['date']=$email[1];
 				$status['server']=$email[2];
-				$status['status']=$email[3];
-				$status['status_info']=$email[4];
-				$status['from']=$email[5];
-				$status['to']=$email[6];
-				$status['helo']=$email[7];
+				$status['status']=$email[4];
+				$status['status_info']=preg_replace("/;/","",$email[5]);
+				$status['from']=$email[6];
+				$status['to']=$email[7];
+				$status['helo']=$email[8];
 				$values="'".$status['date']."','".$status['status']."','".$status['status_info']."','".strtolower($status['from'])."','".strtolower($status['to'])."','".$status['helo']."','".$status['server']."'";
 				//log without queue, must use curr_time info instead of sid database
-				$day=date("Y-m-d",strtotime($postfix_arg['time'],time()));
-				$stm_noqueue[$day].='insert or ignore into mail_noqueue(date,status,status_info,fromm,too,helo,server) values ('.$values.');'."\n";
+				$day=date("Y-m-d",strtotime($postfix_arg['time'],$curr_time));
+				print "\n $day {$postfix_arg['time']} $curr_time\n*****************\n";
+				$stm_noqueue[$day] .= 'insert or ignore into mail_noqueue(date,status,status_info,fromm,too,helo,server) values (' . $values . ');' . "\n";
 			}
 			if ($total_lines%1500 == 0){
 				print "Save partial logs in database($line)...\n";
+				//foreach($stm_noqueue as $noqueue) {
+				//	$tstmq=split(";",$noqueue);
+				//	var_dump($tstmq);
+				//}
 				var_dump($stm_noqueue);
 				var_dump($stm_queue);
 				write_db($stm_noqueue,"noqueue");
 				write_db($stm_queue,"from");
 				$stm_noqueue=array();
 			        $stm_queue=array();
+				
 			}
 		}
 	#save log in database

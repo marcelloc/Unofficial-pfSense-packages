@@ -120,25 +120,31 @@ if ($z==0) {
 }
 
 if (file_exists($postfix_dir.'/'.$postfix_db.".db")) {
-	#noqueue
 	if (@filesize($postfix_dir.'/'.$postfix_db.".db")< $size) {
+		//noqueue
 		$stm="select count(*) as total from mail_noqueue";
 		$row_noqueue = postfix_read_db($stm,$postfix_db.".db");
 		$total=0;
+
 		//queue
 		$stm="select mail_status.info as status,count(*) as total from mail_to,mail_status where mail_to.status=mail_status.id group by status order by mail_status.info";
 		$result = postfix_read_db($stm,$postfix_db.".db");
+
+		//status count
 		foreach($dbc as $sc) {
-		$c[$sc]=0; //status count
-		}
+			$c[$sc]=0;
+			}
+		$c['reject'] = $row_noqueue[0]['total'];
+		$c['total'] = $c['reject'];
 		foreach($result as $i => $row) {
 			if (is_array($row)) {
 				if (preg_match("/\w+/",$row['status'])) {
-					$c[$row['status']] = $row['total'];
-					$c['total']= $c['total'] + $row['total'];
-				 	if ($row['status']=="reject") {
-						$c[$row['status']]=+$row_noqueue[0]['total']; 
-				 	}
+					$c['total'] = $c['total'] + $row['total'];
+				 	if ($row['status'] == 'reject') {
+						$c['reject'] = $c['reject'] + $row['total']; 
+				 	} else {
+						$c[$row['status']] = $row['total'];
+					}
 				 }
 			}
 		}
