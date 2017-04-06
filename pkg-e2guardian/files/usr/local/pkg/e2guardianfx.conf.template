@@ -142,7 +142,7 @@ exceptionfileurllist = '{$e2_dir}/etc/e2guardian/lists/exceptionfileurllist.g_{$
 # use -1 for no blocking
 #maxuploadsize = 512
 #maxuploadsize = 0
-maxuploadsize = -1
+maxuploadsize = {$e2guardian_groups['maxuploadsize']}
 
 
 # Categorise without blocking:

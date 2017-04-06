@@ -371,6 +371,7 @@
 		<field>
 			<name>LDAP</name>
 			<type>listtopic</type>
+			<collapse>closed</collapse>
 		</field>
 		<field>
 			<fielddescr>LDAP group name source</fielddescr>

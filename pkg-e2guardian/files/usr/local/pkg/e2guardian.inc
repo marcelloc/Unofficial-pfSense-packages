@@ -275,7 +275,8 @@ print "<PRE>inicio";
 	}
 
 	#limits
-	$maxuploadsize = ($e2guardian_limits['maxuploadsize'] ? $e2guardian_limits['maxuploadsize'] : "-1");
+	// moved to groups
+	//$maxuploadsize = ($e2guardian_limits['maxuploadsize'] ? $e2guardian_limits['maxuploadsize'] : "-1");
 	$maxcontentfiltersize = ($e2guardian_limits['maxcontentfiltersize'] ? $e2guardian_limits['maxcontentfiltersize'] : "256");
 	$maxcontentramcachescansize = ($e2guardian_limits['maxcontentramcachescansize'] ? $e2guardian_limits['maxcontentramcachescansize'] : "1000");
 	$maxcontentfilecachescansize = ($e2guardian_limits['maxcontentfilecachescansize'] ? $e2guardian_limits['maxcontentfilecachescansize'] : "2000");
@@ -855,7 +856,7 @@ print "<PRE>inicio";
 		$e2guardian_groups['embeddedurlweight'] = ($e2guardian_groups['embeddedurlweight'] ? $e2guardian_groups['embeddedurlweight'] : "0");
 		$e2guardian_groups['bypass'] = ($e2guardian_groups['bypass'] ? $e2guardian_groups['bypass'] : "0");
 		$e2guardian_groups['infectionbypass'] = ($e2guardian_groups['infectionbypass'] ? $e2guardian_groups['infectionbypass'] : "0");
-		$e2guardian_groups['maxuploadsize'] = (is_numeric($e2guardian_groups['maxuploadsize']) ? $e2guardian_groups['maxuploadsize'] : $maxuploadsize);
+		$e2guardian_groups['maxuploadsize'] = (is_numeric($e2guardian_groups['maxuploadsize']) ? $e2guardian_groups['maxuploadsize'] : "-1");
 		switch ($e2guardian_groups['reportinglevel']) {
 			case "1":
 			case "2":
