@@ -545,6 +545,7 @@ usexforwardedfor = {$usexforwardedfor}
 # instance If you want authorize multiple IPs, specify each one on an individual
 # xforwardedforfilterip line.
 # xforwardedforfilterip =
+{$xforwardedforfilterip}
 
 # if on it logs some debug info regarding fork()ing and accept()ing which
 # can usually be ignored.  These are logged by syslog.  It is safe to leave

@@ -274,6 +274,17 @@ print "<PRE>inicio";
 		}
 	}
 
+	$xforwardedforfilterip = "";
+	if ($e2guardian_config['xforwardedforfilterip'] != "") {
+		$xforwardip_list= preg_replace("/\s+/",",",base64_decode($e2guardian_config['xforwardedforfilterip']));
+		if (preg_match("/\w+/",$xforwardip_list)) {
+ 			$xforwardip_array= explode(",",$xforwardip_list);
+			foreach ($xforwardip_array as $xforwardip) {
+				$xforwardedforfilterip .= "xforwardedforfilterip={$xforwardip}\n";
+			}
+		} 
+	}
+
 	#limits
 	// moved to groups
 	//$maxuploadsize = ($e2guardian_limits['maxuploadsize'] ? $e2guardian_limits['maxuploadsize'] : "-1");

@@ -277,6 +277,18 @@
 			<multiple/>
 			<size>4</size>
 		</field>
+     		<field>
+                        <fielddescr>XForwarded for filter ip</fielddescr>
+                        <fieldname>xforwardedforfilterip</fieldname>
+                        <description><![CDATA[Headers can be easily spoofed in order to fake the request origin by setting the X-Forwarded-For header.<br>
+				If you have the  "usexforwardedfor" option enabled, you may want to specify the IPs from which this kind of header is allowed,
+				such as another upstream proxy server for instance If you want authorize multiple IPs, 
+				specify each one on an individual xforwardedforfilterip line.]]></description>
+                        <type>textarea</type>
+                        <cols>25</cols>
+                        <rows>5</rows>
+                        <encoding>base64</encoding>
+                </field>
 	</fields>
 	<custom_php_command_before_form>
 		e2guardian_check_config();
