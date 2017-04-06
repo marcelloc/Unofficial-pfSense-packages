@@ -95,7 +95,8 @@
 			<description><![CDATA[This option handles the extraction of client usernames from various sources, such as Proxy-Authorisation headers and ident servers,
 				enabling requests to be handled according to the settings of the user's filter group.<br>
 				Use CTRL + click for multiple select.<br>
-				<strong>Note: Do NOT select more then one auth plugin if you plan to use more then one listening interface.</strong>]]></description>
+				<strong>Note:</strong>E2guardian supports different authentication on different ports but
+				 Current package configuration forces multiport to off.]]></description>
 			<type>select</type>
 			<options>
 				<option><name>Proxy-Basic</name><value>/usr/local/etc/e2guardian/authplugins/proxy-basic.conf</value></option>
