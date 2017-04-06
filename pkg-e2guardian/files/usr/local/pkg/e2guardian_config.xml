@@ -132,7 +132,8 @@
 		<field>
 			<fielddescr>Weighted phrase mode</fielddescr>
 			<fieldname>weightedphrasemode</fieldname>
-			<description><![CDATA[IMPORTANT: Note that setting this to "0" turns off all features which extract phrases from page content,
+			<description><![CDATA[Default option for Weighted phrase mode on group configuration.<br>
+				IMPORTANT: Note that setting this to "0" turns off all features which extract phrases from page content,
 				including banned & exception phrases (not just weighted), search term filtering, and scanning for links to banned URLs.]]></description>
 			<type>select</type>
 			<options>

@@ -276,7 +276,8 @@
 			<fielddescr>Weighted phrase mode</fielddescr>
 			<fieldname>weightedphrasemode</fieldname>
 			<description><![CDATA[IMPORTANT: Note that setting this to "0" turns off all features which extract phrases from page content,
-				including banned & exception phrases (not just weighted), search term filtering, and scanning for links to banned URLs.]]></description>
+				including banned & exception phrases (not just weighted), search term filtering, and scanning for links to banned URLs.<br>
+				Leave empty to use default weighted phrase mode set on general tab.]]></description>
 			<type>select</type>
 			<options>
 				<option><name>Use Weighted phrase mode value from general config</name><value>default</value></option>
