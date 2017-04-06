@@ -105,10 +105,11 @@
 				<option><name>Ident</name><value>/usr/local/etc/e2guardian/authplugins/ident.conf</value></option>
 				<option><name>Ip Address</name><value>/usr/local/etc/e2guardian/authplugins/ip.conf</value></option>
 				<option><name>Proxy-Header</name><value>/usr/local/etc/e2guardian/authplugins/proxy-header.conf</value></option>
+				<option><name>DNS</name><value>/usr/local/etc/e2guardian/authplugins/dnsauth.conf</value></option>
 				<option><name>none</name><value>none</value></option>
 			</options>
 			<multiple/>
-			<size>7</size>
+			<size>8</size>
 		</field>
 		<field>
 			<fielddescr>Scan Options</fielddescr>
@@ -254,10 +255,10 @@
 		</field>
 		<field>
 			<fielddescr>ICAP URL</fielddescr>
-			<fieldname>contentscannertimeout</fieldname>
+			<fieldname>contentscannericapurl</fieldname>
 			<type>input</type>
 			<size>40</size>
-			<description><![CDATA[Enter ICAP URL in <strong>icap://icapserver:1344/avscan</strong> format<br>
+			<description><![CDATA[Enter ICAP URL in <strong>icap://127.0.0.1:1344/squid_clamav</strong> format<br>
 				Use hostname rather than IP address and Always specify the port]]></description>
 		</field>
 		<field>

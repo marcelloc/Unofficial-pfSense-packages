@@ -285,6 +285,10 @@ print "<PRE>inicio";
 		} 
 	}
 
+	if ($e2guardian_config['contentscannericapurl'] != "") {
+		include("/usr/local/pkg/icapscan.conf.template");
+		file_put_contents(E2GUARDIAN_DIR . "/etc/e2guardian/contentscanners/icapscan.conf", $icap_conf_file , LOCK_EX);
+	}
 	#limits
 	// moved to groups
 	//$maxuploadsize = ($e2guardian_limits['maxuploadsize'] ? $e2guardian_limits['maxuploadsize'] : "-1");
