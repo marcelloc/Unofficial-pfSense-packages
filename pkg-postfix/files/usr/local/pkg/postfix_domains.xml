@@ -8,7 +8,7 @@
 /*
  * postfix_domains.xml
  *
- * part of Unofficial packages for pfSense(R) softwate
+ * 
  * Copyright (c) 2011-2017 Marcello Coutinho
  * All rights reserved.
  *
@@ -108,11 +108,11 @@
 				<size>27</size>
 			</rowhelperfield>
 			<rowhelperfield>
-				<fielddescr>Mail Server IP</fielddescr>
+				<fielddescr><![CDATA[Mail Server <b>fqdn</b> ,<b>IP</b> or <b>IP:port</b>]]></fielddescr>
 				<fieldname>mailserverip</fieldname>
 				<description>Enter the mail server IP to forward to here.</description>
 				<type>input</type>
-				<size>25</size>
+				<size>30</size>
 			</rowhelperfield>
                         <rowhelperfield>
                                 <fielddescr>DKIM</fielddescr>
@@ -153,7 +153,7 @@
 		postfix_php_deinstall_command();
 	</custom_php_deinstall_command>
 	<custom_php_validation_command>
-		postfix_domain_validate_input($_POST, $input_errors);
+		postfix_validate_input($_POST, $input_errors);
 	</custom_php_validation_command>	
 	<custom_php_resync_config_command>
 		sync_package_postfix();

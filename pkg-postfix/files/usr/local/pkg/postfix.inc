@@ -261,7 +261,9 @@ function sync_package_postfix($via_rpc = "no") {
 		foreach ($postfix_domains['row'] as $postfix_row) {
 			$relay_domains .= ' ' . $postfix_row['domain'];
 			if (!empty($postfix_row['mailserverip'])) {
-				$transport .= $postfix_row['domain'] . " smtp:[" . $postfix_row['mailserverip'] . "]\n";
+				  list($t_ip, $t_port) = explode(":", $postfix_row['mailserverip']);
+				  $t_port = (is_numeric($t_port) ? $t_port : 25);
+                                  $transport .= $postfix_row['domain'] . " smtp:[" . $t_ip . "]:" . "$t_port\n";
 			}
 		}
 	}
@@ -823,11 +825,12 @@ function postfix_validate_input($post, &$input_errors) {
 				$input_errors[] = "{$value} is not a valid domain name.";
 			}
 		} else if (substr($key, 0, 12) == "mailserverip" && is_numeric(substr($key, 12))) {
+			list($t_ip, $t_port) = explode(":", $value);
 			if (empty($post['domain' . substr($key, 12)])) {
 				$input_errors[] = "Domain for {$value} cannot be blank.";
 			}
-			if (!is_ipaddr($value) && !is_hostname($value)) {
-				$input_errors[] = "{$value} is not a valid IP address or host name.";
+			if (!is_ipaddr($t_ip) && !is_hostname($t_ip)) {
+				$input_errors[] = "{$t_ip} xxxx is not a valid IP address or host name.";
 			}
 		}
 	}
