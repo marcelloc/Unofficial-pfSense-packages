@@ -830,7 +830,7 @@ function postfix_validate_input($post, &$input_errors) {
 				$input_errors[] = "Domain for {$value} cannot be blank.";
 			}
 			if (!is_ipaddr($t_ip) && !is_hostname($t_ip)) {
-				$input_errors[] = "{$t_ip} xxxx is not a valid IP address or host name.";
+				$input_errors[] = "{$t_ip} is not a valid IP address or host name.";
 			}
 		}
 	}
