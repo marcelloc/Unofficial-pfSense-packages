@@ -106,10 +106,15 @@
 			<description><![CDATA[Default: Checked. Reject unknow helo hostname during smtp communication.]]></description>
 		</field>
 		<field>
+                        <name><![CDATA[Postscreen]]></name>
+                        <type>listtopic</type>
+                </field>
+
+		<field>
 			<fielddescr>Zombie blocker</fielddescr>
 			<fieldname>zombie_blocker</fieldname>
 			<description>
-			<![CDATA[<strong>Default: Enabled with enforce</strong><br><a target=_new href='http://www.postfix.org/POSTSCREEN_README.html'>Use postfix 2.8 Postscreen feature to detect zombie spammers</a>]]>
+			<![CDATA[<strong>Default: Enabled with enforce</strong><br><a target=_new href='http://www.postfix.org/POSTSCREEN_README.html'>Use postfix Postscreen feature to detect zombie spammers<br>and deep header check verification.</a>]]>
 			</description>
 	    	<type>select</type>
  				<options>
@@ -119,6 +124,7 @@
 				<option><name>Disabled</name><value>disabled</value></option>
 				</options>
 		</field>
+
 		<field>
 			<fielddescr>greet wait time</fielddescr>
 			<fieldname>greet_time</fieldname>
@@ -201,6 +207,10 @@
 				</options>
 		</field>
 		<field>
+                        <name><![CDATA[SPF Lookup]]></name>
+                        <type>listtopic</type>
+                </field>
+		<field>
 			<fielddescr>SPF lookup HELO</fielddescr>
 			<fieldname>postfix_spf</fieldname>
                         <type>select</type>
@@ -246,6 +256,33 @@
                         <description>Select SPF debug level on mail log.</description>
                 </field>
                 <field>
+                        <name><![CDATA[Batch import whitelist ips to Postcreen]]></name>
+                        <type>listtopic</type>
+                </field>
+		<field>
+                        <fielddescr>Postwhite</fielddescr>
+                        <fieldname>postwhite</fieldname>
+                        <type>checkbox</type>
+                        <description><![CDATA[Check to import most cloud based SPF ips to Postscreen whitelist.]]></description>
+                </field>
+		 <field>
+                        <fielddescr>Whitelist domains</fielddescr>
+                        <fieldname>postwhite_list</fieldname>
+                        <description><![CDATA[<span>List domains(<b>one per line</b>) to Postwhite fetch published SPF records<br>
+					to generate a list of outbound mailer IP addresses and CIDR ranges to create a whitelist for 
+					Postfix's Postscreen.<br><br>
+					<b>Postwhite will scan these .com domains by default:</b><div class="infoblock blockopen">
+					<b>webmail:</b> aol, google, microsoft, outlook, hotmail, gmx, icloud, mail, inbox, zoho and fastmail.<br>
+					<b>social:</b> facebook, facebookmail, twitter, pinterest, instagram, tumblr, reddit and linkedin.<br>
+					<b>commerce:</b> craigslist, amazon, ebay and paypal.<br>
+					<b>bulk:</b> sendgrid, sendgrid, mailchimp, exacttarget, cust-spf.exacttarget, constantcontact, icontact, mailgun, fishbowl, fbmta, mailjet, sparkpost and sparkpostmail.<br>
+					<b>misc:</b> zendesk and github.</div>]]>
+                        </description>
+                        <type>textarea</type>
+                        <cols>50</cols>
+                        <rows>5</rows>
+                </field>
+                <field>
                         <name><![CDATA[Domain keys]]></name>
                         <type>listtopic</type>
                 </field>
@@ -253,9 +290,7 @@
                         <fielddescr>DKIM key lookup</fielddescr>
                         <fieldname>check_dkim</fieldname>
                         <type>checkbox</type>
-                        <description>
-                        <![CDATA[<strong>Default: Unchecked (Do not check for DKIM keys)</strong><br>]]>
-                        </description>
+                        <description><![CDATA[Default: Unchecked (Do not check for DKIM keys)]]></description>
                 </field>
                  <field>
                         <fielddescr>On Bad signature</fielddescr>

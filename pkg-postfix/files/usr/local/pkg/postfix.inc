@@ -225,6 +225,31 @@ function check_cron() {
 	}
 }
 
+function postfix_check_postwhite($status,$domains) {
+	$postwhite_acl_file = POSTFIX_LOCALBASE . "/etc/postfix/postscreen_spf_whitelist.cidr";
+	if ($status == 'on') {
+		//save file
+		$postwhite_domains = preg_replace("/\s+/"," ",$domains);
+		include("/usr/local/pkg/postfix_postwhite.template");
+		file_put_contents($postwhite_conf , POSTFIX_LOCALBASE . "/etc/postwhite.conf" , LOCK_EX);
+	
+		//check if config file changed
+		/* TODO */
+		$config_file_changed = 0;
+		
+		//check if resulting acl from script exist
+		if (! file_exists($postwhite_acl_file) || $config_file_changed == 1) {
+			mwexec_bg("/usr/local/bin/postwhite");
+		}
+
+		//return parcial postscreen whitelist file
+		return (",\n\t\t\tcidr:" . POSTFIX_LOCALBASE . "/etc/postfix/postscreen_spf_whitelist.cidr\n");
+	} else {
+		//return parcial postscreen whitelist file
+		return("\n");
+	}
+}
+
 function sync_package_postfix($via_rpc = "no") {
 	global $g, $config;
 
@@ -614,8 +639,8 @@ EOF;
 		if (preg_match("/postscreen_greet_check/",$antispam['after_greeting'])) {
 			$postfix_main .= "postscreen_greet_action = ".$antispam['zombie_blocker']."\n";
 		}
-	
-		$postfix_main .= "postscreen_access_list = permit_mynetworks,\n\t\t\tcidr:".POSTFIX_LOCALBASE."/etc/postfix/cal_cidr\n";
+		$postfix_main .= "postscreen_access_list = permit_mynetworks,\n\t\t\tcidr:".POSTFIX_LOCALBASE."/etc/postfix/cal_cidr";
+		$postfix_main .= postfix_check_postwhite($antispam['postwhite'],$antispam['postwhite_list']);
 		$postfix_main .= "postscreen_dnsbl_action= ".$antispam['zombie_blocker']."\n";
 		$postfix_main .= "postscreen_blacklist_action= ".$antispam['zombie_blocker']."\n";
 

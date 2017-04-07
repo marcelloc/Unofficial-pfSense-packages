@@ -52,8 +52,8 @@ for file in 	bin/adexport.pl pkg/postfix.inc pkg/postfix.xml pkg/postfix_acl.xml
 		www/postfix.php www/postfix_about.php www/postfix_queue.php www/postfix_recipients.php www/postfix_search.php \
 		www/postfix_view_config.php www/shortcuts/pkg_postfix.inc www/widgets/widgets/postfix.widget.php \
 		pkg/postfix_dkim.inc $dtdir/se-1.2.0.zip $dtdir/css/jquery.dataTables.min.css \
-		$dtdir/js/jquery.dataTables.min.js www/postfix.sql.php
-do
+		$dtdir/js/jquery.dataTables.min.js www/postfix.sql.php bin/postwhite pkg/postfix_postwhite.template 
+ do
 	echo "fetching  /usr/local/$file from github"
 	fetch -q -o /usr/local/$file $prefix/usr/local/$file
 done
@@ -85,11 +85,25 @@ cp /root/pfSense.bkp.conf $repo2
 cp /root/FreeBSD.bkp.conf $repo1
 
 #check some libs
- if [ ! -f /usr/local/lib/libmilter.so.5 ];then
+if [ ! -f /usr/local/lib/libmilter.so.5 ];then
   ln -s /usr/local/lib/libmilter.so.6 /usr/local/lib/libmilter.so.5
- fi
+fi
 
+fetch -q -o /usr/local/etc/postfix/yahoo_static_hosts.txt https://raw.githubusercontent.com/stevejenkins/postwhite/master/yahoo_static_hosts.txt
 
+#install spf tools
+if [ -f master.zip ];then
+  mv master.zip master.old.zip
+fi
+fetch https://github.com/jsarenik/spf-tools/archive/master.zip
+unzip master.zip
+mv spf-tools-master /usr/local/bin/spf-tools
+rm -f master.zip
+
+#check postwhite
+if [ -f /usr/local/etc/postfix/postscreen_spf_whitelist.cidr ];then
+ /usr/local/bin/bash /usr/local/bin/postwhite
+fi
 
 #install services and menus
 php /root/check_postfix_service.php
@@ -98,5 +112,6 @@ php /root/check_postfix_service.php
 cd /usr/local/$dtdir
 /usr/bin/unzip -o se-1.2.0.zip 
 cd -
+
 
 fi

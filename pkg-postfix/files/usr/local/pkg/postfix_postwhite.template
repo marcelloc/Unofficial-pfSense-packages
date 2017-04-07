@@ -1,0 +1,44 @@
+<?php
+
+$postwhite_conf=<<<EOF
+
+# CONFIGURATION OPTIONS FOR POSTWHITE
+# https://github.com/stevejenkins/postwhite
+# POSTWHITE WILL LOOK FOR THIS FILE IN /etc/postwhite.conf
+
+# FILE PATHS
+spftoolspath=/usr/local/bin/spf-tools
+postfixpath=/usr/local/etc/postfix
+postfixbinarypath=/usr/local/sbin
+whitelist=postscreen_spf_whitelist.cidr
+blacklist=postscreen_spf_blacklist.cidr
+yahoo_static_hosts=/usr/local/etc/postfix/yahoo_static_hosts.txt
+
+# CUSTOM HOSTS
+# Enter custom hosts separated by a space, ex: "example.com example2.com example3.com"
+custom_hosts="{$postwhite_domains}"
+
+# Include static list of Yahoo IPs from https://help.yahoo.com/kb/SLN23997.html?
+include_yahoo="yes"
+
+# Do you also want to build a blacklist?
+enable_blacklist=no
+blacklist_hosts=""
+
+# Do what to invalid IPv4 addresses and CIDRs?
+# Valid settings are 'remove' 'fix' or 'keep'
+invalid_ip4=remove
+ 
+# Simplify (remove) IP addresses from the whitelist that are already covered by CIDRs?
+# WARNING: Enabling this option can dramatically increase the time Postwhite takes to
+# run if you have many mailers selected. Try it once, then come back and turn it off. :)
+simplify=no
+
+# Reload Postfix Automatically when done?
+reload_postfix=yes
+
+
+EOF;
+
+
+?>
