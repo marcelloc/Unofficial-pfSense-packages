@@ -90,10 +90,11 @@ function postfix_domain_validate_input($post, &$input_errors) {
                         if (!is_domain($value))
                                 $input_errors[] = "{$value} is not a valid domain name.";
                 } else if (substr($key, 0, 12) == "mailserverip" && is_numeric(substr($key, 12))) {
+			list($t_ip, $t_port) = explode(":", $value);
                         if (empty($post['domain' . substr($key, 12)]))
                                 $input_errors[] = "Domain for {$value} cannot be blank.";
-                        if (!is_ipaddr($value) && !is_hostname($value))
-                                $input_errors[] = "{$value} is not a valid IP address or host name.";
+                        if (!is_ipaddr($t_ip) && !is_hostname($t_ip))
+                                $input_errors[] = "{$t_ip} is not a valid IP address or host name.";
                 }
         }
         //print "<pre>";
