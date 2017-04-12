@@ -197,6 +197,8 @@
 				<option><name>bounce</name><value>bounce</value></option>
 				<option><name>Strip HTML</name><value>strip_html</value></option>
 				<option><name>attachment</name><value>attachment</value></option>
+				<option><name>Return to sender</name><value>_FROMUSER_@_FROMDOMAIN_</value></option>
+                                <option><name>Forward to Postmaster</name><value>forward postmaster@_FROMDOMAIN_</value></option>
 				<option><name>Notify</name><value>notify</value></option>
 				</options>
 				<size>08</size>
@@ -225,6 +227,8 @@
 				<option><name>bounce</name><value>bounce</value></option>
 				<option><name>Strip HTML</name><value>strip_html</value></option>
 				<option><name>attachment</name><value>attachment</value></option>
+				<option><name>Return to sender</name><value>_FROMUSER_@_FROMDOMAIN_</value></option>
+                                <option><name>Forward to Postmaster</name><value>forward postmaster@_FROMDOMAIN_</value></option>
 				<option><name>Notify</name><value>notify</value></option>
 				</options>
 				<size>08</size>
@@ -294,6 +298,8 @@
 				<option><name>bounce</name><value>bounce</value></option>
 				<option><name>Strip HTML</name><value>strip_html</value></option>
 				<option><name>attachment</name><value>attachment</value></option>
+				<option><name>Return to sender</name><value>_FROMUSER_@_FROMDOMAIN_</value></option>
+                                <option><name>Forward to Postmaster</name><value>forward postmaster@_FROMDOMAIN_</value></option>
 				<option><name>Notify</name><value>Notify</value></option>
 				</options>
 				<size>08</size>
@@ -321,6 +327,8 @@
 				<option><name>bounce</name><value>bounce</value></option>
 				<option><name>Strip HTML</name><value>strip_html</value></option>
 				<option><name>attachment</name><value>attachment</value></option>
+				<option><name>Return to sender</name><value>_FROMUSER_@_FROMDOMAIN_</value></option>
+                                <option><name>Forward to Postmaster</name><value>forward postmaster@_FROMDOMAIN_</value></option>
 				<option><name>Notify</name><value>Notify</value></option>
 				</options>
 				<size>08</size>
