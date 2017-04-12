@@ -30,7 +30,7 @@ require_once("/usr/local/pkg/postfix.inc");
 define('POSTFIX_DEBUG', 'YES');
 $uname = posix_uname();
 if ($uname['machine'] == 'amd64') {
-        ini_set('memory_limit', '250M');
+        ini_set('memory_limit', '512M');
 }
 
 function get_remote_log() {
