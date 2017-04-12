@@ -231,8 +231,7 @@ function postfix_check_postwhite($status,$domains) {
 		//save file
 		$postwhite_domains = preg_replace("/\s+/"," ",$domains);
 		include("/usr/local/pkg/postfix_postwhite.template");
-		file_put_contents($postwhite_conf , POSTFIX_LOCALBASE . "/etc/postwhite.conf" , LOCK_EX);
-	
+		file_put_contents(POSTFIX_LOCALBASE . "/etc/postwhite.conf",$postwhite_conf, LOCK_EX);
 		//check if config file changed
 		/* TODO */
 		$config_file_changed = 0;

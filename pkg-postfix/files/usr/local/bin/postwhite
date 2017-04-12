@@ -47,9 +47,9 @@ set -e
 printf "Starting Postwhite v$version ($lastupdated)\n"
 
 # Read config file options
-if [ -s /etc/postwhite.conf ] ; then
+if [ -s /usr/local/etc/postwhite.conf ] ; then
 	printf "\nReading options from /etc/postwhite.conf...\n"
-	source /etc/postwhite.conf
+	source /usr/local/etc/postwhite.conf
 else
 	printf "\nCan't find /etc/postwhite.conf. Exiting.\n\n"
 	exit 1
