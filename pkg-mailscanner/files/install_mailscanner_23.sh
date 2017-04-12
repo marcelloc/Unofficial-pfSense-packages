@@ -56,6 +56,28 @@ pkg install mailscanner bash dcc-dccd spamassassin
 #install services and menus
 php /root/check_mailscanner_service.php
 
+#install spamassassin-extremeshok_fromreplyto
+plugin_dir=/usr/local/etc/mail/spamassassin
+plugin_file=extremeshok_fromreplyto.zip
+
+if [ ! -d $plugin_dir/plugins ];then
+	mkdir -p $plugin_dir/plugins
+fi
+
+cd root
+
+fetch -o $plugin_file https://github.com/extremeshok/spamassassin-extremeshok_fromreplyto/archive/master.zip
+unzip -o $plugin_file
+cp spamassassin-extremeshok_fromreplyto-master/plugins/*pm $plugin_dir/plugins/
+cp spamassassin-extremeshok_fromreplyto-master/01_extremeshok_fromreplyto.cf $plugin_dir
+
+#install shorturl mailscanner plugin
+plugin_file=DecodeShortURLs.zip
+fetch -o $plugin_file https://github.com/smfreegard/DecodeShortURLs/archive/master.zip
+unzip -o $plugin_file
+cp DecodeShortURLs-master/*pm $plugin_dir/plugins/
+cp DecodeShortURLs-master/*cf $plugin_dir
+
 # update spamassassin database
 rehash
 /usr/local/bin/sa-update -D
