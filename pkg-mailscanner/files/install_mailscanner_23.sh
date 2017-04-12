@@ -33,7 +33,7 @@ fetch -q -o /root/$check_service_file $prefix/$check_service_file
 for file in 	www/mailscanner_about.php pkg/mailscanner.conf.template pkg/mailscanner.xml pkg/mailscanner_antispam.xml \
 		pkg/mailscanner_attachments.xml pkg/mailscanner_report.xml pkg/mailscanner.inc pkg/mailscanner_alerts.xml \
 		pkg/mailscanner_antivirus.xml pkg/mailscanner_content.xml pkg/mailscanner_sync.xml \
-		www/shortcuts/pkg_mailscanner.inc
+		www/shortcuts/pkg_mailscanner.inc bin/sa-updater-custom-channels.sh
 do
 	echo "fetching  /usr/local/$file from github"
 	fetch -q -o /usr/local/$file $prefix/usr/local/$file
@@ -49,6 +49,9 @@ cp $repo2 /root/pfSense.bkp.conf
 cp /usr/local/etc/pkg/repos/pfSense.conf /root/pfSense.bkp.conf
 cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
 cp /tmp/pfSense.conf $repo2
+
+#fix permission
+chmod +x /usr/local/bin/sa-updater-custom-channels.sh
 
 # Install mailscanner package
 pkg install mailscanner bash dcc-dccd spamassassin
