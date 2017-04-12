@@ -156,7 +156,12 @@ if (file_exists($postfix_dir.'/'.$postfix_db.".db")) {
 			}
 			echo"<tr><th style='text-align:center;'>{$postfix_db}</th>";
 			foreach($dbc as $sc) {
-				echo "<th style='text-align:right;'>" . number_format($c[$sc],0,"",".") . "</th>\n";
+				if ($sc == 'total') {
+					$s_link="";
+				} else {
+					$s_link="href='/postfix_search.php?widget={$postfix_db},{$sc}' target='_blank'";
+				}
+				echo "<th style='text-align:right;'><a {$s_link}>" . number_format($c[$sc],0,"",".") . "</a></th>\n";
 			}
 			print "</tr>";
 		}

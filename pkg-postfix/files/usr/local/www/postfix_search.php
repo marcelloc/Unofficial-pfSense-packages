@@ -268,21 +268,47 @@ function loopSelected(id)
   return(selectedArray);
 }
 
-function getsearch_results(sbutton) {
+function getsearch_results(sbutton,Wday,Wstatus) {
 		var $new_from=$('#from').val().replace("\n", "','");
 		var $new_to=$('#to').val().replace("\n", "','");
 		var $new_sid=$('#sid').val().replace("\n", "','");
-		var $files="";
-		 $('#Select1').each(function () {
-					var sThisVal = (this.checked ? "1" : "0");
-    					$files += ($files=="" ? $(this).val() : "," + $(this).val());
-					});
-		var $fields="";
-		var $errors=0;
-		$('#fields').each(function () {
+			
+		//check if its a widget funcion call
+		if (typeof Wday != "undefined") {
+		  var $files= Wday + '.db';
+		} else {
+		  var $files="";
+ 		  $('#Select1').each(function () {
+                                        var sThisVal = (this.checked ? "1" : "0");
+                                        $files += ($files=="" ? $(this).val() : "," + $(this).val());
+                                        });
+
+		}
+
+		//check if its a widget funcion call
+                if (typeof Wstatus != "undefined") {
+                   var $status= Wstatus;
+		   if (Wstatus === 'reject') {
+			var $fields='date,from,to,status,status_info';
+			var $queue = 'NOQUEUE';
+			var $status = '';
+		   } else {
+		   	var $fields='date,from,to,status,subject,status_info,delay';
+		   	var $queue = 'QUEUE';
+		   }
+		   $('#quetype').val($queue).change();
+                } else {
+                   var $status= $('#status').val();
+		   var $queue= $('#queuetype').val();
+		   var $fields="";
+ 		   $('#fields').each(function () {
                                         var sThisVal = (this.checked ? "1" : "0");
                                         $fields += ($fields=="" ? $(this).val() : "," + $(this).val());
                                         });
+
+                }
+		var $errors=0;
+		//alert($status + ' ' + $files + ' ' + $queue);
 		if ( $files == "null" ){
 			alert ("Please select at least one file.");
 			$errors++;
@@ -309,12 +335,12 @@ function getsearch_results(sbutton) {
 					sid:	$new_sid,
 					limit:	$('#queuemax').val(),
 					fields:	$fields,
-					status:	$('#status').val(),
+					status:	$status,
 					server:	$('#server').val(),
 					subject:$('#subject').val(),
 					msgid:	$('#msgid').val(),
 					files:	$files,
-					queue:	$('#queuetype').val(),
+					queue:	$queue,
 					relay:	$('#relay').val(),
 					sbutton:sbutton
                         	},
@@ -338,6 +364,22 @@ function getsearch_results(sbutton) {
 		$('export').value="Export";
 	}
 }
+<?
+if (isset($_REQUEST['widget'])){
+	list($wfile,$wstatus)=explode(",",$_REQUEST['widget']);
+	$queue_select= ($wstatus=='reject' ? 'NOQUEUE' : 'QUEUE');
+	$select_search=<<<EOF
+$( document ).ready(function() {
+	$('#Select1').val('{$wfile}.db').change();
+	$('#queuetype').val('{$queue_select}').change();
+	$('#queuemax').val('unlimited').change();	
+	getsearch_results('search','{$wfile}','{$wstatus}')
+	});
+EOF;
+print $select_search;
+}
+?>
+
 </script>
 <!-- </form> -->
 <?php include("foot.inc"); ?>
