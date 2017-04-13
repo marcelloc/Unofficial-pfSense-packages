@@ -40,5 +40,12 @@ cpan -f -i Razor2::Client::Agent
 cpan -f -i Geo::IP
 cpan -f -i Net::Patricia
 cpan -f -i LWP::UserAgent
+cpan -f -i Net::Server::Daemonize
+cpan -f -i Net::Server::Multiplex
+cpan -f -i IO::Multiplex
+cpan -f -i Net::Server::PreFork
+cpan -f -i Net::DNS
+cpan -f -i Time::HiRes
+cpan -f -i Storable
 
 fi

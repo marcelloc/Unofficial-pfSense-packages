@@ -336,6 +336,43 @@
                         <size>80</size>
                 </field>
 		<field>
+                        <name><![CDATA[Throttle connections(Postfwd)]]></name>
+                        <type>listtopic</type>
+                </field>
+                <field>
+                        <fielddescr>use Postfwd</fielddescr>
+                        <fieldname>postfwd_enabled</fieldname>
+                        <type>checkbox</type>
+                        <description>Enable connections throttle</description>
+                </field>
+		<field>
+                        <fielddescr>Rule Position</fielddescr>
+                        <fieldname>postfwd_position</fieldname>
+                        <description><![CDATA[Throttle rules before or after my_network<br>
+				If you select before, internal clients will be Throttled(this is usefull to reduce malwares that sends spams form your client's email.<br>
+				If you select after, this will throttle only ips that are not on your my_network cidr list under ACLs]]>
+			</description>
+                <type>select</type>
+                                <options>
+                                <option><name>Before My_networks - Incoming and outgoing mails</name><value>before</value></option>
+                                <option><name>After My_networks - Incoming mails only</name><value>after</value></option>
+                                </options>
+                </field>
+
+                 <field>
+                        <fielddescr>Throttle rules</fielddescr>
+                        <fieldname>postfwd_rules</fieldname>
+                        <description><![CDATA[Connections rules see http://postfwd.org for rule documentation.<br><b>Basic rule sample to limit mail per sender</b><br>
+				id=R001; sender=~/.*/; action=rate(sender/100/86400/REJECT only 100 messages per day for $$sender)<br>
+				id=R002; sender=~/.*/; action=rate(sender/50/3600/REJECT only 50 messages per hour for $$sender)<br>
+			]]></description>
+                        <type>textarea</type>
+			<encoding>base64</encoding>
+                        <cols>80</cols>
+                        <rows>05</rows>
+                </field>
+
+		<field>
 			<name><![CDATA[Third part Antispam Settings ]]></name>
 			<type>listtopic</type>
 		</field>

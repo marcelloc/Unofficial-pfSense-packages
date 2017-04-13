@@ -231,7 +231,8 @@ function postfix_check_postwhite($status,$domains) {
 		//save file
 		$postwhite_domains = preg_replace("/\s+/"," ",$domains);
 		include("/usr/local/pkg/postfix_postwhite.template");
-		file_put_contents(POSTFIX_LOCALBASE . "/etc/postwhite.conf",$postwhite_conf, LOCK_EX);
+		file_put_contents($postwhite_conf , POSTFIX_LOCALBASE . "/etc/postwhite.conf" , LOCK_EX);
+	
 		//check if config file changed
 		/* TODO */
 		$config_file_changed = 0;
@@ -249,6 +250,60 @@ function postfix_check_postwhite($status,$domains) {
 	}
 }
 
+function postfix_check_postfwd_service($status,$new_md5,$current_md5) {
+	$pid_file="/var/tmp/postfwd2-master.pid";
+	$start_postfwd="/usr/local/bin/postfwd --daemon -f /usr/local/etc/postfix/postfwd.cf";
+	$postfwd_pid="";
+	if (file_exists($pid_file)) {
+		$postfwd_pid_contents=file_get_contents($pid_file);
+	  	if (preg_match("/(\d+)/",$postfwd_pid_contents,$pid_m)) {
+			$postfwd_pid=$pid_m[1];
+	  	}
+	}
+	if ($status == 'on') {
+		if ($postfwd_pid == "") {
+			system($start_postfwd);
+		} else {
+		   if ($new_md5 != $current_md5) {
+			system ("kill $postfwd_pid");
+			sleep(2);
+			system($start_postfwd);
+		  }
+		}
+	} else {
+	 	if ($postfwd_pid != "") {
+			system ("kill $postfwd_pid");
+		}
+	}
+}
+function postfix_check_postfwd($status,$position,$rules){
+	$postfwd_conf_file = POSTFIX_LOCALBASE . "/etc/postfix/postfwd";
+	$rule_position= ($position != "" ? $position : "before");
+	$conf_spaces="\n\t\t\t\t";
+	$conf_inet="inet:127.0.0.1:10045,";
+	if ($status == 'on') {
+		if ($rule_position == "before") {
+			$postfwd_before="{$conf_inet}{$conf_spaces}";
+			$postfwd_after=""; 
+		} else {
+			$postfwd_after="{$conf_spaces}{$conf_inet}";
+			$postfwd_before="";
+		}
+		//todo - check old and new md5 conf file before service reload
+		file_put_contents("{$postfwd_conf_file}_tmp.cf",base64_decode($rules),LOCK_EX);
+		$new_md5=md5_file("{$postfwd_conf_file}_tmp.cf");
+		if (file_exists("{$postfwd_conf_file}.cf")) {
+			$current_md5=md5_file("{$postfwd_conf_file}.cf");
+		}
+		$return =array($postfwd_before , $postfwd_after);
+	 } else {
+                //return empty
+                $return = array("","");
+        }
+	//todo - send m5 status to check_service
+	postfix_check_postfwd_service($status,$new_md5,$current_md5);
+	return($return);
+}
 function sync_package_postfix($via_rpc = "no") {
 	global $g, $config;
 
@@ -429,7 +484,11 @@ EOF;
 		"default_process_limit = {$process_limit}\n";
 	
 	//assign antispam options
+	$check_policy_service="inet:127.0.0.1:10045,\n\t\t\t\t";
 	$antispam = $config['installedpackages']['postfixantispam']['config'][0];
+
+	//postfwd configuration
+	list($postfwd_before, $postfwd_after) = postfix_check_postfwd($antispam['postfwd_enabled'],$antispam['postfwd_position'],$antispam['postfwd_rules']);
 
 	if ($antispam['antispam_enabled']) {
 		switch ($antispam['antispam_software']) {
@@ -496,7 +555,7 @@ smtpd_client_restrictions = permit_mynetworks,
 				reject_multi_recipient_bounce,
 				permit
 
-smtpd_recipient_restrictions = permit_mynetworks,
+smtpd_recipient_restrictions = {$postfwd_before}permit_mynetworks,{$postfwd_after}
 				reject_unauth_destination,
 				reject_unauth_pipelining,
 				check_client_access pcre:{$pf_dir}/etc/postfix/cal_pcre,
