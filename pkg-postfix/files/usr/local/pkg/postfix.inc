@@ -280,7 +280,7 @@ function postfix_check_postfwd($status,$position,$rules){
 	$postfwd_conf_file = POSTFIX_LOCALBASE . "/etc/postfix/postfwd";
 	$rule_position= ($position != "" ? $position : "before");
 	$conf_spaces="\n\t\t\t\t";
-	$conf_inet="inet:127.0.0.1:10045,";
+	$conf_inet="check_policy_service inet:127.0.0.1:10045,";
 	if ($status == 'on') {
 		if ($rule_position == "before") {
 			$postfwd_before="{$conf_inet}{$conf_spaces}";
