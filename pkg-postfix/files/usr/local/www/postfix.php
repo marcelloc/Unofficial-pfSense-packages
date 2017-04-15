@@ -285,7 +285,11 @@ function grep_log(){
 				check_sid_day($email[3],$grep_day);
 				$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$email[8]."');\n";
 				$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_to (from_id,too,status,status_info,relay,delay,dsn) values ((select id from mail_from where sid='".$email[3]."' and server='".$email[2]."'),'".strtolower($email[4])."',(select id from mail_status where info='".$email[8]."'),'".preg_replace("/(\<|\>|\s+|\'|\")/"," ",$email[9])."','".$email[5]."','".$email[6]."','".$email[7]."');\n";
-				$stm_queue[$sa[$email[3]]].= "update or ignore mail_to set status=(select id from mail_status where info='".$email[8]."'), status_info='".preg_replace("/(\<|\>|\s+|\'|\")/"," ",$email[9])."', dsn='".$email[7]."', delay='".$email[6]."', relay='".$email[5]."', too='".strtolower($email[4])."' where from_id in (select id from mail_from where sid='".$email[3]."' and server='".$email[2]."');\n";
+				//update status to sent only if it's not a spam message
+				$stm_queue[$sa[$email[3]]] .= "update or ignore mail_to set dsn='{$email[7]}', delay='{$email[6]}', relay='{$email[5]}', too='" . strtolower($email[4]);
+				$stm_queue[$sa[$email[3]]] .= "' where from_id in (select id from mail_from where sid='{$email[3]}' and server='{$email[2]}');\n";
+				$stm_queue[$sa[$email[3]]] .= "update or ignore mail_to set status=(select id from mail_status where info='{$email[8]}'), status_info='" . preg_replace("/(\<|\>|\s+|\'|\")/"," ",$email[9]);
+				$stm_queue[$sa[$email[3]]] .= "' where from_id in (select id from mail_from where sid='{$email[3]}' and server='{$email[2]}') and status !=(select id from mail_status where info='spam');\n";
 			}
 			#Nov 13 01:48:44 srvch011 postfix/cleanup[16914]: D995B1F570B: message-id=<61.40.11745.10E3FBE4@ofertas6>
 			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.cleanup\W\d+\W+(\w+): message-id=\<(.*)\>/",$line,$email)) {
