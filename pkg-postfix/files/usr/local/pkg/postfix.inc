@@ -231,7 +231,7 @@ function postfix_check_postwhite($status,$domains) {
 		//save file
 		$postwhite_domains = preg_replace("/\s+/"," ",$domains);
 		include("/usr/local/pkg/postfix_postwhite.template");
-		file_put_contents( POSTFIX_LOCALBASE . "/etc/postwhite.conf", $postwhite_conf, LOCK_EX);
+		file_put_contents(POSTFIX_LOCALBASE . "/etc/postwhite.conf",$postwhite_conf , LOCK_EX);
 	
 		//check if config file changed
 		/* TODO */
@@ -294,6 +294,9 @@ function postfix_check_postfwd($status,$position,$rules){
 		$new_md5=md5_file("{$postfwd_conf_file}_tmp.cf");
 		if (file_exists("{$postfwd_conf_file}.cf")) {
 			$current_md5=md5_file("{$postfwd_conf_file}.cf");
+		}
+		if ($new_md5 != $current_md5) {
+			rename("{$postfwd_conf_file}_tmp.cf","{$postfwd_conf_file}.cf");
 		}
 		$return =array($postfwd_before , $postfwd_after);
 	 } else {
