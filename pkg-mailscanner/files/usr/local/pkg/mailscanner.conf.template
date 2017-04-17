@@ -74,7 +74,7 @@ Gunzip Timeout = 50
 Unrar Command = /usr/local/bin/unrar
 Unrar Timeout = 50
 # Used as unpacking engine for multiple archive formats
-Un7zip Command = /usr/bin/7z
+Un7zip Command = /usr/local/bin/7z
 # 
 Un7zip Timeout = 50
 
