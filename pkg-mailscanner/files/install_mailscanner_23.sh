@@ -83,11 +83,11 @@ cp DecodeShortURLs-master/*cf $plugin_dir
 
 #install 7z and pdf patch
 plugin_file=pdfid.zip 
-fetch -o $plugin_file fetch http://didierstevens.com/files/software/pdfid_v0_2_1.zip
+fetch -o $plugin_file http://didierstevens.com/files/software/pdfid_v0_2_1.zip
 unzip -o $plugin_file
 cp p*py /usr/local/bin/
 chmod +x /usr/local/bin/p*py
-ln -s /usr/local/bin/python2 /usr/local/bin/python2
+ln -s /usr/local/bin/python2 /usr/local/bin/python
 
 # update spamassassin database
 rehash
