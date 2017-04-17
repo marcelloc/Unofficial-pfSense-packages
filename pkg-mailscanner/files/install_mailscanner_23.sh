@@ -54,7 +54,7 @@ cp /tmp/pfSense.conf $repo2
 chmod +x /usr/local/bin/sa-updater-custom-channels.sh
 
 # Install mailscanner package
-pkg install mailscanner bash dcc-dccd spamassassin p7zip
+pkg install mailscanner bash dcc-dccd spamassassin p7zip rsync
 
 #install services and menus
 php /root/check_mailscanner_service.php
@@ -89,6 +89,27 @@ cp p*py /usr/local/bin/
 chmod +x /usr/local/bin/p*py
 #fix python path
 sed -i '.bak' "s@/usr/bin/env python@/usr/local/bin/python2@" /usr/local/bin/p*.py
+
+#install unofficial sigs for improving malware protection
+plugin_file=clamav-unofficial-sigs.zip
+fetch -o $plugin_file https://github.com/extremeshok/clamav-unofficial-sigs/archive/master.zip
+unzip -o $plugin_file
+script_file=/usr/local/sbin/clamav-unofficial-sigs.sh
+plugin_dir=clamav-unofficial-sigs
+cp ${plugin_dir}-master/clamav-unofficial-sigs.sh $script_file
+
+chmod +x $script_file
+sed -i '.bak' "s@!/bin/bash@!/usr/local/bin/bash@" $script_file
+for c_dir in /etc/$plugin_dir/ /var/log/$plugin_dir/
+do
+        if [ ! -d $c_dir ];then
+                mkdir $c_dir
+        fi
+done
+cp ${plugin_dir}-master/config/* /etc/$plugin_dir
+cp /etc/$plugin_dir/os.pfsense.conf /etc/$plugin_dir/os.conf
+sed -i '.bak' 's@clam_user=.*@clam_user="postfix"@' /etc/$plugin_dir/os.conf
+sed -i '.bak' 's@#user_configuration.*@user_configuration_complete="yes"@' /etc/$plugin_dir/user.conf
 
 # update spamassassin database
 rehash
