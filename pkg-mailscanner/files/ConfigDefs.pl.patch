@@ -1,0 +1,38 @@
+--- /usr/local/lib/MailScanner/MailScanner/ConfigDefs.orig.pl	2017-04-17 01:30:06.687969000 +0000
++++ /usr/local/lib/MailScanner/MailScanner/ConfigDefs.pl	2017-04-17 01:37:31.896642000 +0000
+@@ -350,6 +350,8 @@
+ MCPSpamAssassinTimeout		10
+ TNEFTimeout			120
+ UnrarTimeout			50
++Un7zipTimeout			50
++PDFiDTimeout			50
+ WhitelistMaxRecips		20
+ # For Qmail users
+ qmailhashdirectorynumber	23
+@@ -405,6 +407,8 @@
+ MCPSpamAssassinInstallPrefix	/etc/MailScanner/mcp
+ TNEFExpander		/usr/bin/tnef --maxsize=100000000
+ UnrarCommand		/usr/bin/unrar
++Un7zipCommand		/usr/local/bin/7z
++PDFiDCommand		/usr/local/bin/pdfid.py
+ VirusScanners		auto  # Space-separated list
+ WorkUser
+ WorkGroup
+@@ -490,6 +494,9 @@
+ WarnSizeSenders		0	no	0	yes	1
+ WarnOtherSenders	1	no	0	yes	1
+ # JKF 19/12/2007 WarnPasswordSenders    1       no      0       yes     1
++ScanPDF			1	no	0	yes	1
++DeliverSuspiciousPDF	0	no	0	yes	1
++SuspiciousPDFModifySubject	start	no	0	yes	1	start	start	end	end
+ 
+ [First,File]
+ DeletedContentMessage	/etc/MailScanner/reports/en/deleted.content.message.txt
+@@ -603,6 +610,7 @@
+ SizeSubjectText		{Size}
+ unzipmembers		*.txt *.ini *.log *.csv
+ unzipmimetype		text/plain
++SuspiciousPDFSubjectText	{Suspicious PDF?}
+ 
+ [All,YesNo]
+ AddEnvFrom		1	no	0	yes	1

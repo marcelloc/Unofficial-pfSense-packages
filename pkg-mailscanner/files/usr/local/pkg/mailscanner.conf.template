@@ -73,6 +73,31 @@ Gunzip Command = /usr/bin/gunzip
 Gunzip Timeout = 50
 Unrar Command = /usr/local/bin/unrar
 Unrar Timeout = 50
+# Used as unpacking engine for multiple archive formats
+Un7zip Command = /usr/bin/7z
+# 
+Un7zip Timeout = 50
+
+
+# Used for string scanning a pdf for possible malicious content
+# http://blog.didierstevens.com/programs/pdf-tools/#pdfid
+PDFiD Command = /usr/local/bin/pdfid.py
+
+#
+PDFiD Timeout = 50
+
+# Enable pdf scanning using PDFiD
+Scan PDF = {$scan_pdf}
+
+# Block and replace pdf if possible malicious content is detected
+Deliver Suspicious PDF = {$deliver_suspicious_pdf}
+
+# Todo: allow PDF but change Subject
+# Subject change only possible when Delivery of Suspicious PDFs is Yes
+#Suspicious PDF Modify Subject = start
+#Suspicious PDF Subject Text = {Suspicious PDF?}
+
+
 Find UU-Encoded Files = no
 Maximum Message Size = %rules-dir%/max.message.size.rules
 Maximum Attachment Size ={$max_size}

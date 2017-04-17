@@ -54,7 +54,7 @@ cp /tmp/pfSense.conf $repo2
 chmod +x /usr/local/bin/sa-updater-custom-channels.sh
 
 # Install mailscanner package
-pkg install mailscanner bash dcc-dccd spamassassin
+pkg install mailscanner bash dcc-dccd spamassassin p7zip
 
 #install services and menus
 php /root/check_mailscanner_service.php
@@ -81,8 +81,22 @@ unzip -o $plugin_file
 cp DecodeShortURLs-master/*pm $plugin_dir/plugins/
 cp DecodeShortURLs-master/*cf $plugin_dir
 
+#install 7z and pdf patch
+plugin_file=pdfid.zip 
+fetch -o $plugin_file fetch http://didierstevens.com/files/software/pdfid_v0_2_1.zip
+unzip -o $plugin_file
+cp p*py /usr/local/bin/
+chmod +x /usr/local/bin/p*py
+ln -s /usr/local/bin/python2 /usr/local/bin/python2
+
 # update spamassassin database
 rehash
 /usr/local/bin/sa-update -D
 
 fi
+
+for PatchFile in ConfigDefs.pl.patch Message.pm.patch SweepContent.pm.patch
+  do
+  fetch -o - -q $prefix/$PatchFile | patch -N -b -p0
+  done
+

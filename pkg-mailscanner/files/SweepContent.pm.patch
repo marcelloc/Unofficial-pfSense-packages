@@ -1,0 +1,112 @@
+--- /usr/local/lib/MailScanner/MailScanner/SweepContent.orig.pm	2017-04-17 01:50:30.156409000 +0000
++++ /usr/local/lib/MailScanner/MailScanner/SweepContent.pm	2017-04-17 01:52:24.158842000 +0000
+@@ -140,6 +140,11 @@
+     # Check all the files for the attachment-size limit
+     $counter += CheckAttachmentSizes($message, $id);
+ 
++    # Check PDF's for any suspicious content
++    if (MailScanner::Config::Value('scanpdf')) {
++	$counter += CheckPDF($message, $id);
++    }
++
+     # Search for Microsoft-specific attacks
+     # Disallow both by default. Allow them only if all addresses agree.
+     my $iframevalue = MailScanner::Config::Value('allowiframetags', $message);
+@@ -336,6 +341,97 @@
+   return $counter;
+ }
+ 
++# Danny: added scanning of PDF's for suspicious content using PDFiD
++# more information at http://blog.didierstevens.com/programs/pdf-tools/
++sub CheckPDF {
++  my($message, $id) = @_;
++
++  my($BaseDir, $basefh, $safename, $maxsize, $attachsize, $tnefname);
++  my($unsafename, $counter, $minsize, $attachentity);
++
++  my ($PDFiDPipeTimeOut, $PDFiDcommand, $FilePipeTimeOut, $filecommand, $memb);
++
++  # return if we don't want pdf scanning  
++  return 0 unless (MailScanner::Config::Value('scanpdf'));
++
++  $PDFiDPipeTimeOut = MailScanner::Config::Value('pdfidtimeout');
++  $PDFiDcommand = MailScanner::Config::Value('pdfidcommand');
++
++  # return if pdfif.py doesn't exists or it isn't executable
++  return 1 unless ($PDFiDcommand && -x $PDFiDcommand);
++
++  $FilePipeTimeOut = MailScanner::Config::Value('filetimeout');
++  $filecommand = MailScanner::Config::Value('filecommand');
++
++  # Get into the directory containing all the attachments
++  $BaseDir = $global::MS->{work}->{dir} . "/$id";
++  chdir $BaseDir or die "Cannot chdir to $BaseDir for file size checking, $!";
++
++  $basefh = new DirHandle;
++  $basefh->open('.')
++    or MailScanner::Log::DieLog("Could not open attachment dir %s, %s",
++                                $BaseDir, $!);
++  $counter = 0;
++  while ($safename = $basefh->read()) {
++    next if $safename eq '.' || $safename eq '..';
++
++    #MailScanner::Log::WarnLog("Looping attachment (%s/%s)", $BaseDir, $safename);
++
++    if ($filecommand && -x $filecommand) {
++      $memb = MailScanner::Message::SafePipe("$filecommand -b '$BaseDir/$safename' 2>&1", # re-use SafePipe from Message.pm
++                   $FilePipeTimeOut);
++
++      if ($memb =~ /ERROR/) {
++        MailScanner::Log::WarnLog("File magic error (%s)", $memb); 
++      } elsif ( ($memb =~ /^PDF document/i || $safename =~ /\.pdf$/i) ) {
++        MailScanner::Log::WarnLog("Checking PDF for malicious content (%s/%s)", $BaseDir, $safename);
++
++	if ($PDFiDcommand && -x $PDFiDcommand) {
++          $memb = MailScanner::Message::SafePipe("$PDFiDcommand -s '$BaseDir/$safename' 2>&1", # re-use SafePipe from Message.pm
++                   $PDFiDPipeTimeOut);
++	  my $orig_memb = $memb;
++	  $memb =~ s/\r//g;
++	  $memb =~ s/\n/ /g;
++	  my $remove = 0;
++          if ($memb =~ /Traceback|Not a PDF/i) {
++    	    MailScanner::Log::WarnLog("PDFiD scan error (%s)", $memb); 
++
++          } elsif ( $memb =~ /PDF Header/i ) {
++	    #MailScanner::Log::WarnLog("PDFiD: result (%s)", $orig_memb);
++	    my $score = 0;
++	    my (@string_array) = split /\n/,$orig_memb;
++	    shift @string_array; # remove fullpath/filename
++	    foreach my $string (@string_array)
++	    {
++		$string =~ s/ +/ /g;
++		my ($dummy, $code, $number) = split / /,$string;
++    		if ( (($code =~ /JS|JavaScript|AA|OpenAction|RichMedia|Launch/) && ($number !~ /0/)) || ($number =~ /\(.*\)/) ) {
++		    $score += 10; 	# if any string matches and value is != 0 or we got some obfuscation add 10 to score
++		} elsif (($code =~ /EmbeddedFile|Encrypt|ObjStm|JBIG2Decode|XFA|Colors/) && ($number !~ /0/) ){
++		    $score++;		# if any string matches and value is != 0 add 1 to score
++		} 
++	    }
++	    if ($score >= 2) {
++		$remove = 1;
++	    }
++	  } else {
++	    MailScanner::Log::WarnLog("PDFiD: unknown and therefor suspicous result (%s)", $memb);
++	    $remove = 1;
++	  }
++	  if ($remove && MailScanner::Config::Value('deliversuspiciouspdf', $message) eq 0) {
++    	    $message->{otherreports}{$safename} .=
++		"A PDF with suspicous content was found, these are often used by malware to exploit system vulnerabilities\n";
++    	    	#MailScanner::Config::LanguageValue($message,'foundpdf') . "\n"; # todo add to language conf
++    	    $message->{othertypes}{$safename}   .= "c";
++    	    $counter++;
++    	    $message->{otherinfected}++;
++	  }
++	}
++      }
++    }
++  }
++  return $counter;
++}
+ 
+ 
+ # Walk the entire tree of a message, looking for any
