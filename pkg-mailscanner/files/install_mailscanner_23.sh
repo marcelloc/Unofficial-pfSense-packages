@@ -87,7 +87,8 @@ fetch -o $plugin_file http://didierstevens.com/files/software/pdfid_v0_2_1.zip
 unzip -o $plugin_file
 cp p*py /usr/local/bin/
 chmod +x /usr/local/bin/p*py
-ln -s /usr/local/bin/python2 /usr/local/bin/python
+#fix python path
+sed -i '.bak' "s@/usr/bin/env python@/usr/local/bin/python2@" /usr/local/bin/p*.py
 
 # update spamassassin database
 rehash
