@@ -250,7 +250,7 @@ function grep_log(){
 			$status=array();
 			$total_lines++;
 			#Nov  8 09:31:50 srvch011 postfix/smtpd[43585]: 19C281F59C8: client=pm03-974.auinmem.br[177.70.0.3]
-			if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.smtpd\W\d+\W+(\w+): client=(.*)/",$line,$email)) {
+			if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.smtpd\W\d+\W+(\w+): client=(.*)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
 				$values="'".$email[3]."','".$email[1]."','".$email[2]."','".$email[4]."'";
 				if(${$email[3]}!=$email[3]) {
@@ -260,7 +260,7 @@ function grep_log(){
 			}
 			#Dec  2 22:21:18 pfsense MailScanner[60670]: Requeue: 8DC3BBDEAF.A29D3 to 5AD9ABDEB5
 			#Apr 01 05:49:05 smgsc2 MailScanner[48506]: Requeue: 4C256286A6E.A2F06 to E89B5286BD6
-			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) MailScanner.*Requeue: (\w+)\W\w+ to (\w+)/",$line,$email)) {
+			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) MailScanner.*Requeue: (\w+)\W\w+ to (\w+)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
 				check_sid_day($email[4],$sa[$email[3]]);
 				print "REQUEUE {$email[3]} {$email[4]} grep_day{$grep_day} e3_day {$sa[$email[3]]} e4_day {$sa[$email[3]]}\n";
@@ -272,7 +272,7 @@ function grep_log(){
 			}
 			#Apr 05 03:32:20 zonk MailScanner[4802]: Message 8193A1496BBE.AE19A from 195.62.13.253 (info@testdomain.com) to wwtest.com is spam, SpamAssassin (nicht zwischen gespeichert, Wertung=13.592, benoetigt 3, BAYES_50 0.80, BLACKLIST_SOURCE_COUNTRY 0.50, DIGEST_MULTIPLE 0.29, DKIM_SIGNED 0.10, DKIM_VALID -0.10, DKIM_VALID_AU -0.10, FROM_IS_REPLY_TO -0.50, HS_HEADER_821 5.00, PYZOR_CHECK 1.39, RAZOR2_CF_RANGE_51_100 0.50, RAZOR2_CF_RANGE_E8_51_100 1.89, RAZOR2_CHECK 0.92, RP_MATCHES_RCVD -0.10, SPF_PASS -0.00, ZONK_21394 3.00)
 			#Dec  5 14:06:10 srvchunk01 MailScanner[19589]: Message 775201F44B1.AED2C from 209.185.111.50 (marcellocoutinho@mailtest.com) to sede.mail.test.com is spam, SpamAssassin (not cached, escore=99.202, requerido 6, autolearn=spam, DKIM_SIGNED 0.10, DKIM_VALID -0.10, DKIM_VALID_AU -0.10, FREEMAIL_FROM 0.00, HTML_MESSAGE 0.00, RCVD_IN_DNSWL_LOW -0.70, WORM_TEST2 100.00)
-			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) MailScanner\W\d+\W+\w+\s+(\w+).* is spam, (.*)/",$line,$email)) {
+			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) MailScanner\W\d+\W+\w+\s+(\w+).* is spam, (.*)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
 				$stm_queue[$sa[$email[3]]] .= "insert or ignore into mail_status (info) values ('spam');\n";
 				print "\n#######################################\nSPAM:".$email[4].$email[3].$email[2]."\n#######################################\n";
@@ -281,7 +281,7 @@ function grep_log(){
 			#Nov 14 09:29:32 srvch011 postfix/error[58443]: 2B8EB1F5A5A: to=<hildae.sva@pi.email.com>, relay=none, delay=0.66, delays=0.63/0/0/0.02, dsn=4.4.3, status=deferred (delivery temporarily suspended: Host or domain name not found. Name service error for name=mail.pi.test.com type=A: Host not found, try again)
 			#Nov  3 21:45:32 srvch011 postfix/smtp[18041]: 4CE321F4887: to=<viinil@vitive.com.br>, relay=smtpe1.eom[81.00.20.9]:25, delay=1.9, delays=0.06/0.01/0.68/1.2, dsn=2.0.0, status=sent (250 2.0.0 Ok: queued as 2C33E2382C8)
 			#Nov 16 00:00:14 srvch011 postfix/smtp[7363]: 7AEB91F797D: to=<alessandra.bueno@mg.test.com>, relay=mail.mg.test.com[172.25.3.5]:25, delay=39, delays=35/1.1/0.04/2.7, dsn=5.7.1, status=bounced (host mail.mg.test.com[172.25.3.5] said: 550 5.7.1 Unable to relay for alessandra.bueno@mg.test.com (in reply to RCPT TO command))
-			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.\w+\W\d+\W+(\w+): to=\<(.*)\>, relay=(.*), delay=([0-9,.]+), .* dsn=([0-9,.]+), status=(\w+) (.*)/",$line,$email)) {
+			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.\w+\W\d+\W+(\w+): to=\<(.*)\>, relay=(.*), delay=([0-9,.]+), .* dsn=([0-9,.]+), status=(\w+) (.*)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
 				$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$email[8]."');\n";
 				$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_to (from_id,too,status,status_info,relay,delay,dsn) values ((select id from mail_from where sid='".$email[3]."' and server='".$email[2]."'),'".strtolower($email[4])."',(select id from mail_status where info='".$email[8]."'),'".preg_replace("/(\<|\>|\s+|\'|\")/"," ",$email[9])."','".$email[5]."','".$email[6]."','".$email[7]."');\n";
@@ -292,21 +292,21 @@ function grep_log(){
 				$stm_queue[$sa[$email[3]]] .= "' where from_id in (select id from mail_from where sid='{$email[3]}' and server='{$email[2]}') and status !=(select id from mail_status where info='spam');\n";
 			}
 			#Nov 13 01:48:44 srvch011 postfix/cleanup[16914]: D995B1F570B: message-id=<61.40.11745.10E3FBE4@ofertas6>
-			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.cleanup\W\d+\W+(\w+): message-id=\<(.*)\>/",$line,$email)) {
+			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.cleanup\W\d+\W+(\w+): message-id=\<(.*)\>/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
 				$stm_queue[$sa[$email[3]]].="update mail_from set msgid='".$email[4]."' where sid='".$email[3]."';\n";
 			}
 			#Nov 14 02:40:05 srvch011 postfix/qmgr[46834]: BC5931F4F13: from=<ceag@mx.crmcom.br>, size=32727, nrcpt=1 (queue active)
-			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.qmgr\W\d+\W+(\w+): from=\<(.*)\>\W+size=(\d+)/",$line,$email)){
+			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.qmgr\W\d+\W+(\w+): from=\<(.*)\>\W+size=(\d+)/",$line,$email)){
 				check_sid_day($email[3],$grep_day);
 				$stm_queue[$sa[$email[3]]].= "update mail_from set fromm='".strtolower($email[4])."', size='".$email[5]."' where sid='".$email[3]."';\n";
 			}
 			#Nov 13 00:09:07 srvch011 postfix/bounce[56376]: 9145C1F67F7: sender non-delivery notification: D5BD31F6865
-			#else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.bounce\W\d+\W+(\w+): sender non-delivery notification: (\w+)/",$line,$email)){
+			#else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.bounce\W\d+\W+(\w+): sender non-delivery notification: (\w+)/",$line,$email)){
 			#	$stm_queue[$day].= "update mail_queue set bounce='".$email[4]."' where sid='".$email[3]."';\n";
 			#}
 			#Nov 14 01:41:44 srvch011 postfix/smtpd[15259]: warning: 1EF3F1F573A: queue file size limit exceeded
-	  		else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.smtpd\W\d+\W+warning: (\w+): queue file size limit exceeded/",$line,$email)){
+	  		else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.smtpd\W\d+\W+warning: (\w+): queue file size limit exceeded/",$line,$email)){
 				check_sid_day($email[3],$grep_day);
 	  			$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$email[8]."');\n";
 				$stm_queue[$sa[$email[3]]].= "update mail_to set status=(select id from mail_status where info='reject'), status_info='queue file size limit exceeded' where from_id in (select id from mail_from where sid='".$email[3]."' and server='".$email[2]."');\n";
@@ -316,7 +316,7 @@ function grep_log(){
 			#Nov  8 09:31:50 srvch011 postfix/cleanup[11471]: 19C281F59C8: reject: header From: "Giuliana Flores - Parceiro do Grupo Virtual" <publicidade@parceiro-grupovirtual.com.br> from pm03-974.auinmeio.com.br[177.70.232.225]; from=<publicidade@parceiro-grupovirtual.com.br> to=<jorge.lustosa@mail.test.com> proto=ESMTP helo=<pm03-974.auinmeio.com.br>: 5.7.1 [SN007]
 			#Nov 13 00:03:24 srvch011 postfix/cleanup[4192]: 8A5B31F52D2: reject: body http://platform.roastcrack.info/mj0ie6p-48qtiyq from move2.igloojack.info[173.239.63.16]; from=<ljmd6u8lrxke4@move2.igloojack.info> to=<edileva@aasdf..br> proto=SMTP helo=<move2.igloojack.info>: 5.7.1 [BD040]
 			#Nov 14 01:41:35 srvch011 postfix/cleanup[58446]: 1EF3F1F573A: warning: header Subject: =?windows-1252?Q?IMOVEL_Voc=EA_=E9_um_Cliente_especial_da_=93CENTURY21=22?=??=?windows-1252?Q?Veja_o_que_tenho_para_voc=EA?= from mail-yw0-f51.google.com[209.85.213.51]; from=<sergioalexandre6308@gmail.com> to=<sinza@tr.br> proto=ESMTP helo=<mail-yw0-f51.google.com>
-			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.cleanup\W\d+\W+(\w+): (\w+): (.*) from ([a-z,A-Z,0-9,.,-]+)\W([0-9,.]+)\W+from=\<(.*)\> to=\<(.*)\>.*helo=\W([a-z,A-Z,0-9,.,-]+)(.*)/",$line,$email)){
+			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.cleanup\W\d+\W+(\w+): (\w+): (.*) from ([a-z,A-Z,0-9,.,-]+)\W([0-9,.]+)\W+from=\<(.*)\> to=\<(.*)\>.*helo=\W([a-z,A-Z,0-9,.,-]+)(.*)/",$line,$email)){
 				check_sid_day($email[3],$grep_day);
 				$status['date']=$email[1];
 				$status['server']=$email[2];
@@ -354,7 +354,7 @@ function grep_log(){
 			#Apr  6 00:00:00 zonk postfix/smtpd[96233]: NOQUEUE: reject: RCPT from mx6.test.com[217.182.51.86]: 550 5.1.1 <nvcvgegax@test.de>: Recipient address rejected: User unknown in relay recipient table; from=<tekavqrqx_mz3@test.com> to=<nvcvgegax@test.de> proto=ESMTP helo=<mx6.test.com>
 			#Apr  5 00:05:40 zonk postfix/postscreen[87711]: NOQUEUE: reject: RCPT from [191.101.155.227]:60197: 450 4.7.1 Service unavailable; client [191.101.155.227] blocked using zen.spamhaus.org; from=<service@test.de>, to=<user.sirname@test.de>, proto=ESMTP, helo=<itcorhost.ru>
 			#Nov  9 02:14:34 srvch011 postfix/smtpd[38129]: NOQUEUE: reject: RCPT from unknown[201.36.0.7]: 450 4.7.1 Client host rejected: cannot find your hostname, [201.36.98.7]; from=<maladireta@esadcos.com.br> to=<sexec.09vara@go.domain.test.com> proto=ESMTP helo=<capri0.wb.com.br>
-			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\w+) postfix.(postscreen|smtpd)\W\d+\W+NOQUEUE:\s+(\w+): (.*); from=\<(.*)\>\W+to=\<(.*)\>.*helo=\<(.*)\>/",$line,$email)){
+			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.(postscreen|smtpd)\W\d+\W+NOQUEUE:\s+(\w+): (.*); from=\<(.*)\>\W+to=\<(.*)\>.*helo=\<(.*)\>/",$line,$email)){
 				$status['date']=$email[1];
 				$status['server']=$email[2];
 				$status['status']=$email[4];
@@ -776,7 +776,9 @@ if ($_REQUEST['files']!= ""){
 		}
 		print "{$thead}\n<tbody>\n";
 		foreach ($stm_fetch as $mail){
-                        print "\n<tr>";
+                        print "\n<tr><PRE>";
+			var_dump($mail);
+			print "</PRE>";
                         foreach ($dbc as $c){
                            if(in_array($c,$fields))
 				switch($c){
