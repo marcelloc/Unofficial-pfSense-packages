@@ -28,7 +28,7 @@ require_once("service-utils.inc");
 
 $uname=posix_uname();
 if ($uname['machine']=='amd64')
-        ini_set('memory_limit', '250M');
+        ini_set('memory_limit', '512M');
 
 //$dbc=array('bounced','deferred','hold','incoming','reject','spam','sent','total');
 $dbc=array('bounced','deferred','reject','spam','sent','total');
