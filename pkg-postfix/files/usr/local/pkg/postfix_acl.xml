@@ -8,7 +8,7 @@
 /*
  * postfix_acl.xml
  *
- * part of Unofficial packages for pfSense(R) softwate
+ * 
  * Copyright (c) 2011-2017 Marcello Coutinho
  * All rights reserved.
  *
@@ -106,7 +106,7 @@
 		<field>
 			<fielddescr>Helo</fielddescr>
 			<fieldname>helo_maps</fieldname>
-			<description><![CDATA[<strong>PCRE filters</strong><a href=http://www.postfix.org/pcre_table.5.html> that are applied to initial message helo info. Hint:<br>
+			<description><![CDATA[<strong>PCRE filters</strong><a href=http://www.postfix.org/pcre_table.5.html> that are applied to initial message helo info.</a> Hint:<br>
 								/^tmpstr.*/ REJECT<br>
 								/^myserver.local/ REJECT external server with local domain info<br>
 								/^trusted_network.local/ DUNNO trusted remote misconfigured server<br>
