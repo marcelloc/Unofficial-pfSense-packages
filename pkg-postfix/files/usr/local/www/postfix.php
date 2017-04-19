@@ -776,9 +776,7 @@ if ($_REQUEST['files']!= ""){
 		}
 		print "{$thead}\n<tbody>\n";
 		foreach ($stm_fetch as $mail){
-                        print "\n<tr><PRE>";
-			var_dump($mail);
-			print "</PRE>";
+                        print "\n<tr>";
                         foreach ($dbc as $c){
                            if(in_array($c,$fields))
 				switch($c){
