@@ -606,6 +606,7 @@ EOF;
 	#check spf option
 	$spf_helo_reject="No_Check";
 	$spf_mail_reject="False";
+	$spf_skipd="127.0.0.0/8,::ffff:127.0.0.0/104,::1";
 	switch ($antispam['postfix_spf']) {
 		case '':
         	case 'disable':
@@ -634,7 +635,12 @@ EOF;
                 	break;
 	}
 
-	
+	if ($antispam['postfix_spf_skip'] != "") {
+                $spf_skip=" {$antispam['postfix_spf_skip']},$spf_skipd ";
+        } else {
+                $spf_skip="$spf_skipd";
+                }
+
 	$postfix_main  = preg_replace("/SPFSPFSPF/",$spf,$postfix_main);
 	$postfix_main .= $postfix_main_antispam.$check_debug;
 	switch ($antispam['zombie_blocker']) {
@@ -802,9 +808,13 @@ defaultSeedOnly = 1
 
 HELO_reject = {$spf_helo_reject}
 Mail_From_reject = {$spf_mail_reject}
-skip_addresses = 127.0.0.0/8,::ffff:127.0.0.0/104,::1
+skip_addresses = {$spf_skip}
 
 SPF;
+
+	if ($antispam['postfix_spf_white'] != "") {
+		$policyd_spf .= "Whitelist = {$antispam['postfix_spf_white']}\n";
+	}
 
 	conf_mount_rw();
 
