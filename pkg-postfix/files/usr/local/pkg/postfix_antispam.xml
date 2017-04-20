@@ -218,7 +218,7 @@
                                 <option><name>SPF_Not_Pass (default) - Reject if HELO results in not Pass, None, or Temperror</name><value>SPF_Not_Pass</value></option>
                                 <option><name>SoftFail - Reject on HELO Softfail or Fail.</name><value>Softfail</value></option>
                                 <option><name>Fail - Reject only on HELO Fail.</name><value>Fail</value></option>
-                                <option><name>Null - Only reject HELO Fail for Null sender (SPF Classic)</name><value>Fail</value></option>
+                                <option><name>Null - Only reject HELO Fail for Null sender (SPF Classic)</name><value>Null</value></option>
                                 <option><name>False - Never reject on HELO, append header only</name><value>False</value></option>
                                 <option><name>No_Check - Do not check SPF records</name><value>No_Check</value></option>
                                 </options>
@@ -234,13 +234,37 @@
                                 <option><name>SPF_Not_Pass (default) - Reject if Mail From results in not Pass, None, or Temperror</name><value>SPF_Not_Pass</value></option>
                                 <option><name>SoftFail - Reject on Mail From Softfail or Fail.</name><value>Softfail</value></option>
                                 <option><name>Fail - Reject only on Mail From Fail.</name><value>Fail</value></option>
-                                <option><name>Null - Only reject Mail From Fail for Null sender (SPF Classic)</name><value>Fail</value></option>
                                 <option><name>False - Never reject on Mail From, append header only</name><value>False</value></option>
                                 <option><name>No_Check - Do not check SPF records</name><value>No_Check</value></option>
                                 </options>
                         <description>
                         <![CDATA[<strong>Default: Reject if result not Pass, None, or Temperror</strong><br><a target=_new href='http://www.openspf.org/Introduction'>The Sender Policy Framework (SPF) is an open standard specifying a technical method to prevent sender address forgery.</a>]]>
                         </description>
+                </field>
+
+		<field>
+                        <fielddescr>SPF skip lookup</fielddescr>
+                        <fieldname>postfix_spf_skip</fieldname>
+                        <description><![CDATA[<span>Do not check SPF for localhost addresses - add to 'skip addresses' to<br>
+                                        skip SPF for internal networks if desired. Defaults are standard IPv4 and IPv6 <br>
+                                        localhost addresses. 127.0.0.0/8,::ffff:127.0.0.0/104,::1<br>
+                                        Just add any additional local/internal networks/hosts here.<br>]]>
+                        </description>
+                        <type>textarea</type>
+                        <cols>50</cols>
+                        <rows>5</rows>
+                </field>
+
+                <field>
+                        <fielddescr>SPF Whitelist</fielddescr>
+                        <fieldname>postfix_spf_white</fieldname>
+                        <description><![CDATA[<span>Whitelist: CIDR Notation list of IP addresses not to check SPF for.<br>
+                                        example (default is no whitelist): 192.168.0.0/31,192.168.1.12<br>
+                                        Backup MX servers already doing SPF should go here<br>]]>
+                        </description>
+                        <type>textarea</type>
+                        <cols>50</cols>
+                        <rows>5</rows>
                 </field>
 
                 <field>
