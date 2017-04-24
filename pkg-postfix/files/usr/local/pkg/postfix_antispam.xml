@@ -241,20 +241,17 @@
                         <![CDATA[<strong>Default: Reject if result not Pass, None, or Temperror</strong><br><a target=_new href='http://www.openspf.org/Introduction'>The Sender Policy Framework (SPF) is an open standard specifying a technical method to prevent sender address forgery.</a>]]>
                         </description>
                 </field>
-
 		<field>
                         <fielddescr>SPF skip lookup</fielddescr>
                         <fieldname>postfix_spf_skip</fieldname>
                         <description><![CDATA[<span>Do not check SPF for localhost addresses - add to 'skip addresses' to<br>
                                         skip SPF for internal networks if desired. Defaults are standard IPv4 and IPv6 <br>
                                         localhost addresses. 127.0.0.0/8,::ffff:127.0.0.0/104,::1<br>
-                                        Just add any additional local/internal networks/hosts here.<br>]]>
+                                        Just add any additional local/internal networks/hosts here using coma between hosts.<br>]]>
                         </description>
-                        <type>textarea</type>
-                        <cols>50</cols>
-                        <rows>5</rows>
+                        <type>input</type>
+                        <size>80</size>
                 </field>
-
                 <field>
                         <fielddescr>SPF Whitelist</fielddescr>
                         <fieldname>postfix_spf_white</fieldname>
@@ -262,11 +259,9 @@
                                         example (default is no whitelist): 192.168.0.0/31,192.168.1.12<br>
                                         Backup MX servers already doing SPF should go here<br>]]>
                         </description>
-                        <type>textarea</type>
-                        <cols>50</cols>
-                        <rows>5</rows>
-                </field>
-
+                        <type>input</type>
+                        <size>80</size>
+		</field>
                 <field>
                         <fielddescr>SPF Debug level</fielddescr>
                         <fieldname>postfix_spf_debug</fieldname>
@@ -369,13 +364,13 @@
                         <type>checkbox</type>
                         <description>Enable connections trottle/rate limit</description>
                 </field>
-		<field>
+               <field>
                         <fielddescr>Rule Position</fielddescr>
                         <fieldname>postfwd_position</fieldname>
                         <description><![CDATA[Place rules before or after my_network<br>
-				If you select before, internal clients will be rated(this is usefull to reduce malwares that sends spams form your client's email.<br>
-				If you select after, this will rate only ips that are not on your my_network cidr list under ACLs]]>
-			</description>
+                               If you select before, internal clients will be rated(this is usefull to reduce malwares that sends spams form your client's email.<br>
+                               If you select after, this will rate only ips that are not on your my_network cidr list under ACLs]]>
+                       </description>
                 <type>select</type>
                                 <options>
                                 <option><name>Before My_networks - Incoming and outgoing mails</name><value>before</value></option>
@@ -387,15 +382,14 @@
                         <fielddescr>Throttle rules</fielddescr>
                         <fieldname>postfwd_rules</fieldname>
                         <description><![CDATA[Connections rules see <a href=http://postfwd.org/ratelimits.html>postfwd.org</a> for rule documentation.<br><b>Basic rule sample to limit mail per sender</b><br>
-				id=R001; sender=~/.*/; action=rate(sender/100/86400/REJECT only 100 messages per day for $$sender)<br>
-				id=R002; sender=~/.*/; action=rate(sender/50/3600/REJECT only 50 messages per hour for $$sender)<br>
-			]]></description>
+                               id=R001; sender=~/.*/; action=rate(sender/100/86400/REJECT only 100 messages per day for $$sender)<br>
+                               id=R002; sender=~/.*/; action=rate(sender/50/3600/REJECT only 50 messages per hour for $$sender)<br>
+                       ]]></description>
                         <type>textarea</type>
-			<encoding>base64</encoding>
+                       <encoding>base64</encoding>
                         <cols>80</cols>
                         <rows>05</rows>
                 </field>
-
 		<field>
 			<name><![CDATA[Third part Antispam Settings ]]></name>
 			<type>listtopic</type>
@@ -432,6 +426,23 @@
 				<option><name>Policyd v2 + amavis</name><value>policyd2</value></option>
 				</options>
 		</field>
+                <field>
+                        <fielddescr>Sa-Learn</fielddescr>
+                        <fieldname>sa_learn</fieldname>
+                        <type>checkbox</type>
+                        <description><![CDATA[Host SpamAssassin spam/ham auto learn on this server]]></description>
+                </field>
+                <field>
+                        <fielddescr>Sa-Learn domain</fielddescr>
+                        <fieldname>sa_learn_domain</fieldname>
+                        <type>input</type>
+			<size>30</size>
+                        <description><![CDATA[
+                                Local antispam box domain to receive <b>spam@</b> and <b>ham@</b> learn messages<br>.
+				You may need to create a mx record for this domain in order to receive sa-learn.<br>
+                                Leave empty to use @antispam.local domain.</b>
+                        ]]></description>
+                </field>
 		<field>
 			<fielddescr>Policydv2 Location</fielddescr>
 			<fieldname>antispam_location</fieldname>
