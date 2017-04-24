@@ -50,6 +50,11 @@ function px_check_sa_learn($section) {
 	}
 	$return="";
 	if ($antispam['sa_learn'] == 'on') {
+	   if (preg_match("/\w+/",$antispam['sa_learn_domain'])) {
+		$antispam_domain = $antispam['sa_learn_domain'];
+	   } else {
+		$antispam_domain = "antispam.local";
+	   }
 	   switch($section) {
 		case 'aliases':
 			$return  = "spam:              spam@spam.spam\n";
@@ -60,10 +65,21 @@ function px_check_sa_learn($section) {
 			$return  = "spam.spam	sa-spam:\n";
 			$return .= "ham.ham		sa-ham:\n";
 			break;
+		case 'recipients':
+			$return  = "spam@{$antispam_domain} OK\n";
+			$return .= "ham@{$antispam_domain} OK\n";
+			break;
+		case 'mydomain':
+			$return  = "mydomain = {$antispam_domain}\n";
+			$return .= 'myorigin = $mydomain' . "\n";
+			break;
+		case 'mydestination':
+			$return .= '$myhostname, localhost.$mydomain, $mydomain';
+			break; 
 		case 'main':
 			$return  = "alias_maps = hash:/usr/local/etc/postfix/aliases\n";
 			$return .= "alias_database = hash:/usr/local/etc/postfix/aliases\n";
-			$return .= "virtual_alias_maps = hash:/usr/local/etc/postfix/virtual_alias_maps\n";
+			$return .= "#virtual_alias_maps = hash:/usr/local/etc/postfix/virtual_alias_maps\n";
 			break;
 		case 'virtual':
 			if (preg_match("/\w+/",$antispam['sa_learn_domain'])) {
@@ -524,12 +540,15 @@ EOF;
 	if ($config['installedpackages']['postfixacl']['config'][0]['cal_pcre']) {
 		$cal_pcre = px_text_area_decode($config['installedpackages']['postfixacl']['config'][0]['cal_pcre']);
 	}
+	$mydomain = px_check_sa_learn('mydomain');
+	$mydestination = px_check_sa_learn('mydestination');
 	$postfix_main .= px_text_area_decode($postfix_config['maincf'])."\n".
 		"relay_domains ={$relay_domains}\n" .
-		"transport_maps = hash:".POSTFIX_LOCALBASE."/etc/postfix/transport\n" .
-		"local_recipient_maps =\n" .
-		$all_relay_recipients.
-		"mydestination =\n" .
+		"transport_maps = hash:".POSTFIX_LOCALBASE . "/etc/postfix/transport\n" .
+		"local_recipient_maps = hash:" . POSTFIX_LOCALBASE . "/etc/postfix/local_recipients\n" .
+		$all_relay_recipients .
+		"{$mydomain}" .
+		"mydestination = {$mydestination}\n" .
 		"mynetworks_style = host\n" .
 		"message_size_limit = {$message_size_limit}\n" .
 		"default_process_limit = {$process_limit}\n";
@@ -871,7 +890,10 @@ SPF;
 	$virtual_domains_content  = px_check_sa_learn('virtual');
         file_put_contents(POSTFIX_LOCALBASE."/etc/postfix/virtual_alias_maps",$virtual_domains_content,LOCK_EX);
 
-	$FILES = array("transport","sender_access","virtual_alias_maps");
+	$local_recipients = px_check_sa_learn('recipients');
+	file_put_contents(POSTFIX_LOCALBASE."/etc/postfix/local_recipients",$local_recipients,LOCK_EX);
+
+	$FILES = array("transport","sender_access","local_recipients");
 	foreach ($FILES as $file) {
 		if (file_exists(POSTFIX_LOCALBASE."/etc/postfix/".$file)) {
 			mwexec(POSTFIX_LOCALBASE."/sbin/postmap ".POSTFIX_LOCALBASE."/etc/postfix/".$file);
