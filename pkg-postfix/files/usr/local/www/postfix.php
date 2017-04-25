@@ -311,7 +311,7 @@ function grep_log(){
 	  			$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$email[8]."');\n";
 				$stm_queue[$sa[$email[3]]].= "update mail_to set status=(select id from mail_status where info='reject'), status_info='queue file size limit exceeded' where from_id in (select id from mail_from where sid='".$email[3]."' and server='".$email[2]."');\n";
 			}
-
+			#Apr 25 10:00:11 smgsc2 postfix/cleanup[19867]: EF0302869D0: info: header Subject: New message for you from asmg.test.com[200.98.16.4]; from=<notificacao@test.com> to=<user.sirname@corp.com> proto=SMTP helo=<alfa.test.com>
 			#Nov  9 02:14:57 srvch011 postfix/cleanup[6856]: 617A51F5AC5: warning: header Subject: Mapeamento de Processos from lxalpha.12b.com.br[66.109.29.225]; from=<apache@lxalpha.12b.com.br> to=<ritiele.faria@mail.test.com> proto=ESMTP helo=<lxalpha.12b.com.br>
 			#Nov  8 09:31:50 srvch011 postfix/cleanup[11471]: 19C281F59C8: reject: header From: "Giuliana Flores - Parceiro do Grupo Virtual" <publicidade@parceiro-grupovirtual.com.br> from pm03-974.auinmeio.com.br[177.70.232.225]; from=<publicidade@parceiro-grupovirtual.com.br> to=<jorge.lustosa@mail.test.com> proto=ESMTP helo=<pm03-974.auinmeio.com.br>: 5.7.1 [SN007]
 			#Nov 13 00:03:24 srvch011 postfix/cleanup[4192]: 8A5B31F52D2: reject: body http://platform.roastcrack.info/mj0ie6p-48qtiyq from move2.igloojack.info[173.239.63.16]; from=<ljmd6u8lrxke4@move2.igloojack.info> to=<edileva@aasdf..br> proto=SMTP helo=<move2.igloojack.info>: 5.7.1 [BD040]
@@ -328,7 +328,7 @@ function grep_log(){
 				$status['helo']=$email[10];
 				$status['status']=$email[4];
 				$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$email[4]."');\n";
-				if ($email[4] =="warning") {
+				if ($email[4] == "info" || $email[4] == "warning" ) {
 					if (${$status['sid']}=='hold') {
 						$status['status']='hold';
 					} else {
