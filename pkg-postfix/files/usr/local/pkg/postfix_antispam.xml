@@ -103,7 +103,7 @@
 			<fielddescr>Helo Hostname</fielddescr>
 			<fieldname>reject_unknown_helo_hostname</fieldname>
 			<type>checkbox</type>
-			<description><![CDATA[Default: Checked. Reject unknow helo hostname during smtp communication.]]></description>
+			<description><![CDATA[Default: Checked. Reject invalid fqdn helo and check reverse helo name during smtp communication.]]></description>
 		</field>
 		<field>
                         <name><![CDATA[Postscreen]]></name>

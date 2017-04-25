@@ -594,8 +594,9 @@ EOF;
 	if ($antispam['reject_unknown_helo_hostname']) {
 		$reject_unknown_helo_hostname = <<<EOF
 smtpd_helo_restrictions = check_helo_access pcre:{$pf_dir}/etc/postfix/helo_check,
-				reject_unknown_helo_hostname,
-				reject_invalid_helo_hostname,
+				warn_if_reject reject_invalid_helo_hostname,
+				warn_if_reject reject_unknown_client_hostname,
+				reject_unknown_reverse_client_hostname,
 				reject_non_fqdn_helo_hostname,
 				permit
 
