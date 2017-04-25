@@ -60,10 +60,12 @@ function px_check_sa_learn($section) {
 			$return  = "spam:              spam@spam.spam\n";
                 	$return .= "ham:               ham@ham.ham\n";
                 	$return .= "notspam:           ham@ham.ham\n";
+			$return .= "sa.learn:		sa.learn@sa.learn\n";
 			break;
 		case 'transport':
 			$return  = "spam.spam	sa-spam:\n";
-			$return .= "ham.ham		sa-ham:\n";
+			$return .= "ham.ham	sa-ham:\n";
+			$return .= "sa-learn	sa-learn:\n";
 			break;
 		case 'recipients':
 			$return  = "spam@{$antispam_domain} OK\n";
@@ -74,12 +76,13 @@ function px_check_sa_learn($section) {
 			$return .= 'myorigin = $mydomain' . "\n";
 			break;
 		case 'mydestination':
-			$return .= '$myhostname, localhost.$mydomain, $mydomain';
+			$return .= '$myhostname, localhost.$mydomain, $mydomain, spam.spam, ham.ham';
 			break; 
 		case 'main':
 			$return  = "alias_maps = hash:/usr/local/etc/postfix/aliases\n";
 			$return .= "alias_database = hash:/usr/local/etc/postfix/aliases\n";
-			$return .= "#virtual_alias_maps = hash:/usr/local/etc/postfix/virtual_alias_maps\n";
+			#$return .= "virtual_alias_domains = {$antispam_domain}\n";
+			#$return .= "virtual_alias_maps = hash:/usr/local/etc/postfix/virtual_alias_maps\n";
 			break;
 		case 'virtual':
 			if (preg_match("/\w+/",$antispam['sa_learn_domain'])) {
@@ -87,13 +90,14 @@ function px_check_sa_learn($section) {
 			} else {
 				$antispam_domain = "antispam.local";
 			}
-			$return  = "spam@{$antispam_domain} spam\n";
-			$return .= "ham@{$antispam_domain} ham\n";
+			$return  = "spam@{$antispam_domain} spam@spam.spam\n";
+			$return .= "ham@{$antispam_domain} ham@ham.ham\n";
 			break;
 		case 'master':
 			$return  = "# Spam & Ham\n";
-			$return .= 'sa-spam	unix	-	n	n	-	-	pipe user=amavis:amavis argv=/usr/local/bin/sa-wrapper.pl spam ${sender}' . "\n";
-			$return .= 'sa-ham	unix	-	n	n	-	-	pipe user=amavis:amavis argv=/usr/local/bin/sa-wrapper.pl ham  ${sender}' . "\n";
+			$return .= 'sa-spam	unix	-	n	n	-	-	pipe user=nobody argv=/usr/local/bin/sa-wrapper.pl spam' . "\n";
+			$return .= 'sa-ham	unix	-	n	n	-	-	pipe user=nobody argv=/usr/local/bin/sa-wrapper.pl ham' . "\n";
+			$return .= 'sa-learn	unix	-	n	n	-	-	pipe user=nobody argv=/usr/local/bin/sa-learn-pipe.sh' . "\n";
 			break;
 	   }
 	}
@@ -394,7 +398,7 @@ function sync_package_postfix($via_rpc = "no") {
 	}
 
 	// check patch in /etc/inc/config.
-	$relay_domains = "";
+	$relay_domains = "antispam.local ";
 	$transport =  px_check_sa_learn('transport');
 	$postfix_config=$config['installedpackages']['postfix']['config'][0];
 	if (is_array($config['installedpackages']['postfixdomains'])) {
@@ -893,7 +897,7 @@ SPF;
 	$local_recipients = px_check_sa_learn('recipients');
 	file_put_contents(POSTFIX_LOCALBASE."/etc/postfix/local_recipients",$local_recipients,LOCK_EX);
 
-	$FILES = array("transport","sender_access","local_recipients");
+	$FILES = array("transport","sender_access","local_recipients","virtual_alias_maps");
 	foreach ($FILES as $file) {
 		if (file_exists(POSTFIX_LOCALBASE."/etc/postfix/".$file)) {
 			mwexec(POSTFIX_LOCALBASE."/sbin/postmap ".POSTFIX_LOCALBASE."/etc/postfix/".$file);
