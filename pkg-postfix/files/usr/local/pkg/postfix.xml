@@ -192,7 +192,7 @@
 								  To use <strong>Diagnostics -> Search mail</strong> you need to:<br>
 								  Select Loggin Destination to /var/log/maillog<br>
 								  Select update Sqlite frequency<br>
-								  Inlcude <strong>/^Subject:/ WARN</strong> line in Acl Headers after all your Subject rules.]]></description>
+								  Inlcude <strong>/^Subject:/ INFO</strong> line in Acl Headers after all your Subject rules.]]></description>
 	    	<type>select</type>
  				<options>
  				<option><name>Every minute</name><value>01min</value></option>

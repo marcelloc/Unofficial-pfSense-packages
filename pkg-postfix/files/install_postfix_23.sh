@@ -51,7 +51,7 @@ for file in 	bin/adexport.pl pkg/postfix.inc pkg/postfix.xml pkg/postfix_acl.xml
 		pkg/postfix_domains.xml pkg/postfix_recipients.xml pkg/postfix_sync.xml share/pfSense-pkg-postfix/info.xml \
 		www/postfix.php www/postfix_about.php www/postfix_queue.php www/postfix_recipients.php www/postfix_search.php \
 		www/postfix_view_config.php www/shortcuts/pkg_postfix.inc www/widgets/widgets/postfix.widget.php \
-		pkg/postfix_dkim.inc $dtdir/se-1.2.0.zip $dtdir/css/jquery.dataTables.min.css \
+		pkg/postfix_dkim.inc $dtdir/se-1.2.0.zip $dtdir/css/jquery.dataTables.min.css bin/sa-learn-pipe.sh\
 		$dtdir/js/jquery.dataTables.min.js www/postfix.sql.php bin/postwhite pkg/postfix_postwhite.template 
  do
 	echo "fetching  /usr/local/$file from github"
@@ -61,6 +61,7 @@ done
 #fix some permissions
 chmod +x /usr/local/bin/adexport.pl 
 chmod +x /usr/local/www/postfix.php
+chmod +x /usr/local/bin/sa-learn-pipe.sh
 
 #other minor fixes
 cp /usr/local/$dtdir/DataTables-1.10.13/images/sort_both.png /usr/local/$dtdir/images/sort_both.png
@@ -78,7 +79,7 @@ cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
 cp /tmp/pfSense.conf $repo2
 
 # Install postfix package
-pkg install postfix libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap
+pkg install postfix libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap postfix-postfwd
 
 # restore repository configuration state
 cp /root/pfSense.bkp.conf $repo2
