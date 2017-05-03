@@ -287,7 +287,7 @@ function check_cron() {
 
 function postfix_check_autowhitelist($auto_whitelist){
 	if ($auto_whitelist > 0) {
-		return (",\n\t\t\tcidr:" . POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelist_cidr\n");
+		return (",\n\t\t\tcidr:" . POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelisted_cidr\n");
 	} else {
 		return ("\n");
 	}
