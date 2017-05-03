@@ -114,5 +114,13 @@ cd /usr/local/$dtdir
 /usr/bin/unzip -o se-1.2.0.zip 
 cd -
 
+echo "updating soft bounce message status on databases.."
+for a in /var/db/postfix/20*db
+
+do
+echo -n $a
+echo "update mail_noqueue set status='soft bounce' where status_info like '%Service currently unavailable%';" | sqlite3 $a
+echo " ok"
+done
 
 fi

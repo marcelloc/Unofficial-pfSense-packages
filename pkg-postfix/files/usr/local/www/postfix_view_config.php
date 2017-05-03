@@ -2,7 +2,7 @@
 /*
  * postfix_view_config.php
  *
- * part of Unofficial packages for pfSense(R) softwate
+ * 
  * Copyright (c) 2011-2017 Marcello Coutinho
  * All rights reserved.
  *
@@ -34,8 +34,8 @@ if (isset($_REQUEST['file'])){
         		'header' => POSTFIX_LOCALBASE . "/etc/postfix/header_check",
         		'mime' => POSTFIX_LOCALBASE . "/etc/postfix/mime_check",
         		'body' => POSTFIX_LOCALBASE . "/etc/postfix/body_check",
-        		'cidr' => POSTFIX_LOCALBASE . "/etc/postfix/cal_cidr",
-        		'pcre' => POSTFIX_LOCALBASE . "/etc/postfix/cal_pcre");
+        		'domains' => POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelisted_domains",
+        		'cidr' => POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelisted_cidr");
 	
 	$file=preg_replace("/\W+/","",$_REQUEST['file']);
       
@@ -87,12 +87,12 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
     <ul class="nav navbar-nav">
       <li><a href="#" onClick="get_postfix_file('main');">main.cf</a></li>
       <li><a href="#" onClick="get_postfix_file('master');">master.cf</a></li>
-      <li><a href="#" onClick="get_postfix_file('recipients');">relay_recipients</a></li>
+      <li><a href="#" onClick="get_postfix_file('relay');">relay_recipients</a></li>
       <li><a href="#" onClick="get_postfix_file('header');">heade_check</a></li>
       <li><a href="#" onClick="get_postfix_file('mime');">mime_check</a></li>
       <li><a href="#" onClick="get_postfix_file('body');">body_check</a></li>
-      <li><a href="#" onClick="get_postfix_file('cidr');">client CIDR</a></li>
-      <li><a href="#"onClick="get_postfix_file('pcre');">Client PCRE</a></li>
+      <li><a href="#" onClick="get_postfix_file('domains');">whitelisted domains</a></li>
+      <li><a href="#"onClick="get_postfix_file('cidr');">whitelisted CIDRs</a></li>
     </ul>
   </div>
 </nav>

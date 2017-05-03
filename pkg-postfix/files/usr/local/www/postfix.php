@@ -343,7 +343,11 @@ function grep_log(){
 			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.(postscreen|smtpd)\W\d+\W+NOQUEUE:\s+(\w+): (.*); from=\<(.*)\>\W+to=\<(.*)\>.*helo=\<(.*)\>/",$line,$email)){
 				$status['date']=$email[1];
 				$status['server']=$email[2];
-				$status['status']=$email[4];
+				if (preg_match("/Service currently unavailable/",$email[5])) {
+        	                        $status['status'] = "soft bounce";
+	                        } else {
+                	                $status['status'] = $email[4];
+                        	}
 				$status['status_info']=preg_replace("/;/","",$email[5]);
 				$status['from']=$email[6];
 				$status['to']=$email[7];
@@ -575,6 +579,7 @@ $postfix_arg['argv']=$argv[1];
 get_remote_log();
 # get local log from logfile
 grep_log();
+mwexec_bg('/usr/local/bin/php -q /usr/local/www/postfix_cloud_domains.php');
 }
 
 function create_grep($days,$m,$r,$curr_time){
@@ -604,7 +609,7 @@ if ($_REQUEST['files']!= ""){
 	$fields1 .= "'' as delay, '' as msgid, '' as bounce, 'NOQUEUE' as log";
   	$stm1 = "select {$fields1} from mail_noqueue where sid = ''  ";
 
-  	$fields2  = "date,sid,fromm,too,size,subject,helo,mail_status.info as status,status_info as info,relay,dsn,mail_from.server as server,";
+   	$fields2  = "date,sid,fromm,too,size,subject,helo,mail_status.info as status,status_info as info,relay,dsn,mail_from.server as server,";
 	$fields2 .= "delay,msgid,bounce,'QUEUE' as log";
   	$stm2 = "select {$fields2} from mail_from, mail_to ,mail_status where mail_from.id=mail_to.from_id and mail_to.status=mail_status.id ";
 
@@ -657,7 +662,7 @@ if ($_REQUEST['files']!= ""){
 	}
 
 	if ($_REQUEST['status']!= "") {
-		$stm .= $next . "info = '" . $_REQUEST['status'] . "'";
+		$stm .= $next . "status = '" . $_REQUEST['status'] . "'";
 	}
 	//$stm_fetch=array();
 	
@@ -677,7 +682,7 @@ if ($_REQUEST['files']!= ""){
 			//queue
 			$result2= $dbhandle->query($stm2 . $stm . " order by date desc $limit_prefix $limit;");
                         if ($result2){
-                               // var_dump($result2->fetchArray(SQLITE3_ASSOC));
+                                //var_dump($result2->fetchArray(SQLITE3_ASSOC));
                                 while($row=$result2->fetchArray(SQLITE3_ASSOC)) {
                                         if (is_array($row)) {
                                                 $stm_fetch[] = $row;

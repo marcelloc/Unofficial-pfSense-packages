@@ -103,7 +103,7 @@
 			<fielddescr>Helo Hostname</fielddescr>
 			<fieldname>reject_unknown_helo_hostname</fieldname>
 			<type>checkbox</type>
-			<description><![CDATA[Default: Checked. Reject invalid fqdn helo and check reverse helo name during smtp communication.]]></description>
+			<description><![CDATA[Default: Checked. Reject unknow helo hostname during smtp communication.]]></description>
 		</field>
 		<field>
                         <name><![CDATA[Postscreen]]></name>
@@ -124,7 +124,18 @@
 				<option><name>Disabled</name><value>disabled</value></option>
 				</options>
 		</field>
-
+                <field>
+                        <fielddescr>Auto whitelist</fielddescr>
+                        <fieldname>auto_whitelist</fieldname>
+                        <type>select</type>
+                        <options>
+                                <option><name>0 - Disabled</name><value>0</value></option>
+                                <option><name>2</name><value>2</value></option>
+                                <option><name>4</name><value>4</value></option>
+                                <option><name>6</name><value>6</value></option>
+                        </options>
+                        <description><![CDATA[Auto whitelist cloud based domains after X different ips <b>'450 4.3.2 Service currently unavailable'</b> rejects.]]></description>
+                </field>
 		<field>
 			<fielddescr>greet wait time</fielddescr>
 			<fieldname>greet_time</fieldname>
@@ -218,7 +229,7 @@
                                 <option><name>SPF_Not_Pass (default) - Reject if HELO results in not Pass, None, or Temperror</name><value>SPF_Not_Pass</value></option>
                                 <option><name>SoftFail - Reject on HELO Softfail or Fail.</name><value>Softfail</value></option>
                                 <option><name>Fail - Reject only on HELO Fail.</name><value>Fail</value></option>
-                                <option><name>Null - Only reject HELO Fail for Null sender (SPF Classic)</name><value>Null</value></option>
+                                <option><name>Null - Only reject HELO Fail for Null sender (SPF Classic)</name><value>Fail</value></option>
                                 <option><name>False - Never reject on HELO, append header only</name><value>False</value></option>
                                 <option><name>No_Check - Do not check SPF records</name><value>No_Check</value></option>
                                 </options>
@@ -234,6 +245,7 @@
                                 <option><name>SPF_Not_Pass (default) - Reject if Mail From results in not Pass, None, or Temperror</name><value>SPF_Not_Pass</value></option>
                                 <option><name>SoftFail - Reject on Mail From Softfail or Fail.</name><value>Softfail</value></option>
                                 <option><name>Fail - Reject only on Mail From Fail.</name><value>Fail</value></option>
+                                <option><name>Null - Only reject Mail From Fail for Null sender (SPF Classic)</name><value>Fail</value></option>
                                 <option><name>False - Never reject on Mail From, append header only</name><value>False</value></option>
                                 <option><name>No_Check - Do not check SPF records</name><value>No_Check</value></option>
                                 </options>
@@ -241,27 +253,7 @@
                         <![CDATA[<strong>Default: Reject if result not Pass, None, or Temperror</strong><br><a target=_new href='http://www.openspf.org/Introduction'>The Sender Policy Framework (SPF) is an open standard specifying a technical method to prevent sender address forgery.</a>]]>
                         </description>
                 </field>
-		<field>
-                        <fielddescr>SPF skip lookup</fielddescr>
-                        <fieldname>postfix_spf_skip</fieldname>
-                        <description><![CDATA[<span>Do not check SPF for localhost addresses - add to 'skip addresses' to<br>
-                                        skip SPF for internal networks if desired. Defaults are standard IPv4 and IPv6 <br>
-                                        localhost addresses. 127.0.0.0/8,::ffff:127.0.0.0/104,::1<br>
-                                        Just add any additional local/internal networks/hosts here using coma between hosts.<br>]]>
-                        </description>
-                        <type>input</type>
-                        <size>80</size>
-                </field>
-                <field>
-                        <fielddescr>SPF Whitelist</fielddescr>
-                        <fieldname>postfix_spf_white</fieldname>
-                        <description><![CDATA[<span>Whitelist: CIDR Notation list of IP addresses not to check SPF for.<br>
-                                        example (default is no whitelist): 192.168.0.0/31,192.168.1.12<br>
-                                        Backup MX servers already doing SPF should go here<br>]]>
-                        </description>
-                        <type>input</type>
-                        <size>80</size>
-		</field>
+
                 <field>
                         <fielddescr>SPF Debug level</fielddescr>
                         <fieldname>postfix_spf_debug</fieldname>
@@ -355,42 +347,6 @@
                         <size>80</size>
                 </field>
 		<field>
-                        <name><![CDATA[Rate connections(Postfwd)]]></name>
-                        <type>listtopic</type>
-                </field>
-                <field>
-                        <fielddescr>use Postfwd</fielddescr>
-                        <fieldname>postfwd_enabled</fieldname>
-                        <type>checkbox</type>
-                        <description>Enable connections trottle/rate limit</description>
-                </field>
-               <field>
-                        <fielddescr>Rule Position</fielddescr>
-                        <fieldname>postfwd_position</fieldname>
-                        <description><![CDATA[Place rules before or after my_network<br>
-                               If you select before, internal clients will be rated(this is usefull to reduce malwares that sends spams form your client's email.<br>
-                               If you select after, this will rate only ips that are not on your my_network cidr list under ACLs]]>
-                       </description>
-                <type>select</type>
-                                <options>
-                                <option><name>Before My_networks - Incoming and outgoing mails</name><value>before</value></option>
-                                <option><name>After My_networks - Incoming mails only</name><value>after</value></option>
-                                </options>
-                </field>
-
-                 <field>
-                        <fielddescr>Throttle rules</fielddescr>
-                        <fieldname>postfwd_rules</fieldname>
-                        <description><![CDATA[Connections rules see <a href=http://postfwd.org/ratelimits.html>postfwd.org</a> for rule documentation.<br><b>Basic rule sample to limit mail per sender</b><br>
-                               id=R001; sender=~/.*/; action=rate(sender/100/86400/REJECT only 100 messages per day for $$sender)<br>
-                               id=R002; sender=~/.*/; action=rate(sender/50/3600/REJECT only 50 messages per hour for $$sender)<br>
-                       ]]></description>
-                        <type>textarea</type>
-                       <encoding>base64</encoding>
-                        <cols>80</cols>
-                        <rows>05</rows>
-                </field>
-		<field>
 			<name><![CDATA[Third part Antispam Settings ]]></name>
 			<type>listtopic</type>
 		</field>
@@ -433,14 +389,12 @@
                         <description><![CDATA[Host SpamAssassin spam/ham auto learn on this server]]></description>
                 </field>
                 <field>
-                        <fielddescr>Sa-Learn domain</fielddescr>
-                        <fieldname>sa_learn_domain</fieldname>
-                        <type>input</type>
-			<size>30</size>
+                        <fielddescr></fielddescr>
+                        <fieldname>sa_learn_info</fieldname>
+                        <type>info</type>
                         <description><![CDATA[
-                                Local antispam box domain to receive <b>spam@</b> and <b>ham@</b> learn messages<br>.
-				You may need to create a mx record for this domain in order to receive sa-learn.<br>
-                                Leave empty to use @antispam.local domain.</b>
+                                You may need to create a mx record for spam.local and ham.local domains in order to receive sa-learn.<br>
+                                internal maiboxes will be <b>spam@spam.local</b>, <b>ham@ham.local</b> and <b>not-spam@ham.local</b>
                         ]]></description>
                 </field>
 		<field>
