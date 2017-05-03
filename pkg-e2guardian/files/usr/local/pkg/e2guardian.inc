@@ -1377,11 +1377,12 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 					}
 					break;
 				case "auto":
-					if (is_array($config['installedpackages']['carpsettings']) && is_array($config['installedpackages']['carpsettings']['config'])) {
-						$system_carp = $config['installedpackages']['carpsettings']['config'][0];
+					if (is_array($config['hasync'])) {
+						$system_carp = $config['hasync'];
 						$rs[0]['ipaddress'] = $system_carp['synchronizetoip'];
 						$rs[0]['username'] = $system_carp['username'];
 						$rs[0]['password'] = $system_carp['password'];
+						$rs[0]['sync_type'] = "xmlrpc";
 						if (!is_ipaddr($system_carp['synchronizetoip'])) {
 							log_error("[E2guardian] xmlrpc sync is enabled but there is no system backup hosts to push squid config.");
 							return;
