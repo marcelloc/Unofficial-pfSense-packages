@@ -30,7 +30,7 @@ require_once("/usr/local/pkg/postfix.inc");
 define('POSTFIX_DEBUG', 'YES');
 $uname = posix_uname();
 if ($uname['machine'] == 'amd64') {
-        ini_set('memory_limit', '512M');
+        ini_set('memory_limit', '768M');
 }
 
 function get_remote_log() {
@@ -211,14 +211,10 @@ function grep_log(){
 	$stm_queue=array();
         $stm_noqueue=array();
 	$stm_update_sa="";
-	$grep="(MailScanner|postfix.cleanup|postfix.smtp|postfix.error|postfix.qmgr)";
+	$grep="(MailScanner|postfix.cleanup|postfix.smtp|postfix.error|postfix.qmgr|postfix.postscreen)";
 	$curr_time = time();
 	$log_time=strtotime($postfix_arg['time'],$curr_time);
-	/*
-	$m=date('M',strtotime($postfix_arg['time'],$curr_time));
-	$j=substr(" (0| )".date('j',strtotime($postfix_arg['time'],$curr_time)),-7);
-	*/
-	//$j=substr("  ".date('j',strtotime($postfix_arg['time'],$curr_time)),-3);
+
 	// file grep loop
         if ($argv[2]!= ""){
                  $maillog_filename = $argv[2];
@@ -227,16 +223,6 @@ function grep_log(){
         }
         echo " checking $maillog_filename ...\n";
 	
-	/*
-	$sids=array('B793A286F53','453D3286F4B','5AF34286CE8','95496286F50','1504F286F54','4916C286F55','B793A286F54','453D3286F44','5AF34286CE4','95496286F54','1504F286F56','4916C286F54');
-	foreach ($sids as $sid) {
-                check_sid_day($sid,'2017-03-31');
-		$day=$sa[$sid];
-                print "dia recebido para $sid {$day}\n";
-        }
-
-	exit;
-	*/
 	foreach ($postfix_arg['grep'] as $grep_array) {
 		$grep=$grep_array['s'];
 		$grep_day=$grep_array['d'];
@@ -614,100 +600,90 @@ function create_grep($days,$m,$r,$curr_time){
 // http client call
 if ($_REQUEST['files']!= ""){
 	#do search
-	if($_REQUEST['queue']=="QUEUE"){
-		$stm="select * from mail_from, mail_to ,mail_status where mail_from.id=mail_to.from_id and mail_to.status=mail_status.id ";
-		$last_next=" and ";
-	}
-	else{
-		$stm="select * from mail_noqueue";
-		$last_next=" where ";
-	}
+	$fields1  = "date,'' as sid,fromm,too,'' as size,'' as subject,helo,status,status_info as info,'' as relay,'' as dsn,'' as server,";
+	$fields1 .= "'' as delay, '' as msgid, '' as bounce, 'NOQUEUE' as log";
+  	$stm1 = "select {$fields1} from mail_noqueue where sid = ''  ";
+
+  	$fields2  = "date,sid,fromm,too,size,subject,helo,mail_status.info as status,status_info as info,relay,dsn,mail_from.server as server,";
+	$fields2 .= "delay,msgid,bounce,'QUEUE' as log";
+  	$stm2 = "select {$fields2} from mail_from, mail_to ,mail_status where mail_from.id=mail_to.from_id and mail_to.status=mail_status.id ";
+
+	$next = " and ";
 	$limit_prefix=(preg_match("/\d+/",$_REQUEST['limit']) ? "limit " : "" );
 	$limit=(preg_match("/\d+/",$_REQUEST['limit']) ? $_REQUEST['limit'] : "" );
 	$files= explode(",", $_REQUEST['files']);
 	$stm_fetch=array();
 	$total_result=0;
 	if ($_REQUEST['from']!= ""){
-		$next=($last_next==" and "?" and ":" where ");
-		$last_next=" and ";
 		if (preg_match('/\*/',$_REQUEST['from'])) {
-			$stm .=$next . "fromm like '".preg_replace('/\*/','%',$_REQUEST['from']) . "'";
+			$stm .= $next . "fromm like '".preg_replace('/\*/','%',$_REQUEST['from']) . "'";
 		} else {
-			$stm .=$next . "fromm in('" . preg_replace("/\s+/","','",$_REQUEST['from']) . "')";
+			$stm .= $next . "fromm in('" . preg_replace("/\s+/","','",$_REQUEST['from']) . "')";
 		}
 	}
 	if ($_REQUEST['to']!= ""){
-		$next=($last_next==" and "?" and ":" where ");
-		$last_next=" and ";
 		if (preg_match('/\*/',$_REQUEST['to'])) {
-			$stm .=$next."too like '".preg_replace('/\*/','%',$_REQUEST['to'])."'";
+			$stm .= $next . "too like '" . preg_replace('/\*/','%',$_REQUEST['to']) . "'";
 		} else {
-			$stm .=$next . "too in('" . preg_replace("/\s+/","','",$_REQUEST['to']) . "')";
+			$stm .= $next . "too in('" . preg_replace("/\s+/","','",$_REQUEST['to']) . "')";
 		}
 	}
-	if ($_REQUEST['sid']!= "" && $_REQUEST['queue']=="QUEUE"){
-		$next=($last_next==" and "?" and ":" where ");
-		$last_next=" and ";
-		$stm .=$next . "sid in('" . preg_replace("/\s+/","','",$_REQUEST['sid']) . "')";
+	if ($_REQUEST['sid']!= ""){
+		$stm .= $next . "sid in('" . preg_replace("/\s+/","','",$_REQUEST['sid']) . "')";
 	}
-	if ($_REQUEST['relay']!= "" && $_REQUEST['queue']=="QUEUE"){
-		$next=($last_next==" and "?" and ":" where ");
-		$last_next=" and ";
+	if ($_REQUEST['relay']!= ""){
 		if (preg_match('/\*/',$_REQUEST['subject'])) {
-			$stm .=$next . "relay like '".preg_replace('/\*/','%',$_REQUEST['relay'])."'";
+			$stm .= $next . "relay like '".preg_replace('/\*/','%',$_REQUEST['relay']) . "'";
 		} else {
-			$stm .=$next . "relay = '".$_REQUEST['relay']."'";
+			$stm .= $next . "relay = '".$_REQUEST['relay'] . "'";
 		}
 	}
-	if ($_REQUEST['subject']!= "" && $_REQUEST['queue']=="QUEUE"){
-		$next=($last_next==" and "?" and ":" where ");
-		$last_next=" and ";
+	if ($_REQUEST['subject']!= ""){
 		if (preg_match('/\*/',$_REQUEST['subject'])) {
-			$stm .=$next . "subject like '".preg_replace('/\*/','%',$_REQUEST['subject'])."'";
+			$stm .= $next . "subject like '" . preg_replace('/\*/','%',$_REQUEST['subject']) . "'";
 		} else {
-			$stm .=$next . "subject = '".$_REQUEST['subject']."'";
+			$stm .= $next . "subject = '" . $_REQUEST['subject'] . "'";
 		}
 	}
-	if ($_REQUEST['msgid']!= "" && $_REQUEST['queue']=="QUEUE") {
-		$next=($last_next==" and "?" and ":" where ");
-		$last_next=" and ";
+	if ($_REQUEST['msgid']!= "") {
 		if (preg_match('/\*/',$_REQUEST['msgid'])) {
-			$stm .=$next."msgid like '".preg_replace('/\*/','%',$_REQUEST['msgid'])."'";
+			$stm .= $next."msgid like '" . preg_replace('/\*/','%',$_REQUEST['msgid']) . "'";
 		} else {
-			$stm .=$next."msgid = '".$_REQUEST['msgid']."'";
+			$stm .= $next."msgid = '" . $_REQUEST['msgid'] . "'";
 		}
 	}
 	if ($_REQUEST['server']!= "" ){
-		$next=($last_next==" and "?" and ":" where ");
-		$last_next=" and ";
-		if( $_REQUEST['queue']=="QUEUE") {
-			$stm .=$next."mail_from.server = '".$_REQUEST['server']."'";
-		} else {
-			$stm .=$next."server = '".$_REQUEST['server']."'";
-		}
+		$stm .= $next . "server = '".$_REQUEST['server'] . "'";
 	}
 
 	if ($_REQUEST['status']!= "") {
-		$next=($last_next==" and "?" and ":" where ");
-		$last_next=" and ";
-		$stm .=$next."mail_status.info = '".$_REQUEST['status']."'";
+		$stm .= $next . "info = '" . $_REQUEST['status'] . "'";
 	}
 	//$stm_fetch=array();
 	
 	foreach ($files as $postfix_db) {
               if (file_exists($postfix_dir.'/'.$postfix_db)) {
 			$dbhandle = new SQLite3($postfix_dir.'/'.$postfix_db);
-			#print "<pre>".$stm;
-			#$stm = "select * from mail_to,mail_status where mail_to.status=mail_status.id";
-			$result= $dbhandle->query($stm . " order by date desc $limit_prefix $limit ");
-			if ($result){
-				//var_dump($result->fetchArray(SQLITE3_ASSOC));
-				while($row=$result->fetchArray(SQLITE3_ASSOC)) {
+			//noqueue
+			$result1= $dbhandle->query($stm1. $stm . " order by date desc $limit_prefix $limit;");
+			if ($result1){
+				//var_dump($result1->fetchArray(SQLITE3_ASSOC));
+				while($row=$result1->fetchArray(SQLITE3_ASSOC)) {
 					if (is_array($row)) {
-						$stm_fetch[]=$row;
+						$stm_fetch[] = $row;
                                	 	}
 				}
 			}
+			//queue
+			$result2= $dbhandle->query($stm2 . $stm . " order by date desc $limit_prefix $limit;");
+                        if ($result2){
+                               // var_dump($result2->fetchArray(SQLITE3_ASSOC));
+                                while($row=$result2->fetchArray(SQLITE3_ASSOC)) {
+                                        if (is_array($row)) {
+                                                $stm_fetch[] = $row;
+                                        }
+                                }
+                        }
 	   }
 	}
 	$fields= explode(",", $_REQUEST['fields']);
@@ -729,61 +705,27 @@ if ($_REQUEST['files']!= ""){
 		<br/>
                 <?php
 
-	if ($_REQUEST['queue']=="NOQUEUE"){
-		print '<table id="dtresult" class="display" width="98%" border="0" cellpadding="8" cellspacing="0">';
-		$tss=array('thead','tfoot');
-		$dbc=array('date','server','from','to','helo','status','status_info');
-		foreach ($tss as $t){
-			$$t = "<" . $t . "><tr>\n";
-			foreach ($dbc as $c){
-			   if(in_array($c,$fields))
-				$$t .= "<th>".ucfirst($c)."</th>";
-			}
-			$$t .= "</tr></" . $t . ">";
-		}
-		print "{$thead}\n<tbody>\n";
-		foreach ($stm_fetch as $mail){
-			print "\n<tr>";
-			foreach ($dbc as $c){
-                           if(in_array($c,$fields))
-				switch($c){
-				case 'from':
-					print  "<th>{$mail['fromm']}</th>\n";
-					break;
-				case 'to':
-					print  "<th>{$mail['too']}</th>\n";
-                                        break;
-				default:
-                                	print  "<th>{$mail[$c]}</th>\n";
-					break;
-				}
-                        }
-			print "</tr>\n";
-		}
-		print "</tbody>\n{$tfoot}\n</table>";
-	}
-  else{
-  		print '<table id="dtresult" class="display" width="90%" border="0" cellpadding="8" cellspacing="0">';
-		$tss=array('thead','tfoot');
-		$dbc=array('date','server','from','to','subject','delay','helo','status','status_info','size','sid',',msgid','bounce','relay');
-                foreach ($tss as $t){
+	print '<table id="dtresult" class="display" width="90%" border="0" cellpadding="8" cellspacing="0">';
+	$tss=array('thead','tfoot');
+	$dbc=array('date','server','from','to','subject','delay','helo','status','status_info','size','sid','msgid','bounce','relay','log');
+        foreach ($tss as $t){
 		$$t = "<" . $t . "><tr>\n";
 		foreach ($dbc as $c){
                 	if(in_array($c,$fields))
                         	$$t .= "<th>".ucfirst($c)."</th>";
                         }
 		$$t .= "</tr></" . $t . ">";
-		}
-		print "{$thead}\n<tbody>\n";
-		foreach ($stm_fetch as $mail){
-                        print "\n<tr>";
-                        foreach ($dbc as $c){
-                           if(in_array($c,$fields))
-				switch($c){
+	}
+	print "{$thead}\n<tbody>\n";
+	foreach ($stm_fetch as $mail) {
+        	print "\n<tr>";
+                foreach ($dbc as $c) {
+                	if(in_array($c,$fields)) {
+			   switch($c){
                                 case 'from':
                                         print  "<th>{$mail['fromm']}</th>\n";
                                         break;
-				case 'status':
+				case 'status_info':
                                         print  "<th>{$mail['info']}</th>\n";
                                         break;
                                 case 'to':
@@ -797,15 +739,15 @@ if ($_REQUEST['files']!= ""){
 					break;
 				}
                         }
-                        print "</tr>\n";
-                }
-		print "</tbody>\n{$tfoot}\n</table>";
-  }
+		}
+                print "</tr>\n";
+        }
+	print "</tbody>\n{$tfoot}\n</table>";
 	print <<<EOF
 <script>
 $(document).ready(function() {
     $('#dtresult').DataTable({
-	scrollY:        '50vh',
+	scrollY:        '60vh',
 	scrollCollapse: true,
 	dom: 'Bfrtip',
 	colReorder: {

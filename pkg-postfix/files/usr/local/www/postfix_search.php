@@ -36,7 +36,7 @@ if ($savemsg) {
 
 $uname=posix_uname();
 if ($uname['machine']=='amd64')
-        ini_set('memory_limit', '250M');
+        ini_set('memory_limit', '768M');
 
 $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 
@@ -154,20 +154,6 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 			</tr>
 	
 			<tr>
-                        <td width="22%" valign="top" class="vncell"><?=gettext("Log type: ");?></td>
-                        <td width="78%" class="vtable">
-                        <select name="drop2" id="queuetype">
-                        	<option value="NOQUEUE" selected="selected">NOQUEUE</option>
-							<option value="QUEUE">QUEUE</option>
-						</select>
-			<br>
-			<span class="vexpl">
-			<?=gettext("NOQUEUE logs means messages that where rejected in smtp negotiation.");?>
-			</span>
-			</td>
-			</tr>
-			
-			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Query Limit: ");?></td>
                         <td width="78%" class="vtable">
                         <select name="drop3" id="queuemax">
@@ -209,7 +195,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Message Fields: ");?></td>
                         <td width="78%" class="vtable">
-                        <select name="drop3" id="fields" size="13" multiple="multiple">
+                        <select name="drop3" id="fields" size="14" multiple="multiple">
                         	<option value="date"   selected="selected">Date</option>
                         	<option value="from"   selected="selected">From</option>
                         	<option value="to" 	   selected="selected">To</option>
@@ -218,12 +204,13 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
                         	<option value="status_info">Status Info</option>
                         	<option value="server">Server</option>
                         	<option value="subject">Subject</option>
-							<option value="size">Size</option>
-							<option value="sid">SID</option>
-							<option value="msgid">msgid</option>
-							<option value="bounce">bounce</option>
-							<option value="relay">Relay</option>
-							<option value="helo">Helo</option>
+				<option value="size">Size</option>
+				<option value="sid">SID</option>
+				<option value="msgid">msgid</option>
+				<option value="bounce">bounce</option>
+				<option value="relay">Relay</option>
+				<option value="helo">Helo</option>
+				<option value="log">Log source</option>
 			</select>
 			<br/>
 			<span class="vexpl">
@@ -288,18 +275,10 @@ function getsearch_results(sbutton,Wday,Wstatus) {
 		//check if its a widget funcion call
                 if (typeof Wstatus != "undefined") {
                    var $status= Wstatus;
-		   if (Wstatus === 'reject') {
-			var $fields='date,from,to,status,status_info';
-			var $queue = 'NOQUEUE';
-			var $status = '';
-		   } else {
-		   	var $fields='date,from,to,status,subject,status_info,delay';
-		   	var $queue = 'QUEUE';
-		   }
-		   $('#quetype').val($queue).change();
+	   	   var $fields='date,from,to,status,subject,status_info,delay';
+		   var $queue = 'ALL';
                 } else {
                    var $status= $('#status').val();
-		   var $queue= $('#queuetype').val();
 		   var $fields="";
  		   $('#fields').each(function () {
                                         var sThisVal = (this.checked ? "1" : "0");
@@ -340,7 +319,7 @@ function getsearch_results(sbutton,Wday,Wstatus) {
 					subject:$('#subject').val(),
 					msgid:	$('#msgid').val(),
 					files:	$files,
-					queue:	$queue,
+					queue:	'all',
 					relay:	$('#relay').val(),
 					sbutton:sbutton
                         	},
