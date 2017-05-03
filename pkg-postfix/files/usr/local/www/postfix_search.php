@@ -141,6 +141,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
                         	<option value="" selected="selected">any</option>
                         	<option value="sent">sent</option>
 							<option value="bounced">bounced</option>
+							<option value="soft bounce">soft bounce</option>
 							<option value="reject">reject</option>
 							<option value="spam">spam</option>
 							<option value="hold">hold</option>
