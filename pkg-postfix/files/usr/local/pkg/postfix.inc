@@ -285,6 +285,14 @@ function check_cron() {
 	}
 }
 
+function postfix_check_autowhitelist($auto_whitelist){
+	if ($auto_whitelist > 0) {
+		return (",\n\t\t\tcidr:" . POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelist_cidr\n");
+	} else {
+		return ("\n");
+	}
+}
+
 function postfix_check_postwhite($status,$domains) {
 	$postwhite_acl_file = POSTFIX_LOCALBASE . "/etc/postfix/postscreen_spf_whitelist.cidr";
 	if ($status == 'on') {
@@ -310,10 +318,10 @@ function postfix_check_postwhite($status,$domains) {
 		}
 
 		//return parcial postscreen whitelist file
-		return (",\n\t\t\tcidr:" . POSTFIX_LOCALBASE . "/etc/postfix/postscreen_spf_whitelist.cidr\n");
+		return (",\n\t\t\tcidr:" . POSTFIX_LOCALBASE . "/etc/postfix/postscreen_spf_whitelist.cidr");
 	} else {
 		//return parcial postscreen whitelist file
-		return("\n");
+		return("");
 	}
 }
 
@@ -779,6 +787,7 @@ EOF;
 		}
 		$postfix_main .= "postscreen_access_list = permit_mynetworks,\n\t\t\tcidr:".POSTFIX_LOCALBASE."/etc/postfix/cal_cidr";
 		$postfix_main .= postfix_check_postwhite($antispam['postwhite'],$antispam['postwhite_list']);
+		$postfix_main .= postfix_check_autowhitelist($antispam['auto_whitelist']);
 		$postfix_main .= "postscreen_dnsbl_action= ".$antispam['zombie_blocker']."\n";
 		$postfix_main .= "postscreen_blacklist_action= ".$antispam['zombie_blocker']."\n";
 

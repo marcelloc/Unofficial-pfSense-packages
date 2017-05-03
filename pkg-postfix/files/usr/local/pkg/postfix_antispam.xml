@@ -124,7 +124,18 @@
 				<option><name>Disabled</name><value>disabled</value></option>
 				</options>
 		</field>
-
+                <field>
+                        <fielddescr>Auto whitelist</fielddescr>
+                        <fieldname>auto_whitelist</fieldname>
+                        <type>select</type>
+                        <options>
+                                <option><name>0 - Disabled</name><value>0</value></option>
+                                <option><name>2</name><value>2</value></option>
+                                <option><name>4</name><value>4</value></option>
+                                <option><name>6</name><value>6</value></option>
+                        </options>
+                        <description><![CDATA[Auto whitelist cloud based domains after X different ips <b>'450 4.3.2 Service currently unavailable'</b> rejects.]]></description>
+                </field>
 		<field>
 			<fielddescr>greet wait time</fielddescr>
 			<fieldname>greet_time</fieldname>
