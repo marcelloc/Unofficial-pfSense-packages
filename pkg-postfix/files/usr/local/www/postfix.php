@@ -680,6 +680,7 @@ if ($_REQUEST['files']!= ""){
 				}
 			}
 			//queue
+			$stm = preg_replace("/ and status =/"," and mail_status.info =",$stm);
 			$result2= $dbhandle->query($stm2 . $stm . " order by date desc $limit_prefix $limit;");
                         if ($result2){
                                 //var_dump($result2->fetchArray(SQLITE3_ASSOC));
