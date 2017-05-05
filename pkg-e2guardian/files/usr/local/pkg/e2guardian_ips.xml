@@ -112,6 +112,18 @@
 
 			<cols>80</cols><rows>12</rows>
 			<encoding>base64</encoding>
+		</field>		<field>
+			<name>GrupoAdmin (0)</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fieldname>admin</fieldname>
+			<fielddescr>admin</fielddescr>
+			<description><![CDATA[Include ip addresses and or ip addresses/netmask for this group one per line<br>Hint:192.168.1.0/255.255.255.0<br>192.168.1.5]]></description>
+			<type>textarea</type>
+
+			<cols>80</cols><rows>12</rows>
+			<encoding>base64</encoding>
 		</field>	</fields>
 	<custom_php_command_before_form>
 		e2guardian_check_config();

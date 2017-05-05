@@ -20,26 +20,23 @@
  */
 
 $dgf= <<<EOF
-# e2guardian filter group config file for version 3.5.1
+# e2guardian filter group config file for version 4.1.1
 
 
 # Filter group mode
+# This file is re-read on gentle restart and any changes actions
+# Filter group mode IS NOT LONGER SUPPORTED after 4.x
 # This option determines whether members of this group have their web access
-# unfiltered, filtered, or banned. This mechanism replaces the "banneduserlist"
-# and "exceptionuserlist" files from previous versions.
+# unfiltered, filtered, or banned.
 #
 # 0 = banned
-# 1 = filtered
-# 2 = unfiltered (exception)
-#
-# Only filter groups with a mode of 1 need to define phrase, URL, site, extension,
-# mimetype and PICS lists; in other modes, these options are ignored to conserve
-# memory.
-#
-# Defaults to 0 if unspecified.
+# Replaced by bannedsitelist and bannedsitelist
+# To block all sites except those in the
+# exceptionsitelist and greysitelist files remove
+# the # from the next line to leave only a '**':
 # Unauthenticated users are treated as being in the first filter group.
-groupmode = {$e2guardian_groups['mode']}
-
+# groupmode = {$e2guardian_groups['mode']} #DISABLED
+ 
 # Filter group name
 # Used to fill in the -FILTERGROUP- placeholder in the HTML template file, and to
 # name the group in the access logs
@@ -67,7 +64,9 @@ weightedphraselist = '{$e2_dir}/etc/e2guardian/lists/weightedphraselist.g_{$e2gu
 exceptionphraselist = '{$e2_dir}/etc/e2guardian/lists/exceptionphraselist.g_{$e2guardian_groups['name']}'
 bannedsitelist = '{$e2_dir}/etc/e2guardian/lists/bannedsitelist.g_{$e2guardian_groups['name']}'
 greysitelist = '{$e2_dir}/etc/e2guardian/lists/greysitelist.g_{$e2guardian_groups['name']}'
+# Note: bannedsslsitelist is ignored if MITM is enabled
 # bannedsslsitelist = '/usr/local/etc/e2guardian/lists/bannedsslsitelist'			TODO INCLUDE ON GUI
+# greysslsitelist = '/usr/local/etc/e2guardian/lists/greysslsitelist'
 exceptionsitelist = '{$e2_dir}/etc/e2guardian/lists/exceptionsitelist.g_{$e2guardian_groups['name']}'
 bannedurllist = '{$e2_dir}/etc/e2guardian/lists/bannedurllist.g_{$e2guardian_groups['name']}'
 greyurllist = '{$e2_dir}/etc/e2guardian/lists/greyurllist.g_{$e2guardian_groups['name']}'
@@ -77,13 +76,15 @@ bannedregexpurllist = '{$e2_dir}/etc/e2guardian/lists/bannedregexpurllist.g_{$e2
 picsfile = '{$e2_dir}/etc/e2guardian/lists/g_{$e2guardian_groups['name']}'
 contentregexplist = '{$e2_dir}/etc/e2guardian/lists/contentregexplist.g_{$e2guardian_groups['name']}'
 urlregexplist = '{$e2_dir}/etc/e2guardian/lists/urlregexplist.g_{$e2guardian_groups['name']}'
-authexceptionsitelist = '{$e2_dir}/etc/e2guardian/lists/authexceptionsitelist'
-authexceptionurllist = '{$e2_dir}/etc/e2guardian/lists/authexceptionurllist'
+
 # refererexceptionsitelist = '/usr/local/etc/e2guardian/lists/refererexceptionsitelist'		TODO INCLUDE ON GUI
 # refererexceptionurllist = '/usr/local/etc/e2guardian/lists/refererexceptionurllist'		
 # embededreferersitelist = '/usr/local/etc/e2guardian/lists/embededreferersitelist'
 # embededrefererurllist = '/usr/local/etc/e2guardian/lists/embededrefererurllist'
 # urlredirectregexplist = '/usr/local/etc/e2guardian/lists/urlredirectregexplist'
+
+authexceptionsitelist = '{$e2_dir}/etc/e2guardian/lists/authexceptionsitelist'
+authexceptionurllist = '{$e2_dir}/etc/e2guardian/lists/authexceptionurllist'
 
 # local versions of lists (where LOCAL_LISTS enabled)						TODO INCLUDE ON GUI
 # enablelocallists = on/off
@@ -96,10 +97,6 @@ authexceptionurllist = '{$e2_dir}/etc/e2guardian/lists/authexceptionurllist'
 #localbannedsslsitelist = '/usr/local/etc/e2guardian/lists/localbannedsslsitelist'
 #localgreysslsitelist = '/usr/local/etc/e2guardian/lists/localgreysslsitelist'
 #localbannedsearchlist = '/usr/local/etc/e2guardian/lists/localbannedsearchlist'
-
-#!! Not compiled !! authexceptionsitelist = '/usr/local/etc/e2guardian/lists/authexceptionsitelist'	TODO COMPILE
-#!! Not compiled !! authexceptionurllist = '/usr/local/etc/e2guardian/lists/authexceptionurllist'
-
 
 # Filetype filtering
 #
@@ -133,7 +130,7 @@ bannedmimetypelist = '{$e2_dir}/etc/e2guardian/lists/bannedmimetypelist.g_{$e2gu
 exceptionfilesitelist = '{$e2_dir}/etc/e2guardian/lists/exceptionfilesitelist.g_{$e2guardian_groups['name']}'
 exceptionfileurllist = '{$e2_dir}/etc/e2guardian/lists/exceptionfileurllist.g_{$e2guardian_groups['name']}'
 
-# POST protection (web upload and forms)					TODO CHANGE CODE FROM GENERAL TO GROUP
+# POST protection (web upload and forms)
 # does not block forms without any file upload, i.e. this is just for
 # blocking or limiting uploads
 # measured in kibibytes after MIME encoding and header bumph
@@ -169,15 +166,9 @@ bannedregexpheaderlist = '{$e2_dir}/etc/e2guardian/lists/bannedregexpheaderlist.
 # Phrase filtering additional mime types (by default text/*)					TODO INLCUDE ON GUI
 # textmimetypes = 'application/xhtml+xml,application/xml,application/json,application/javascript,application/x-javascript'
 
-# Weighted phrase mode										TODO CHECK IF GUI MATCHES THIS CONF
-# 0 = off = do not use the weighted phrase feature.
-# 1 = on, normal = normal weighted phrase operation.
-# 2 = on, singular = each weighted phrase found only counts once on a page.
-# IMPORTANT: Note that setting this to "0" turns off all features which
-# extract phrases from page content, including banned & exception
-# phrases (not just weighted), search term filtering, and scanning for
-# links to banned URLs.
-# Defaults to 1.
+# Optional; overrides the weightedphrasemode option in e2guardian.conf
+# for this particular group.  See documentation for supported values in
+# that file.
 weightedphrasemode = {$e2guardian_groups['weightedphrasemode']}
 
 # Naughtiness limit
@@ -284,11 +275,7 @@ categorydisplaythreshold = {$e2guardian_groups['categorydisplaythreshold']}
 embeddedurlweight = {$e2guardian_groups['embeddedurlweight']}
 
 maxuploadsize = {$e2guardian_groups['maxuploadsize']}
-# Enable PICS rating support
-#
-# Defaults to disabled
-# (on | off)
-enablepics = {$e2guardian_groups['enablepics']}
+# Enable PICS rating support  - PICS support withdrawn
 
 # Temporary Denied Page Bypass
 # This provides a link on the denied page to bypass the ban for a few minutes.  To be
@@ -479,10 +466,10 @@ deepurlanalysis = {$e2guardian_groups['deepurlanalysis']}
 #!! Not compiled !!threshold = 0
 
 #SSL site rewriting (i.e. CNAME)				TODO INCLUDE ON GUI
-# Rewrite hostname in ssl connect
-# better than adding CNAME records to DNS
-# Use to enforce Youtube restricted mode
 # sslsiteregexplist = '/usr/local/etc/e2guardian/lists/sslsiteregexplist'
+# NOTE to enable SSL MITM or CERT checking
+# enablessl must be defined as 'yes' in e2guardian.conf
+sslsiteregexplist = '{$e2_dir}/etc/e2guardian/lists/sslsiteregexplist.g_{$e2guardian_groups['name']}'
 
 #SSL certificate checking
 # Check that ssl certificates for servers on https connections are valid

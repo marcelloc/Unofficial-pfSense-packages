@@ -219,23 +219,7 @@ print "<PRE>inicio";
 	$filterport = ($e2guardian['filterports'] ? $e2guardian['filterports'] : "8080");
 	$softrestart = (preg_match('/softrestart/', $e2guardian['daemon_options']) ? "on" : "off");
 	$nodaemon = (preg_match('/nodaemon/', $e2guardian['daemon_options']) ? "yes" : "off");
-	if (preg_match("/(\d+)\/(\d+)/", $e2guardian['children'], $matches)) {
-		$minchildren = $matches[1];
-		$maxchildren = $matches[2];
-	} else {
-		$minchildren = 8;
-		$maxchildren = 120;
-	}
-	if (preg_match("/(\d+)\/(\d+)/", $e2guardian['sparechildren'], $matches)) {
-		$minsparechildren = $matches[1];
-		$maxsparechildren = $matches[2];
-	} else {
-		$minsparechildren = 8;
-		$maxsparechildren = 64;
-	}
-	$maxagechildren = ($e2guardian['maxagechildren'] ? $e2guardian['maxagechildren'] : "500");
-	$maxips = ($e2guardian['maxips'] ? $e2guardian['maxips'] : "0");
-	$preforkchildren = ($e2guardian['preforkchildren']? $e2guardian['preforkchildren'] : "10");
+	$httpworkers=($e2guardian['httpworkers'] ? $e2guardian['httpworkers'] : "100");
 	$proxyip = ($e2guardian['proxyip'] ? $e2guardian['proxyip'] : "127.0.0.1");
 	$proxyport = ($e2guardian['proxyport']?$e2guardian['proxyport'] : "3128");
 	$proxytimeout = ($e2guardian['proxytimeout'] ? $e2guardian['proxytimeout'] : "30");
@@ -361,6 +345,7 @@ print "<PRE>inicio";
 		"/lists/bannedmimetypelist",
 		"/lists/headerregexplist",
 		"/lists/bannedregexpheaderlist",
+		"/lists/sslsiteregexplist",
 		"/lists/authplugins/ipgroups",
 		"/lists/contentscanners/exceptionvirusextensionlist",
 		"/lists/contentscanners/exceptionvirusmimetypelist",
@@ -392,6 +377,7 @@ print "<PRE>inicio";
 			mkdir ($dir, 0755, true);
 		}
 	}
+        $enablessl=($e2guardian_config["enablessl"] == "on" ? "on" : "off");
 	$ca_cert = lookup_ca($e2guardian_config["dca"]);
 	if ($ca_cert != false) {
 		if (base64_decode($ca_cert['prv'])) {
@@ -1377,12 +1363,11 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 					}
 					break;
 				case "auto":
-					if (is_array($config['hasync'])) {
-						$system_carp = $config['hasync'];
+					if (is_array($config['installedpackages']['carpsettings']) && is_array($config['installedpackages']['carpsettings']['config'])) {
+						$system_carp = $config['installedpackages']['carpsettings']['config'][0];
 						$rs[0]['ipaddress'] = $system_carp['synchronizetoip'];
 						$rs[0]['username'] = $system_carp['username'];
 						$rs[0]['password'] = $system_carp['password'];
-						$rs[0]['sync_type'] = "xmlrpc";
 						if (!is_ipaddr($system_carp['synchronizetoip'])) {
 							log_error("[E2guardian] xmlrpc sync is enabled but there is no system backup hosts to push squid config.");
 							return;

@@ -21,7 +21,7 @@
 
 #create e2guardian.conf
 	$dg=<<<EOF
-# E2guardian config file for version 3.5.1
+# E2guardian config file for version 4.1
 
 # Language dir where languages are stored for internationalisation.
 # The HTML template within this dir is only used when reportinglevel
@@ -54,6 +54,10 @@ logexceptionhits = {$logexceptionhits}
 # 2 = CSV-style format
 # 3 = Squid Log File Format
 # 4 = Tab delimited
+# 5 = Protex format
+# 6 = Protex format with server field blanked
+# 7 = Squid Log File Format Secure extension (SF Actions, use comercial report tools (ex: McAfee Webreport))
+
 logfileformat = {$logfileformat}
 
 # Log a specific value from header //To be included on gui
@@ -199,22 +203,41 @@ usecustombannedflash = {$usecustombannedflash}
 filtergroups = {$filtergroups}
 filtergroupslist = '{$e2guardian_dir}/lists/filtergroupslist'
 
-
+# If on it a user without group is considered like unauthenfied
+# E2guardian tries the next plugin
+# If off the user is connected with group1
+# Defaults to off
+# authrequiresuserandgroup = off 				//TODO check this option
 
 # Authentication files location
 bannediplist = '{$e2guardian_dir}/lists/bannediplist'
 exceptioniplist = '{$e2guardian_dir}/lists/exceptioniplist'
 
-# Per-Room blocking definition directory
+# Per-Room definition directory
 # A directory containing text files containing the room's name followed by IPs or ranges
-# Think of it as bannediplist on crack
-perroomblockingdirectory = '{$e2guardian_dir}/lists/bannedrooms/'
+# and optionaly site and url lists
+# Think of it as bannediplist and/or exceptions on crack
+# perroomdirectory = '/usr/local/etc/e2guardian/lists/rooms/'
+perroomdirectory = '{$e2guardian_dir}/lists/rooms/'
 
 # Show weighted phrases found
 # If enabled then the phrases found that made up the total which excedes
 # the naughtyness limit will be logged and, if the reporting level is
 # high enough, reported. on | off
 showweightedfound = {$showweightedfound}
+
+# Weighted phrase mode
+# There are 3 possible modes of operation:
+# 0 = off = do not use the weighted phrase feature.
+# 1 = on, normal = normal weighted phrase operation.
+# 2 = on, singular = each weighted phrase found only counts once on a page.
+#
+# IMPORTANT: Note that setting this to "0" turns off all features which
+# extract phrases from page content, including banned & exception
+# phrases (not just weighted), search term filtering, and scanning for
+# links to banned URLs.
+#
+weightedphrasemode = {$weightedphrasemode}
 
 # Positive (clean) result caching for URLs
 # Caches good pages so they don't need to be scanned again.
@@ -223,13 +246,12 @@ showweightedfound = {$showweightedfound}
 # 1000 = recommended for most users
 # 5000 = suggested max upper limit
 # If you're using an AV plugin then use at least 5000.
-urlcachenumber = {$urlcachenumber}
+# urlcachenumber = {$urlcachenumber} **NOT YET IMPLEMENTED on 4.1
 #
 # Age before they are stale and should be ignored in seconds
 # 0 = never
 # 900 = recommended = 15 mins
-urlcacheage ={$urlcacheage}
-
+# urlcacheage ={$urlcacheage} **NOT YET IMPLEMENTED on 4.1
 
 
 # Cache for content (AV) scan results as 'clean'
@@ -240,8 +262,7 @@ urlcacheage ={$urlcacheage}
 # on = cache results; do not re-scan
 # off = do not cache; always re-scan
 # (on|off) default = on.
-scancleancache = {$scancleancache}
-
+# scancleancache = {$scancleancache} **NOT YET IMPLEMENTED on 4.1
 
 
 # Smart, Raw and Meta/Title phrase content filtering options
@@ -336,7 +357,7 @@ logclienthostnames = {$logclienthostnames}
 # This can increase process start speed on slow computers.
 # Fast computers do not need this option.
 # on | off, default = on
-createlistcachefiles = {$createlistcachefiles}
+# createlistcachefiles = {$createlistcachefiles}  TODO REMOVE FROM HERE AND GUI
 
 
 # Prefer cached list files
@@ -346,7 +367,7 @@ createlistcachefiles = {$createlistcachefiles}
 # list update process which results in - for example - up-to-date, pre-sorted
 # ".processed" list files with dummy unprocessed files.
 # on | off, default = off
-prefercachedlists = {$prefercachedlists}
+# prefercachedlists = {$prefercachedlists} TODO REMOVE FROM HERE AND GUI
 
 # Max content filter size
 # Sometimes web servers label binary files as text which can be very
@@ -359,8 +380,6 @@ prefercachedlists = {$prefercachedlists}
 # use 0 to set it to maxcontentramcachescansize
 maxcontentfiltersize = {$maxcontentfiltersize}
 
-
-
 # Max content ram cache scan size
 # This is only used if you use a content scanner plugin such as AV
 # This is the max size of file that DG will download and cache
@@ -371,8 +390,6 @@ maxcontentfiltersize = {$maxcontentfiltersize}
 # This option may be ignored by the configured download manager.
 maxcontentramcachescansize = {$maxcontentramcachescansize}
 
-
-
 # Max content file cache scan size
 # This is only used if you use a content scanner plugin such as AV
 # This is the max size file that DG will download
@@ -381,14 +398,10 @@ maxcontentramcachescansize = {$maxcontentramcachescansize}
 # The size is in Kibibytes - eg 10240 = 10Mb
 maxcontentfilecachescansize = {$maxcontentfilecachescansize}
 
-
-
 # File cache dir
 # Where DG will download files to be scanned if too large for the
 # RAM cache.
 filecachedir = '/tmp'
-
-
 
 # Delete file cache after user completes download
 # When a file gets save to temp it stays there until it is deleted.
@@ -399,8 +412,6 @@ filecachedir = '/tmp'
 # on|off (defaults to on)
 deletedownloadedtempfiles = {$deletedownloadedtempfiles}
 
-
-
 # Initial Trickle delay
 # This is the number of seconds a browser connection is left waiting
 # before first being sent *something* to keep it alive.  The
@@ -410,16 +421,12 @@ deletedownloadedtempfiles = {$deletedownloadedtempfiles}
 # This may be ignored by the configured download manager.
 initialtrickledelay = {$initialtrickledelay}
 
-
-
 # Trickle delay
 # This is the number of seconds a browser connection is left waiting
 # before being sent more *something* to keep it alive.  The
 # *something* depends on the download manager chosen.
 # This may be ignored by the configured download manager.
 trickledelay = {$trickledelay}
-
-
 
 # Download Managers
 # These handle downloads of files to be filtered and scanned.
@@ -449,10 +456,8 @@ trickledelay = {$trickledelay}
 # and other matching mechanisms.
 #
 downloadmanager = '{$e2guardian_dir}/downloadmanagers/fancy.conf'
-downloadmanager = '{$e2guardian_dir}/downloadmanagers/trickle.conf'
+#downloadmanager = '{$e2guardian_dir}/downloadmanagers/trickle.conf'
 downloadmanager = '{$e2guardian_dir}/downloadmanagers/default.conf'
-
-
 
 # Content Scanners (Also known as AV scanners)
 # These are plugins that scan the content of all files your browser fetches
@@ -466,15 +471,12 @@ downloadmanager = '{$e2guardian_dir}/downloadmanagers/default.conf'
 #
 {$contentscanners}
 
-
 # Content scanner timeout
 # Some of the content scanners support using a timeout value to stop
 # processing (eg AV scanning) the file if it takes too long.
 # If supported this will be used.
 # The default of 60 seconds is probably reasonable.
 contentscannertimeout = {$contentscannertimeout}
-
-
 
 # Content scan exceptions
 # If 'on' exception sites, urls, users etc will be scanned
@@ -483,8 +485,6 @@ contentscannertimeout = {$contentscannertimeout}
 # Correct use of grey lists are a better idea.
 # (on|off) default = off
 contentscanexceptions = {$contentscanexceptions}
-
-
 
 # Auth plugins
 # These replace the usernameidmethod* options in previous versions. They
@@ -523,8 +523,6 @@ mapauthtoports = off
 # Defaults to off.
 recheckreplacedurls = {$recheckreplacedurls}
 
-
-
 # Misc settings
 
 # if on it adds an X-Forwarded-For: <clientip> to the HTTP request
@@ -557,76 +555,17 @@ logconnectionhandlingerrors = {$logconnectionhandlingerrors}
 #
 logsslerrors = {$logsslerrors}
 
-
-# Fork pool options
-
-# If on, this causes DG to write to the log file whenever child processes are
-# created or destroyed (other than by crashes). This information can help in
-# understanding and tuning the following parameters, but is not generally
-# useful in production.
-logchildprocesshandling = {$logchildprocesshandling}
-
-# sets the maximum number of processes to spawn to handle the incoming
-# connections.  Max value usually 250 depending on OS.
-# On large sites you might want to try 180.
-maxchildren = {$maxchildren}
-
-
-# sets the minimum number of processes to spawn to handle the incoming connections.
-# On large sites you might want to try 32.
-minchildren = {$minchildren}
-
-
-# sets the minimum number of processes to be kept ready to handle connections.
-# On large sites you might want to try 8.
-minsparechildren = {$minsparechildren}
-
-
-# sets the minimum number of processes to spawn when it runs out
-# On large sites you might want to try 10.
-preforkchildren = {$preforkchildren}
-
-
-# sets the maximum number of processes to have doing nothing.
-# When this many are spare it will cull some of them.
-# On large sites you might want to try 64.
-maxsparechildren = {$maxsparechildren}
-
-
-# sets the maximum age of a child process before it croaks it.
-# This is the number of connections they handle before exiting.
-# On large sites you might want to try 10000.
-maxagechildren = {$maxagechildren}
-
-
-# Sets the maximum number client IP addresses allowed to connect at once.
-# Use this to set a hard limit on the number of users allowed to concurrently
-# browse the web. Set to 0 for no limit, and to disable the IP cache process.
-maxips = {$maxips}
-
-
+# note this replaces all min/max etc children settings in previous versions
+#
+# This figure is the maximum number of concurrent connections.
+# If more connections are made, connections will queue until a worker thread is free.
+# On large site you might want to try 5000 (max value 20000)
+httpworkers = {$httpworkers}
 
 # Process options
 # (Change these only if you really know what you are doing).
-# These options allow you to run multiple instances of E2guardian on a single machine.
+# These options allow you to run multiple instances of e2guardian on a single machine.
 # Remember to edit the log file path above also if that is your intention.
-
-# IPC filename
-#
-# Defines IPC server directory and filename used to communicate with the log process.
-ipcfilename = '/tmp/.dguardianipc'
-
-# URL list IPC filename
-#
-# Defines URL list IPC server directory and filename used to communicate with the URL
-# cache process.
-urlipcfilename = '/tmp/.dguardianurlipc'
-
-# IP list IPC filename
-#
-# Defines IP list IPC server directory and filename, for communicating with the client
-# IP cache process.
-ipipcfilename = '/tmp/.dguardianipipc'
 
 # PID filename
 #
@@ -671,6 +610,11 @@ softrestart = {$softrestart}
 # Path (sendmail-compatible) email program, with options.
 # Not used if usesmtp is disabled (filtergroup specific).
 #!! Not compiled !!mailer = '/usr/sbin/sendmail -t'
+
+# Enable SSL support  - NEW for v4.0
+# This must be present to enable MITM and/or Cert checking
+# default is off
+enablessl = {$enablessl}
 
 #SSL certificate checking path
 #Path to CA certificates used to validate the certificates of https sites.
@@ -720,24 +664,21 @@ softrestart = {$softrestart}
 # monitor helper path								TODO INLCUDE ON GUI or INC
 # If defined this script/binary will be called with start or stop appended as follows:-
 #
-# At start after e2guardian has started monitorstart children with ' start' appended
-# When e2guardian is stopping with ' stop' appended
-# If cache stops responding with ' stop' appended
-# When cache resumes with ' start' appended
+# Note change in V4!!! - No longer detects cache failure
+# At start after e2guardian has started listener and worker threads with
+# ' start' appended
+# When e2guardian is stopping with ' stop' appended 
 # monitorhelper = '/usr/local/bin/mymonitor'
 
 # monitor flag prefix path							
 # If defined path will be used to generate flag files as follows:-
 #
-# At start after e2guardian has started monitorstart children with 'running' appended
+# At start after e2guardian has started listener and worker threads with
+# 'running' appended
 # When e2guardian is stopping with 'paused' appended
-# If cache stops responding with 'paused' appended
-# When cache resumes with 'running' appended
+# Note change in V4!!! - No longer detects cache failure
 # monitorflagprefix = '/tmp/e2g_run_flag_'					TODO INLCUDE ON GUI or INC
 
-# monitorstart - defaults to minchildren
-# valid values between 1 and minchildren
-# monitorstart = 0
 
 EOF;
 ?>

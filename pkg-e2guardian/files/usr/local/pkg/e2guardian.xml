@@ -271,41 +271,14 @@
 			<size>3</size>
 		</field>
 		<field>
-			<fielddescr>Min/Max Children</fielddescr>
-			<fieldname>children</fieldname>
+			<fielddescr>Http workers</fielddescr>
+			<fieldname>httpworkers</fieldname>
 			<type>input</type>
 			<size>10</size>
-			<description><![CDATA[Default: <strong>8/120</strong><br>
-				Sets the minimun and maximum number of processes to spawn to handle the incoming connections.<br>
-				Max value usually 250 depending on OS.<br>
-				On large sites you might want to try 32/180.]]></description>
-		</field>
-			<field>
-			<fielddescr>Min/Max Spare Children</fielddescr>
-			<fieldname>sparechildren</fieldname>
-			<type>input</type>
-			<size>10</size>
-			<description><![CDATA[Default: <strong>4/32</strong><br>
-				Sets the minimum and maximum number of processes to be kept ready to handle connections.<br>
-				On large sites you might want to try 8/64.]]></description>
-		</field>
-		<field>
-			<fielddescr>Prefork Children</fielddescr>
-			<fieldname>preforkchildren</fieldname>
-			<type>input</type>
-			<size>10</size>
-			<description><![CDATA[sets the minimum number of processes to spawn when it runs out<br>
-				On large sites you might want to try 10]]></description>
-		</field>
-		<field>
-			<fielddescr>Max Age Children</fielddescr>
-			<fieldname>maxagechildren</fieldname>
-			<type>input</type>
-			<size>10</size>
-			<description><![CDATA[Default: <strong>500</strong><br>
-				Sets the maximum age of a child process before it croaks it.<br>
-				This is the number of connections they handle before exiting.<br>
-				On large sites you might want to try 10000.]]></description>
+			<description><![CDATA[Default: <strong>100</strong><br>
+				This figure is the maximum number of concurrent connections.<br>
+				If more connections are made, connections will queue until a worker thread is free.<br>
+				On large site you might want to try 5000 (max value 20000)]]></description>
 		</field>
 		<field>
 			<fielddescr>Max IPs</fielddescr>
@@ -315,7 +288,8 @@
 			<description><![CDATA[Default: <strong>0</strong><br>
 				Sets the maximum number of client IP addresses allowed to connect at once.<br>
 				Use this to set a hard limit on the number of users allowed to concurrently<br>
-				browse the web. Set to 0 for no limit, and to disable the IP cache process.]]></description>
+				browse the web. Set to 0 for no limit, and to disable the IP cache process.<br>
+				On 4.1 this function is NOT YET IMPLEMENTED]]></description>
 		</field>
 		<field>
 			<name>Parent proxy Settings</name>

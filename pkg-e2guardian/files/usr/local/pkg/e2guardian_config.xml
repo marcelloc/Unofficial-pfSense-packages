@@ -131,6 +131,18 @@
 			<multiple/>
 			<size>10</size>
 		</field>
+ 		<field>
+                        <fielddescr>Filter Mode</fielddescr>
+                        <fieldname>filtermode</fieldname>
+                        <description><![CDATA[ This option determines whether clients have their web access unfiltered, filtered, or banned.<br>
+                                This mechanism replaces the "banneduserlist" and "exceptionuserlist"]]></description>
+                        <type>select</type>
+                        <options>
+                                <option><name>Filtered (default)</name><value>1</value></option>
+                                <option><name>unfiltered (exception)</name><value>2</value></option>
+                                <option><name>banned</name><value>0</value></option>
+                        </options>
+                </field>
 		<field>
 			<fielddescr>Weighted phrase mode</fielddescr>
 			<fieldname>weightedphrasemode</fieldname>
@@ -196,6 +208,12 @@
 			<name>SSL man in the middle Filtering</name>
 			<type>listtopic</type>
 		</field>
+		<field>
+                        <fielddescr>Enable SSL support</fielddescr>
+                        <fieldname>enablessl</fieldname>
+                        <type>checkbox</type>
+                        <description><![CDATA[Enable or disable E2guardian SSL interception.]]></description>
+                </field>
 		<field>
 			<fielddescr>CA</fielddescr>
 			<fieldname>dca</fieldname>

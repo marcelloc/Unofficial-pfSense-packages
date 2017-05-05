@@ -86,14 +86,17 @@
 	</tabs>
 	<fields>
 		<field>
-			<name>Users</name>
+			<name>GrupoAdmin (0)</name>
 			<type>listtopic</type>
 		</field>
 		<field>
-			<fielddescr>Users</fielddescr>
-			<fieldname>info_checkbox</fieldname>
-			<type>checkbox</type>
-			<description><![CDATA[E2guardian users are required only when you have more then one group.<br>All unauthenticated users or unlisted users will match first filter group.]]></description>
+			<fieldname>admin</fieldname>
+			<fielddescr>admin</fielddescr>
+			<description><![CDATA[Include users for this group one per line<br>Hint:PFSENSE\marcelloc #Marcello Coutinho]]></description>
+			<type>textarea</type>
+
+			<cols>80</cols><rows>12</rows>
+			<encoding>base64</encoding>
 		</field>	</fields>
 	<custom_php_command_before_form>
 		e2guardian_check_config();
