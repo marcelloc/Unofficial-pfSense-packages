@@ -78,7 +78,7 @@ cp spamassassin-extremeshok_fromreplyto-master/01_extremeshok_fromreplyto.cf $pl
 plugin_file=DecodeShortURLs.zip
 fetch -o $plugin_file https://github.com/smfreegard/DecodeShortURLs/archive/master.zip
 unzip -o $plugin_file
-cp DecodeShortURLs-master/*pm $plugin_dir/plugins/
+cp DecodeShortURLs-master/*pm $plugin_dir
 cp DecodeShortURLs-master/*cf $plugin_dir
 
 #install 7z and pdf patch
