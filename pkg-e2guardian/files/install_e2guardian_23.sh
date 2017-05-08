@@ -55,6 +55,7 @@ cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
 cp /tmp/pfSense.conf $repo2
 
 # Install e2guardian freebsd package and deps
+pkg lock pkg
 pkg install e2guardian tinyproxy ca_root_nss
 
 # remove non ssl e2guardian packages after deps install
@@ -74,3 +75,4 @@ php /root/$check_service_file
 fetch -o - -q $prefix/pkg_edit.patch | patch -N -b -p0
 fetch -o - -q $prefix/pkg.patch | patch -N -b -p0
 fi
+pkg unlock pkg
