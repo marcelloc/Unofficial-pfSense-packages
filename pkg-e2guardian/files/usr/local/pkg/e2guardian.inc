@@ -539,6 +539,13 @@ print "<PRE>inicio";
 		}
 		file_put_contents($e2guardian_dir . "/lists/greysitelist." . $e2guardian_site['name'], ($e2guardian_site['greysite_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardiansiteacl']['config'][$count]['grey_sitelist']) : ""), LOCK_EX);
 
+		//sslregex_sitelist
+		if ($e2guardian_site['sslregex_sitelist'] == "" && file_exists($e2guardian_dir . '/lists/sslsiteregexplist.sample')) {
+			$config['installedpackages']['e2guardiansiteacl']['config'][$count]['sslregex_sitelist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/sslsiteregexplist.sample'));
+			$load_samples++;
+		}
+		file_put_contents($e2guardian_dir . "/lists/sslsiteregexplist." . $e2guardian_site['name'], ($e2guardian_site['sslregex_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardiansiteacl']['config'][$count]['sslregex_sitelist']) : ""), LOCK_EX);
+		
 		//logsitelist
 		if ($e2guardian_site['log_sitelist'] == "" && file_exists($e2guardian_dir . '/lists/logsitelist.sample')) {
 			$config['installedpackages']['e2guardiansiteacl']['config'][$count]['log_sitelist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/logsitelist.sample'));
@@ -887,6 +894,7 @@ print "<PRE>inicio";
 			case "3":
 				$groupreportinglevel = "reportinglevel = " . $e2guardian_groups['reportinglevel'];
 				$groupaccessdeniedaddress = "";
+				$htmltemplate = "htmltemplate='template.html'";
 				break;
 			default:
 				$groupreportinglevel = "";

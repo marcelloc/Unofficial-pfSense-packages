@@ -67,7 +67,9 @@ weightedphraselist = '{$e2_dir}/etc/e2guardian/lists/weightedphraselist.g_{$e2gu
 exceptionphraselist = '{$e2_dir}/etc/e2guardian/lists/exceptionphraselist.g_{$e2guardian_groups['name']}'
 bannedsitelist = '{$e2_dir}/etc/e2guardian/lists/bannedsitelist.g_{$e2guardian_groups['name']}'
 greysitelist = '{$e2_dir}/etc/e2guardian/lists/greysitelist.g_{$e2guardian_groups['name']}'
-# bannedsslsitelist = '/usr/local/etc/e2guardian/lists/bannedsslsitelist'			TODO INCLUDE ON GUI
+greysslsitelist = '{$e2_dir}/etc/e2guardian/lists/greysitelist.g_{$e2guardian_groups['name']}'
+sslsiteregexplist = '{$e2_dir}/usr/local/etc/e2guardian/lists/sslsiteregexplist.g_{$e2guardian_groups['name']}'
+bannedsslsitelist = '{$e2_dir}/etc/e2guardian/lists/bannedsitelist.g_{$e2guardian_groups['name']}'
 exceptionsitelist = '{$e2_dir}/etc/e2guardian/lists/exceptionsitelist.g_{$e2guardian_groups['name']}'
 bannedurllist = '{$e2_dir}/etc/e2guardian/lists/bannedurllist.g_{$e2guardian_groups['name']}'
 greyurllist = '{$e2_dir}/etc/e2guardian/lists/greyurllist.g_{$e2guardian_groups['name']}'
@@ -402,7 +404,7 @@ deepurlanalysis = {$e2guardian_groups['deepurlanalysis']}
 # e.g. {$e2_dir}/share/e2guardian/languages/ukenglish/custom.html
 #
 #htmltemplate = 'custom.html'
-
+{$htmltemplate}
 # Email reporting - original patch by J. Gauthier
 
 # Non standard delimiter (only used with accessdeniedaddress)			TODO INCLUDE ON GUI
