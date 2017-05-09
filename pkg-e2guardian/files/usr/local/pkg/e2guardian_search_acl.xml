@@ -95,7 +95,7 @@
 		<movable>on</movable>
 	</adddeleteeditpagefields>
 	<fields>
-		<filed>
+		<field>
 			<name><![CDATA[<a href="/firewall_aliases.php">Firewall Alias</a>&emsp;
                                 <a href="/firewall_rules.php">Firewall Rules</a>&emsp;<a href="status_logs_filter.php">Firewall Logs</a>]]>
 </name>
