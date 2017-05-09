@@ -52,7 +52,8 @@ for file in 	bin/adexport.pl pkg/postfix.inc pkg/postfix.xml pkg/postfix_acl.xml
 		www/postfix.php www/postfix_about.php www/postfix_queue.php www/postfix_recipients.php www/postfix_search.php \
 		www/postfix_view_config.php www/shortcuts/pkg_postfix.inc www/widgets/widgets/postfix.widget.php \
 		pkg/postfix_dkim.inc $dtdir/se-1.2.0.zip $dtdir/css/jquery.dataTables.min.css bin/sa-learn-pipe.sh\
-		$dtdir/js/jquery.dataTables.min.js www/postfix.sql.php bin/postwhite pkg/postfix_postwhite.template 
+		$dtdir/js/jquery.dataTables.min.js www/postfix.sql.php bin/postwhite pkg/postfix_postwhite.template \
+		www/postfix_cloud_domains.php 
  do
 	echo "fetching  /usr/local/$file from github"
 	fetch -q -o /usr/local/$file $prefix/usr/local/$file
@@ -79,6 +80,7 @@ cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
 cp /tmp/pfSense.conf $repo2
 
 # Install postfix package
+pkg lock pkg
 pkg install postfix libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap postfix-postfwd
 
 # restore repository configuration state
@@ -123,4 +125,5 @@ echo "update mail_noqueue set status='soft bounce' where status_info like '%Serv
 echo " ok"
 done
 
+pkg unlock pkg
 fi
