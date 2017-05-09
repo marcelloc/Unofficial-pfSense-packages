@@ -1,0 +1,20 @@
+--- configure.ac.orig	2017-03-13 13:05:36.000000000 -0300
++++ configure.ac	2017-04-06 14:56:01.653906129 -0300
+@@ -96,7 +96,7 @@
+ [], [-lnsl]
+ )
+ ])
+-AC_SEARCH_LIBS([inet_aton], [resolv])
++AC_SEARCH_LIBS([inet_aton])
+ 
+ AC_CACHE_SAVE
+ 
+@@ -614,7 +614,7 @@
+ 	AC_MSG_RESULT(yes)
+ 	dnsauth=true
+ 	DNSAUTHSUPPORT=""
+-	LIBS="${LIBS} -lresolv"
++	LIBS="${LIBS}"
+ 	AC_DEFINE([PRT_DNSAUTH],[],[Define to enable DNS auth plugin])
+ fi],
+ [
