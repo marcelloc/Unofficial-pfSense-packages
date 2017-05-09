@@ -1,0 +1,31 @@
+# This is an example map file for the sigh milter
+#
+# The file may contain comments starting at the beginning of a line. Also
+# blank lines are allowed. The format of this file is a two column syntax.
+# The first column is a key and the second a value. Key and value are devided
+# by one or more whitespace characters. It is important to NOT put whitspaces
+# in the value column!
+#
+# The key is simply an email address without angle braces. The value has the
+# following form:
+#
+# <cert> ':' /path/to/cert.pem ',' <key> ':' /path/to/key.pem
+#
+# <cert> and <key> are keywords. It doesn't matter, if you define the key
+# first and the cert second. The certificate file may not only contain the
+# pure certificate. You may also concatenate furthe intermediate certificates.
+# For both, the certificate and the key, the files must be in PEM format. See
+# the OpenSSL documentation how to convert it, if you got them in a different
+# format. Furthermore, the key must be in unencrypted. Make sure, you adopt
+# the privileges to restrict access only to the milter.
+#
+# Path names must be absolute and not relative paths!
+#
+# If you make changes to this file, you must send a SIGHUP signal to the milter
+# in order to reload this table.
+
+# Example:
+c@roessner.co		cert:/some/path/cert.pem,key:/some/path/key.pem
+
+# Another example
+test@example.com    key:/another/path/key.pem,cert:/another/path/cert.pem
