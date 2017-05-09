@@ -30,6 +30,7 @@ if [ ! -f /usr/bin/cc ] ;then
  tar -xvzf mk.tar.gz -C /
 fi
 
+pkg lock pkg
 pkg install gcc
 
 rehash
@@ -48,4 +49,5 @@ cpan -f -i Net::DNS
 cpan -f -i Time::HiRes
 cpan -f -i Storable
 
+pkg unlock pkg
 fi
