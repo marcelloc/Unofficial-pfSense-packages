@@ -34,30 +34,8 @@ $dkim_base_dir="/home/{$dkim_user}/keys";
 
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 
-function postfix_check_dkim() {
-   global $dkim_user,$dkim_base_dir,$savemsg,$config;
-/* obsolete. Moved to button and pkg.php
-   if (is_array($config['installedpackages']['postfixdomains']['config'])) {
-        $show_count=0;
-        $new_config=array();
-        foreach($config['installedpackages']['postfixdomains']['config'][0][row] as $domain_id => $saved_domains) {
-          if ($saved_domains['dkim'] == 'public') {
-             $savemsg.= "<br><div style='word-wrap: break-word; width: 600px'>".file_get_contents("{$dkim_base_dir}/{$saved_domains['domain']}/default.txt")."</div><br>";
-             $show_count++;
-             $config['installedpackages']['postfixdomains']['config'][0][row][$domain_id]['dkim']="yes";
-         }
-        if ($saved_domains['dkim'] == 'reset') {
-             $savemsg.= "<br>Info: New Domain Keys for {$saved_domains['domain']} are ready to use.<br>";
-             $show_count++;
-             $config['installedpackages']['postfixdomains']['config'][0][row][$domain_id]['dkim']="yes";
-         }
-
-       }
-       if ($show_count > 0) {
-        write_config('Postfix - restore domain option after show key or reset dkim selection.');
-       }
-  }
-*/
+function dkim_text_area_decode($text) {
+        return preg_replace('/\r\n/', "\n",base64_decode($text));
 }
 
 function postfix_domain_validate_input($post, &$input_errors) {
@@ -124,8 +102,8 @@ function dkim_save_files($domain,$private,$pub) {
 	global $dkim_user,$dkim_base_dir;
 	$dkim_dir = "$dkim_base_dir/$domain";
 	check_dkim_dir($dkim_dir,$dkim_user);
-	file_put_contents("{$dkim_dir}/default.private",base64_decode($private),LOCK_EX);
-        file_put_contents("{$dkim_dir}/default.txt",base64_decode($pub),LOCK_EX);
+	file_put_contents("{$dkim_dir}/default.private",dkim_text_area_decode($private),LOCK_EX);
+        file_put_contents("{$dkim_dir}/default.txt",dkim_text_area_decode($pub),LOCK_EX);
         chmod ("{$dkim_dir}/default.private",0640);
         chmod ("{$dkim_dir}/default.txt",0640);
 }
@@ -137,17 +115,24 @@ function dkim_create_key($domain,$bits,$gui_id) {
 	check_dkim_dir($dkim_dir,$dkim_user);
 	log_error("[postfix] Creating Domain key for {$domain} under {$dkim_dir}");
 	system("/usr/local/sbin/opendkim-genkey -D {$dkim_dir} -b {$bits} -h rsa-sha256 --subdomains -d {$domain} -s default");
-	$dkim_private=base64_encode(file_get_contents("{$dkim_base_dir}/{$domain}/default.private"));
-	$dkim_pub=base64_encode(file_get_contents("{$dkim_base_dir}/{$domain}/default.txt"));
+
 	chmod ("{$dkim_base_dir}/{$domain}/default.private",0640);
-	chmod ("{$dkim_base_dir}/{$domain}/default.txt",0640);
-                
-	// update gui with private and pub info
-        $config['installedpackages']['postfixdomainsng']['config'][$gui_id]['private'] = $dkim_private;
-        $config['installedpackages']['postfixdomainsng']['config'][$gui_id]['pub'] = $dkim_pub;
-        
+        chmod ("{$dkim_base_dir}/{$domain}/default.txt",0640);
+
 	chown("{$dkim_dir}/default.txt",$dkim_user);
         chown("{$dkim_dir}/default.private",$dkim_user);
+
+	dkim_sake_key_from_disk($domain,$gui_id);
+}
+
+function dkim_sake_key_from_disk($domain,$gui_id) {
+	global $config,$dkim_user,$dkim_base_dir;
+	
+	$dkim_private=base64_encode(file_get_contents("{$dkim_base_dir}/{$domain}/default.private"));
+        $dkim_pub=base64_encode(file_get_contents("{$dkim_base_dir}/{$domain}/default.txt"));
+
+	$config['installedpackages']['postfixdomainsng']['config'][$gui_id]['private'] = $dkim_private;
+        $config['installedpackages']['postfixdomainsng']['config'][$gui_id]['pub'] = $dkim_pub;	
 }
 
 function check_dkim_config (){
@@ -173,8 +158,8 @@ function check_dkim_config (){
                 //var_dump($dkim_bits);
                 //exit;
                 //Include Mynetwork hosts on DKIM Internal hosts
-                if (is_array($config['installedpackages']['postfixacl']['config']) && count($dkim_domains) > 0){
-                        $mynetwork = preg_replace( "/\r/" , "" , base64_decode($config['installedpackages']['postfixacl']['config'][0]['mynetworks']));
+                if (is_array($config['installedpackages']['postfixacl']['config']) && preg_match("/\w+/",$dkim_domains)){
+                        $mynetwork = preg_replace( "/\r/" , "" , dkim_text_area_decode($config['installedpackages']['postfixacl']['config'][0]['mynetworks']));
                         $myhosts = explode( "\n" , $mynetwork);
                         foreach ($myhosts as $myhost) {
                                 if (preg_match ( "@/@" , $myhost)) {
@@ -216,7 +201,7 @@ function check_dkim_config (){
 	} else {
 		$except_domains="";
 	}
-        if (count($dkim_domains) >0) {
+        if (preg_match("/\w+/",$dkim_domains[0])) {
         	$dkim_mode = "s";
         } else {
         	$dkim_mode = "";
@@ -224,7 +209,7 @@ function check_dkim_config (){
         if ($check_dkmi == "on") {
         	$dkim_mode .= "v";
         }
-        if ($check_dkmi == "on" || count($dkim_domains) >0){
+        if ($check_dkmi == "on" || preg_match("/\w+/",$dkim_domains)){
                 // print "configure dkim\n";
                 $config_domains = "";
                 foreach($dkim_domains as $domain => $domain_info) {
@@ -315,7 +300,8 @@ EOF;
 		//check domains
 		//var_dump($dkim_domains);
 		$dkim_create = array();
-		$keys_created="";
+		$keys_created = "";
+		$write_config = 0;
 		foreach ($dkim_domains as $dkim_domain => $dkim_info) {
                 	$new_saved_keys = array();
                         $keys_removed = "";
@@ -324,7 +310,9 @@ EOF;
 			if (array_key_exists($dkim_domain,$domains_on_disk)) {
 				// dkim key found on disk
 				if ($dkim_info['private'] == "") {
-				   //read key from disk
+				   	//read key from disk
+					dkim_sake_key_from_disk($dkim_domain,$dkim_info['id']);
+					$write_config++;
 				}
 				if ($dkim_info['private'] != $domains_on_disk[$dkim_domain]['private'] ){
 					//replace local file key with key on GUI
@@ -358,7 +346,7 @@ EOF;
                 file_put_contents($internal_hosts_file , $internal_hosts , LOCK_EX);
                 chown($internal_hosts_file , $dkim_user);
 
-                if ($keys_created != "" ){
+                if ($keys_created != "" || $write_config > 0){
                         write_config("DKIM keys created for {$keys_created}");
                 }
 

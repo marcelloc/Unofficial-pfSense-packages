@@ -149,10 +149,7 @@
 			<fieldname>private</fieldname>
 			<description><![CDATA[DKIM Private key<br>
 				You can paste a previous key or leave empty to create a new key.<br>
-			<button class="btn btn-success btn-sm" name='force_update' id='force_update' type='submit' value='force_update'>
-                                <i class="fa fa-refresh icon-embed-btn"></i>
-                                Create new DKIM keys
-                        </button>]]></description>
+			]]></description>
 			<type>textarea</type>
 			<cols>80</cols>
 			<rows>6</rows>
@@ -162,7 +159,7 @@
                         <fielddescr>TXT Record</fielddescr>
                         <fieldname>pub</fieldname>
                         <description><![CDATA[DKIM Public TXT record<br>
-			You can paste a previous key or leave empty to create a new key.]]></description>
+			You can paste a previous TXT record or leave empty to create a new one.]]></description>
                         <type>textarea</type>
                         <cols>80</cols>
                         <rows>6</rows>
@@ -234,7 +231,6 @@
                 </field>
 	</fields>
         <custom_php_command_before_form>
-                postfix_check_dkim();
         </custom_php_command_before_form>
 	<custom_php_install_command>
 		postfix_php_install_command();
