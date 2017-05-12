@@ -75,14 +75,14 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
                         </span>
 			</td>
 			</tr>
-	
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("To: ");?></td>
                         <td width="78%" class="vtable"><textarea id="to" rows="2" cols="50%"></textarea>
                         <br/>
 			<span class="vexpl">
 			<?=gettext("with wildcard'*' only one line else one email per line.");?>
-			</span>	
+			</span>
 			</td>
 			</tr>
 
@@ -95,7 +95,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 			</span>
 			</td>
 			</tr>
-	
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Subject: ");?></td>
                         <td width="78%" class="vtable"><input type="text" class="formfld unknown" id="subject" size="65%">
@@ -105,7 +105,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 			</span>
 			</td>
 			</tr>
-			
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Message_id: ");?>
                         <td width="78%" class="vtable"><input type="text" class="formfld unknown" id="msgid" size="65%">
@@ -114,7 +114,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 			<?=gettext("Message unique id.");?>
 			</span>
 			</tr>
-			
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("server: ");?></td>
                         <td width="78%" class="vtable"><input type="text" class="formfld unknown" id="server" size="30%">
@@ -133,7 +133,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 			</span>
 			</td>
 			</tr>
-	
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Message Status: ");?></td>
                         <td width="78%" class="vtable">
@@ -153,7 +153,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 			</span>
 			</td>
 			</tr>
-	
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Query Limit: ");?></td>
                         <td width="78%" class="vtable">
@@ -171,7 +171,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 			</span>
 			</td>
 			</tr>
-			
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Sqlite files: ");?></td>
                         <td width="78%" class="vtable">
@@ -192,7 +192,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
                         			echo '</select><br><span class="vexpl">'.gettext("Select what database files you want to use in your search.").'</span></td></td>';
                         	                        			}?>
 			</tr>
-			
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Message Fields: ");?></td>
                         <td width="78%" class="vtable">
@@ -230,7 +230,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 			</div>
 			</div>
 			</div>
-			
+
 <!-- table results -->
 <br/>
 	<div class="panel panel-default" style="margin-right:auto;margin-left:auto;width:95%;">
@@ -260,7 +260,7 @@ function getsearch_results(sbutton,Wday,Wstatus) {
 		var $new_from=$('#from').val().replace("\n", "','");
 		var $new_to=$('#to').val().replace("\n", "','");
 		var $new_sid=$('#sid').val().replace("\n", "','");
-			
+
 		//check if its a widget funcion call
 		if (typeof Wday != "undefined") {
 		  var $files= Wday + '.db';
@@ -333,10 +333,10 @@ function getsearch_results(sbutton,Wday,Wstatus) {
                         	}
                 	}
                 	);
-		
+
 			}
 		 }
-		
+
 	function activitycallback_postfix_search(transport) {
 		$('search_results').innerHTML = transport.responseText;
 		scroll(0,1100);
@@ -352,7 +352,7 @@ if (isset($_REQUEST['widget'])){
 $( document ).ready(function() {
 	$('#Select1').val('{$wfile}.db').change();
 	$('#queuetype').val('{$queue_select}').change();
-	$('#queuemax').val('unlimited').change();	
+	$('#queuemax').val('unlimited').change();
 	getsearch_results('search','{$wfile}','{$wstatus}')
 	});
 EOF;

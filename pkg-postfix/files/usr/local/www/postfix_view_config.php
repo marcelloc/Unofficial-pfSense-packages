@@ -2,7 +2,7 @@
 /*
  * postfix_view_config.php
  *
- * 
+ *
  * Copyright (c) 2011-2017 Marcello Coutinho
  * All rights reserved.
  *
@@ -36,9 +36,9 @@ if (isset($_REQUEST['file'])){
         		'body' => POSTFIX_LOCALBASE . "/etc/postfix/body_check",
         		'domains' => POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelisted_domains",
         		'cidr' => POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelisted_cidr");
-	
+
 	$file=preg_replace("/\W+/","",$_REQUEST['file']);
-      
+
 	if ( $files[$file] != "" && file_exists($files[$file])){
                 print "<PRE>" . $files[$file] . "\n" . file_get_contents($files[$file]) ."</PRE>";
         }
@@ -96,7 +96,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
     </ul>
   </div>
 </nav>
-	
+
 	</div>
 	</div>
         <div class="panel panel-default" style="margin-right:auto;margin-left:auto;width:95%;">

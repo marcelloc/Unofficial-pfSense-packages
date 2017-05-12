@@ -222,7 +222,7 @@ function grep_log(){
                 $maillog_filename = "/var/log/maillog";
         }
         echo " checking $maillog_filename ...\n";
-	
+
 	foreach ($postfix_arg['grep'] as $grep_array) {
 		$grep=$grep_array['s'];
 		$grep_day=$grep_array['d'];
@@ -370,7 +370,7 @@ function grep_log(){
 				write_db($stm_queue,"from");
 				$stm_noqueue=array();
 			        $stm_queue=array();
-				
+
 			}
 		}
 	#save log in database
@@ -468,7 +468,7 @@ function postfix_read_db($query,$file,$db_type='daily_db') {
 
 function postfix_opendb($file,$db_type='daily_db') {
         global $g,$postfix_dir,$postfix_arg;
-        
+
 	print "{$postfix_dir}{$file}\n";
         if (! is_dir($postfix_dir)) {
                 mkdir($postfix_dir,0775);
@@ -539,7 +539,7 @@ switch ($argv[1]){
 							  array('s'=> preg_replace($m,$r,date("M d H:",strtotime('-1min',$curr_time))),
 								'd' => date("Y-m-d",strtotime('-10min',$curr_time)))),
                                            'time' => '-01 hour');
-		
+
                 break;
         case "04hours":
                 $postfix_arg=array(     'grep' => array(array('s'=>preg_replace($m,$r,date("M d H:",strtotime('-04 hour',$curr_time))),
@@ -665,7 +665,7 @@ if ($_REQUEST['files']!= ""){
 		$stm .= $next . "status = '" . $_REQUEST['status'] . "'";
 	}
 	//$stm_fetch=array();
-	
+
 	foreach ($files as $postfix_db) {
               if (file_exists($postfix_dir.'/'.$postfix_db)) {
 			$dbhandle = new SQLite3($postfix_dir.'/'.$postfix_db);
@@ -707,7 +707,7 @@ if ($_REQUEST['files']!= ""){
 		<script src="/vendor/datatable/pdfmake-0.1.18/build/vfs_fonts.js" type="text/javascript"></script>
 		<script src="/vendor/datatable/Buttons-1.2.4/js/buttons.html5.min.js" type="text/javascript"></script>
 		<script src="/vendor/datatable/ColReorder-1.3.2/js/dataTables.colReorder.min.js" type="text/javascript"></script>
-		
+
 		<br/>
                 <?php
 

@@ -141,14 +141,14 @@ if (file_exists($postfix_dir.'/'.$postfix_db.".db")) {
 				if (preg_match("/\w+/",$row['status'])) {
 					$c['total'] = $c['total'] + $row['total'];
 				 	if ($row['status'] == 'reject') {
-						$c['reject'] = $c['reject'] + $row['total']; 
+						$c['reject'] = $c['reject'] + $row['total'];
 				 	} else {
 						$c[$row['status']] = $row['total'];
 					}
 				 }
 			}
 		}
-		
+
 		if(count($result) > 0) {
 			if ($head_count==0) {
 				open_table_header();

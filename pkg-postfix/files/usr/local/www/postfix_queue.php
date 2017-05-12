@@ -103,7 +103,7 @@ if ($_REQUEST['cmd']!=""){
 			if (preg_match("/\s+(T\s.*)/",$line,$matches)){
 		                $dbc=explode (" ",preg_replace("/\s+/"," ",$matches[1]));
 				$tss=array('thead','tfoot');
-				
+
                 		foreach ($tss as $t){
                         		$$t = "<" . $t . "><tr><th></th>\n";
                         			foreach ($dbc as $c){
@@ -117,7 +117,7 @@ if ($_REQUEST['cmd']!=""){
 				print "<tr>";
 				foreach (explode (" ",preg_replace("/\s+/"," ",$matches[1])) as $count)
 					print "<th>{$count}</th>";
-				print "</tr>";	
+				print "</tr>";
 				*/
 			}
 			else{
@@ -209,7 +209,7 @@ include("head.inc");
 			</span>
 			</td>
 			</tr>
-			
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("update frequency: ");?></td>
                         <td width="78%" class="vtable">
@@ -226,7 +226,7 @@ include("head.inc");
 			</span>
 			</td>
 			</tr>
-			
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("qshape Report flags: ");?></td>
                         <td width="78%" class="vtable">
@@ -243,7 +243,7 @@ include("head.inc");
 			</span>
 			</td>
 			</tr>
-			
+
 			<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("qshape Report type: ");?></td>
                         <td width="78%" class="vtable">
@@ -265,7 +265,7 @@ include("head.inc");
 			</div>
 			</td>
 			</tr>
-			
+
 			</table>
 			<br>
 				<div>
@@ -294,7 +294,7 @@ include("head.inc");
 			if ($('#run').val()=="running..." && loop!= 'running'){
 			$('#updatef').val(1);
 			$('#run').val("show queue");
-			
+
 			}
 			if ($('#run').val()=="show queue" || loop== 'running'){
 				$('#run').val("running...");
