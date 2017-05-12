@@ -8,6 +8,7 @@ require_once("/etc/inc/globals.inc");
 global $config;
 $domains=array();
 
+print "checking current domains configuration...";
 if (is_array($config['installedpackages']['postfixdomains'])) {
 	$postfix_domains=$config['installedpackages']['postfixdomains']['config'][0];
 		if (is_array($postfix_domains['row'])) {
@@ -19,6 +20,7 @@ if (is_array($config['installedpackages']['postfixdomains'])) {
 			}
 	}
 }
+print "ok\nMerging current dkim keys with domain config...";
 //var_dump($domain);
 if (is_array($config['installedpackages']['postfixdkim'])) {
 	foreach ($config['installedpackages']['postfixdkim']['config'][0] as $dkims) {
@@ -28,10 +30,11 @@ if (is_array($config['installedpackages']['postfixdkim'])) {
 		}
 	}
 }
+print "ok";
 foreach ($domains as $domain) {
 	$config['installedpackages']['postfixdomainsng']['config'][]=$domain;
-	// $config['installedpackages']['postfixdomains']=array();
-	// $config['installedpackages']['postfixdkim']=array();
+	unset($config['installedpackages']['postfixdomains']);
+	unset($config['installedpackages']['postfixdkim']);
 	
 }
 write_config();
