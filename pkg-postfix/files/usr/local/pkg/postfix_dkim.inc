@@ -41,24 +41,19 @@ function dkim_text_area_decode($text) {
 function postfix_domain_validate_input($post, &$input_errors) {
         global $dkim_user,$dkim_base_dir,$savemsgi,$config;
         $remain_domains=array();
-	$dkim_domain = "";
-        //print "<PRE>";
-        foreach ($post as $key => $value) {
-                if ($key == "domain") {
-			$dkim_domain = $value;
-                        if (!is_domain($value)) {
-                                $input_errors[] = "{$value} is not a valid domain name.";
-			}
-                } else if ($key == "mailserverip") {
-			list($t_ip, $t_port) = explode(":", $value);
-                        if (!is_ipaddr($t_ip) && !is_hostname($t_ip)) {
-                                $input_errors[] = "{$t_ip} is not a valid IP address or host name.";
-			}
-                } else if ($key == "private" && $value == "" && $dkim_domain != "") {
-			//remove files from disk if domain exists
-			remove_dkim_files($dkim_domain,'yes');
-		}
-        }
+	if (!is_domain($post['domain'])) {
+		$input_errors[] = "{$post['domain']} is not a valid domain name.";
+	}
+
+	list($t_ip, $t_port) = explode(":", $post['mailserverip']);
+        if (!is_ipaddr($t_ip) && !is_hostname($t_ip)) {
+		$input_errors[] = "{$t_ip} is not a valid IP address or host name.";
+	}
+        if ($post['private'] == "" && $post['domain'] != "") {
+		//remove files from disk if domain exists
+		remove_dkim_files($dkim_domain,'yes');
+	}
+	$_POST['dmarctxt'] = dmarc_create_txt_record($post);
 }
 
 function remove_dkim_files($dkim_domain,$remove_dir){

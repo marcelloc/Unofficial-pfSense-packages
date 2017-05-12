@@ -218,7 +218,7 @@
                         should have the DMARC verification done by other mail providers.<br>The possible values here are integers between 0 and 100(default).
                         </span>]]></description>
                         <type>input</type>
-                        <size>80</size>
+                        <size>10</size>
                 </field>
                 <field>
                         <fielddescr>DNS TXT record</fielddescr>
@@ -226,8 +226,10 @@
                         <description><![CDATA[<span>
                         This is the resulting DMARC TXT recort to add to your dns configuration based on above selected options
                         </span>]]></description>
-                        <type>input</type>
-                        <size>80</size>
+			<type>textarea</type>
+			<cols>80</cols>
+                        <rows>3</rows>
+                        <encoding>base64</encoding>
                 </field>
 	</fields>
         <custom_php_command_before_form>
