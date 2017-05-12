@@ -104,7 +104,7 @@ mv spf-tools-master /usr/local/bin/spf-tools
 rm -f master.zip
 
 #check postwhite
-if [ -f /usr/local/etc/postfix/postscreen_spf_whitelist.cidr ];then
+if [ ! -f /usr/local/etc/postfix/postscreen_spf_whitelist.cidr ];then
  /usr/local/bin/bash /usr/local/bin/postwhite
 fi
 
