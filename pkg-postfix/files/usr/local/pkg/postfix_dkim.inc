@@ -158,7 +158,7 @@ function check_dkim_config (){
                 //var_dump($dkim_bits);
                 //exit;
                 //Include Mynetwork hosts on DKIM Internal hosts
-                if (is_array($config['installedpackages']['postfixacl']['config']) && preg_match("/\w+/",$dkim_domains)){
+                if (is_array($config['installedpackages']['postfixacl']['config']) && sizeof($dkim_domains > 0)){
                         $mynetwork = preg_replace( "/\r/" , "" , dkim_text_area_decode($config['installedpackages']['postfixacl']['config'][0]['mynetworks']));
                         $myhosts = explode( "\n" , $mynetwork);
                         foreach ($myhosts as $myhost) {
@@ -201,7 +201,7 @@ function check_dkim_config (){
 	} else {
 		$except_domains="";
 	}
-        if (preg_match("/\w+/",$dkim_domains[0])) {
+        if (sizeof($dkim_domains) > 0) {
         	$dkim_mode = "s";
         } else {
         	$dkim_mode = "";
@@ -209,7 +209,7 @@ function check_dkim_config (){
         if ($check_dkmi == "on") {
         	$dkim_mode .= "v";
         }
-        if ($check_dkmi == "on" || preg_match("/\w+/",$dkim_domains)){
+        if ($check_dkmi == "on" || sizeof($dkim_domains) > 0 ){
                 // print "configure dkim\n";
                 $config_domains = "";
                 foreach($dkim_domains as $domain => $domain_info) {
