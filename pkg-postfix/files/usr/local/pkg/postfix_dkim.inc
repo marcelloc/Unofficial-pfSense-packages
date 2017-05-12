@@ -109,7 +109,7 @@ function postfix_domain_validate_input($post, &$input_errors) {
                         //}
                 }
         }
-     
+
         // var_dump($dkim_domains);
         // var_dump($remain_domains);
         // exit;
@@ -118,14 +118,14 @@ function postfix_domain_validate_input($post, &$input_errors) {
             //print "Domain $dkim_domain removed $dkim_base_dir/$dkim_domain\n";
             log_error("[postfix] Domain {$dkim_domain} removed.");
             if (preg_match("@/home/mailnull@",$dkim_base_dir)) {
-                
+
                 // remove files from dir
                 unlink_if_exists("{$dkim_base_dir}/{$dkim_domain}/default.private");
                 unlink_if_exists("{$dkim_base_dir}/{$dkim_domain}/default.txt");
                 rmdir("{$dkim_base_dir}/{$dkim_domain}");
             }
         }
-        
+
         // remove dkim keys from xml
         if (is_array($config['installedpackages']['postfixdkim']['config'])) {
             $rdkk=$config['installedpackages']['postfixdkim']['config'][0][row];
@@ -188,7 +188,7 @@ function check_dkim_config (){
                 //var_dump($dkim_bits);
                 //exit;
                 //Include Mynetwork hosts on DKIM Internal hosts
-                if (is_array($config['installedpackages']['postfixacl']['config']) && preg_match('/\w+/',$dkim_domains[0])){                
+                if (is_array($config['installedpackages']['postfixacl']['config']) && preg_match('/\w+/',$dkim_domains[0])){
                         $mynetwork= preg_replace("/\r/","",base64_decode($config['installedpackages']['postfixacl']['config'][0]['mynetworks']));
                         $myhosts=explode("\n",$mynetwork);
                         foreach ($myhosts as $myhost) {
@@ -209,7 +209,7 @@ function check_dkim_config (){
                 if ( preg_match ("/\w/",$postfix_antispam['on_badsignature'])) {
                         $On_BadSignature=$postfix_antispam['on_badsignature'];
                 } else {
-                        $On_BadSignature='a';        
+                        $On_BadSignature='a';
                 }
                 if ( preg_match ("/\w/",$postfix_antispam['on_keynotfound'])) {
                         $On_KeyNotFound=$postfix_antispam['on_keynotfound'];
@@ -234,7 +234,7 @@ function check_dkim_config (){
         if (preg_match('/\w+/',$dkim_domains[0])) {
           $dkim_mode="s";
         } else {
-          $dkim_mode="";      
+          $dkim_mode="";
         }
         if ($check_dkmi == "on") {
           $dkim_mode.="v";
@@ -347,13 +347,13 @@ EOF;
                         $key_table.="default._dkim.{$domain} {$domain}:default:{$dkim_dir}/default.private\n";
                         $sign_table.="*@{$domain} default._dkim.{$domain}\n";
                         if (! file_exists("{$dkim_dir}/default.private")) {
-                                log_error("[postfix] Creating Domain key for {$domain} under {$dkim_dir}");                                
+                                log_error("[postfix] Creating Domain key for {$domain} under {$dkim_dir}");
                                 system("/usr/local/sbin/opendkim-genkey -D {$dkim_dir} -b {$dkim_bits[$domain]} -h rsa-sha256 --subdomains -d {$domain} -s default");
                                 $dkim_private=base64_encode(file_get_contents("{$dkim_base_dir}/{$domain}/default.private"));
                                 $dkim_pub=base64_encode(file_get_contents("{$dkim_base_dir}/{$domain}/default.txt"));
                                 chmod ("{$dkim_base_dir}/{$domain}/default.private",0640);
                                 chmod ("{$dkim_base_dir}/{$domain}/default.txt",0640);
-                                $config['installedpackages']['postfixdkim']['config'][0][row][]=array('domain'=> $domain, 
+                                $config['installedpackages']['postfixdkim']['config'][0][row][]=array('domain'=> $domain,
                                                                                               'private'=> $dkim_private,
                                                                                               'pub' => $dkim_pub);
                                 $keys_created.="$domain, ";
