@@ -933,7 +933,7 @@ SPF;
 	file_put_contents(POSTFIX_LOCALBASE."/etc/postfix/aliases",$aliases_content,LOCK_EX);
 
 	if (!file_exists("/etc/aliases")) {
-		@symlink("/etc/mail/aliases", "/etc/aliases");
+		@symlink("/usr/local/etc/postfix/aliases", "/etc/aliases");
 	}
 	exec("/usr/local/bin/newaliases");
 	postfix_start();
