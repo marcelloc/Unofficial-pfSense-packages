@@ -63,7 +63,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 
         $tab_array = array();
         $tab_array[] = array(gettext("General"), false, "/pkg_edit.php?xml=postfix.xml&id=0");
-        $tab_array[] = array(gettext("Domains"), false, "/pkg_edit.php?xml=postfix_domains.xml&id=0");
+        $tab_array[] = array(gettext("Domains"), false, "/pkg.php?xml=postfix_domains.xml");
         $tab_array[] = array(gettext("Recipients"), false, "/pkg_edit.php?xml=postfix_recipients.xml&id=0");
         $tab_array[] = array(gettext("Access Lists"), false, "/pkg_edit.php?xml=postfix_acl.xml&id=0");
         $tab_array[] = array(gettext("Antispam"), false, "/pkg_edit.php?xml=postfix_antispam.xml&id=0");

@@ -36,6 +36,7 @@ $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 
 function postfix_check_dkim() {
    global $dkim_user,$dkim_base_dir,$savemsg,$config;
+/* obsolete. Moved to button and pkg.php
    if (is_array($config['installedpackages']['postfixdomains']['config'])) {
         $show_count=0;
         $new_config=array();
@@ -56,6 +57,7 @@ function postfix_check_dkim() {
         write_config('Postfix - restore domain option after show key or reset dkim selection.');
        }
   }
+*/
 }
 
 function postfix_domain_validate_input($post, &$input_errors) {
@@ -99,14 +101,11 @@ function postfix_domain_validate_input($post, &$input_errors) {
         }
         //print "<pre>";
         //remove files from removed domains if any
-         if (is_array($config['installedpackages']['postfixdomains'])) {
-                $postfix_domains=$config['installedpackages']['postfixdomains']['config'][0];
+         if (is_array($config['installedpackages']['postfixdomainsng'])) {
+                $postfix_domains=$config['installedpackages']['postfixdomainsng']['config'];
                 $dkim_domains=array();
-                foreach ($postfix_domains['row'] as $domain) {
+                foreach ($postfix_domains as $domain) {
                         $dkim_domains[]=$domain['domain'];
-                        //var_dump($domain['domain']);
-                        //if ($domain['dkim']!='no' ) {
-                        //}
                 }
         }
 
@@ -126,6 +125,7 @@ function postfix_domain_validate_input($post, &$input_errors) {
             }
         }
 
+	/* Obsolete postfixdkim is now integrated to postfixdomainsng
         // remove dkim keys from xml
         if (is_array($config['installedpackages']['postfixdkim']['config'])) {
             $rdkk=$config['installedpackages']['postfixdkim']['config'][0][row];
@@ -139,6 +139,7 @@ function postfix_domain_validate_input($post, &$input_errors) {
             }
         }
         //exit;
+	*/
 }
 
 
@@ -167,13 +168,14 @@ function check_dkim_dir($dir,$user){
         chown($dir, $user);
         chgrp($dir, 'wheel');
 }
+
 function check_dkim_config (){
  global $config;
  $postfix_config=$config['installedpackages']['postfix']['config'][0];
-        if (is_array($config['installedpackages']['postfixdomains'])) {
-                $postfix_domains=$config['installedpackages']['postfixdomains']['config'][0];
+        if (is_array($config['installedpackages']['postfixdomainsng'])) {
+                $postfix_domains=$config['installedpackages']['postfixdomainsng']['config'];
                 $dkim_domains=array();
-                foreach ($postfix_domains['row'] as $domain) {
+                foreach ($postfix_domains as $domain) {
                         #var_dump($domain);
                         if ($domain['dkim']!='no' ) {
                           $dkim_domains[]=$domain['domain'];
@@ -300,16 +302,16 @@ EOF;
                 $key_table="";
                 $sign_table="";
                 //check if dkim is market to be regenerated
-                if (is_array($config['installedpackages']['postfixdomains']['config'])) {
+                if (is_array($config['installedpackages']['postfixdomainsng']['config'])) {
                         $reset_domains=array();
-                        foreach($config['installedpackages']['postfixdomains']['config'][0][row] as $saved_domains) {
+                        foreach($config['installedpackages']['postfixdomainsng']['config'] as $saved_domains) {
                                 if ($saved_domains['dkim'] == 'reset') {
-                                   $reset_domains[]=$saved_domains['domain'];
+                                   $reset_domains[]=$saved_domains['domain']; //CHANGE HERE FROM COMBO SAVE TO BUTTON CLICK
                                 }
                         }
                 }
                 // print "<PRE>";
-                //check existing keys
+                //check existing keys CHANGE HERE KEYS MOVED TO postfixdomainsng
                 if (is_array($config['installedpackages']['postfixdkim']['config'])) {
                         $new_saved_keys=array();
                         $keys_removed="";

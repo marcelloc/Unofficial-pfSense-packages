@@ -81,7 +81,7 @@ cp /tmp/pfSense.conf $repo2
 
 # Install postfix package
 pkg lock pkg
-pkg install postfix libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap postfix-postfwd
+pkg install postfix-sasl libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap postfix-postfwd opendmarc
 
 # restore repository configuration state
 cp /root/pfSense.bkp.conf $repo2

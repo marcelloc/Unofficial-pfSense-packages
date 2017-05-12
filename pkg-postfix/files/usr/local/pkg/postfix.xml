@@ -65,7 +65,7 @@
 		</tab>
 		<tab>
 			<text>Domains</text>
-			<url>/pkg_edit.php?xml=postfix_domains.xml&amp;id=0</url>
+			<url>/pkg.php?xml=postfix_domains.xml</url>
 		</tab>
 		<tab>
 			<text>Recipients</text>

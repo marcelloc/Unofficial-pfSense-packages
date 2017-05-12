@@ -409,13 +409,13 @@ function sync_package_postfix($via_rpc = "no") {
 	$relay_domains = "antispam.local ";
 	$transport =  px_check_sa_learn('transport');
 	$postfix_config=$config['installedpackages']['postfix']['config'][0];
-	if (is_array($config['installedpackages']['postfixdomains'])) {
-		$postfix_domains=$config['installedpackages']['postfixdomains']['config'][0];
+	if (is_array($config['installedpackages']['postfixdomainsng'])) {
+		$postfix_domains=$config['installedpackages']['postfixdomainsng']['config'];
 	}
 	$message_size_limit = ($postfix_config['message_size_limit'] ? $postfix_config['message_size_limit'] : "10240000");
 	$process_limit = ($postfix_config['process_limit'] ? $postfix_config['process_limit'] : "100");
-	if (is_array($postfix_domains['row'])) {
-		foreach ($postfix_domains['row'] as $postfix_row) {
+	if (is_array($postfix_domains)) {
+		foreach ($postfix_domains as $postfix_row) {
 			$relay_domains .= ' ' . $postfix_row['domain'];
 			if (!empty($postfix_row['mailserverip'])) {
 				  list($t_ip, $t_port) = explode(":", $postfix_row['mailserverip']);
@@ -1137,7 +1137,7 @@ function postfix_do_xmlrpc_sync($sync_to_ip, $port, $protocol, $username, $passw
 	/* XML will hold the sections to sync. */
 	$xml = array();
 	$xml['postfix'] = $config['installedpackages']['postfix'];
-	$xml['postfixdomains'] = $config['installedpackages']['postfixdomains'];
+	$xml['postfixdomainsng'] = $config['installedpackages']['postfixdomainsng'];
 	$xml['postfixacl'] = $config['installedpackages']['postfixacl'];
 	$xml['postfixrecipients'] = $config['installedpackages']['postfixrecipients'];
 	$xml['postfixantispam'] = $config['installedpackages']['postfixantispam'];

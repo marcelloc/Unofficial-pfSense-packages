@@ -30,30 +30,18 @@
 	<description>Describe your package here</description>
 	<requirements>Describe your package requirements here</requirements>
 	<faq>Currently there are no FAQ items provided.</faq>
-	<name>postfixdomains</name>
+	<name>postfixdomainsng</name>
 	<version>1.0</version>
 	<title>Services: Postfix relay and antispam</title>
 	<include_file>/usr/local/pkg/postfix.inc</include_file>
-	<menu>
-		<name>Postfix Forwarder</name>
-		<tooltiptext>Configure Postfix Forwarder</tooltiptext>
-		<section>Services</section>
-		<url>pkg_edit.php?xml=postfix.xml&amp;id=0</url>
-	</menu>
-	<menu>
-		<name>Search Email</name>
-		<tooltiptext>Search postfix logs</tooltiptext>
-		<section>Diagnostics</section>
-		<url>/postfix_search.php</url>
-	</menu>
-<tabs>
+	<tabs>
 		<tab>
 			<text>General</text>
 			<url>/pkg_edit.php?xml=postfix.xml&amp;id=0</url>
 		</tab>
 		<tab>
 			<text>Domains</text>
-			<url>/pkg_edit.php?xml=postfix_domains.xml&amp;id=0</url>
+			<url>/pkg.php?xml=postfix_domains.xml</url>
 			<active/>
 		</tab>
 		<tab>
@@ -90,58 +78,160 @@
 		</tab>
 
 </tabs>
+	<adddeleteeditpagefields>
+		<columnitem>
+			<fielddescr>Domain</fielddescr>
+			<fieldname>domain</fieldname>
+		</columnitem>
+		<columnitem>
+			<fielddescr>Mail Server</fielddescr>
+			<fieldname>mailserverip</fieldname>
+		</columnitem>
+		<columnitem>
+                        <fielddescr>DKIM</fielddescr>
+                        <fieldname>dkim</fieldname>
+                </columnitem>
+		<columnitem>
+                        <fielddescr>Key size</fielddescr>
+                        <fieldname>bits</fieldname>
+                </columnitem>
+		<columnitem>
+                        <fielddescr>DMARC</fielddescr>
+                        <fieldname>dmarcpolicy</fieldname>
+                </columnitem>
+		<movable>on</movable>
+	</adddeleteeditpagefields>
 	<fields>
 		<field>
-			<name>Domains to Forward</name>
+			<name>Domain to Forward</name>
 			<type>listtopic</type>
 		</field>
 		<field>
-			<fielddescr>Forwarding</fielddescr>
-			<fieldname>none</fieldname>
-			<type>rowhelper</type>
-			<rowhelper>
-			<rowhelperfield>
-				<fielddescr>Domain</fielddescr>
-				<fieldname>domain</fieldname>
-				<description>Enter the domain here (ex: example.com)</description>
-				<type>input</type>
-				<size>27</size>
-			</rowhelperfield>
-			<rowhelperfield>
-				<fielddescr><![CDATA[Mail Server <b>fqdn</b> ,<b>IP</b> or <b>IP:port</b>]]></fielddescr>
-				<fieldname>mailserverip</fieldname>
-				<description>Enter the mail server IP to forward to here.</description>
-				<type>input</type>
-				<size>30</size>
-			</rowhelperfield>
-                        <rowhelperfield>
-                                <fielddescr>DKIM</fielddescr>
-                                <fieldname>dkim</fieldname>
-                                <description>Sign outgoin mail from this domain.</description>
-                                <type>select</type>
-                                <options>
+			<fielddescr>Forwarding Domain</fielddescr>
+			<fieldname>domain</fieldname>
+			<description>Enter the domain here (ex: example.com)</description>
+			<type>input</type>
+			<size>27</size>
+		</field>
+		<field>
+			<fielddescr>Mail Server</fielddescr>
+			<fieldname>mailserverip</fieldname>
+			<description><![CDATA[Enter the mail server <b>fqdn</b> ,<b>IP</b> or <b>IP:port</b> to forward to here.]]></description>
+			<type>input</type>
+			<size>30</size>
+		</field>
+		<field>
+                        <name>Domains Key</name>
+                        <type>listtopic</type>
+	        </field>
+                <field>
+                        <fielddescr>DKIM</fielddescr>
+                        <fieldname>dkim</fieldname>
+                        <description><![CDATA[Sign outgoin mail from this domain.]]></description>
+                        <type>select</type>
+                        <options>
                                 <option><name>Do not sign outgoing mail (Default)</name><value>no</value></option>
                                 <option><name>Sign outgoing mail</name><value>yes</value></option>
-                                <option><name>Show Public key</name><value>public</value></option>
-                                <option><name>Change DKIM keys</name><value>reset</value></option>
-                                </options>
-                        </rowhelperfield>
-                         <rowhelperfield>
-                                <fielddescr>key size</fielddescr>
-                                <fieldname>bits</fieldname>
-                                <description>bits to use on key.</description>
-                                <type>select</type>
-                                <options>
-                                <option><name>1024</name><value>1024</value></option>
+                        </options>
+                </field>
+                <field>
+                        <fielddescr>key size</fielddescr>
+                        <fieldname>bits</fieldname>
+                        <description>bits to use on key.</description>
+                        <type>select</type>
+                        <options>
+                        	<option><name>1024</name><value>1024</value></option>
                                 <option><name>2048</name><value>2048</value></option>
-                                </options>
-                        </rowhelperfield>
-
-                         </rowhelper>
-                        <description><![CDATA[<br>While using DKIM, do not forget to include public key info on your domain's DNS config.<br>
-                                      <b>DKIM public key dir example:</b>
-                                        /home/mailnull/keys/your_domain/default.txt ]]></description>
+                        </options>
+                </field>
+		<field>
+			<fielddescr>Private Key</fielddescr>
+			<fieldname>private</fieldname>
+			<description><![CDATA[DKIM Private key<br>
+				You can paste a previous key or leave empty to create a new key.<br>
+			<button class="btn btn-success btn-sm" name='force_update' id='force_update' type='submit' value='force_update'>
+                                <i class="fa fa-refresh icon-embed-btn"></i>
+                                Create new DKIM keys
+                        </button>]]></description>
+			<type>textarea</type>
+			<cols>80</cols>
+			<rows>6</rows>
+			<encoding>base64</encoding>
 		</field>
+		<field>
+                        <fielddescr>TXT Record</fielddescr>
+                        <fieldname>pub</fieldname>
+                        <description><![CDATA[DKIM Public TXT record<br>
+			You can paste a previous key or leave empty to create a new key.]]></description>
+                        <type>textarea</type>
+                        <cols>80</cols>
+                        <rows>6</rows>
+                        <encoding>base64</encoding>
+                </field>
+		<field>
+                        <name><![CDATA[Domain based Message Authentication, Reporting & Conformance settings]]></name>
+                        <type>listtopic</type>
+                </field>
+		<field>
+                        <fielddescr>Policy type</fielddescr>
+                        <fieldname>dmarcpolicy</fieldname>
+                        <description>DMARC policy type</description>
+                        <type>select</type>
+                        <options>
+			<option><name>disabled - Do not configure DMARC for this domain.</name><value>disabled</value></option>
+                        <option><name>none - Don't do anything if the DMARC verification fails.</name><value>none</value></option>
+                        <option><name>quarantine - Mail that fails DMARC checks should be treated as suspicious.</name><value>quaratine</value></option>
+                        <option><name>reject - Mail should be rejected If the DMARC verification fails.</name><value>reject</value></option>
+                        </options>
+                </field>
+                <field>
+                        <fielddescr>rua address</fielddescr>
+                        <fieldname>dmarcrua</fieldname>
+                        <description><![CDATA[<span>This is an optional parameter and contains
+                        the address to which the DMARC aggregate report should be submitted.</span>]]></description>
+                        <type>input</type>
+                        <size>60</size>
+                </field>
+                <field>
+                        <fielddescr>ruf address</fielddescr>
+                        <fieldname>dmarcruf</fieldname>
+                        <description><![CDATA[<span>
+                        This is similar to the rua field, but these are the addresses for DMARC forensic reports.
+                        </span>]]></description>
+                        <type>input</type>
+                        <size>60</size>
+                </field>
+                <field>
+                        <fielddescr>fo report</fielddescr>
+                        <fieldname>dmarcfo</fieldname>
+                        <description>DMARC failure reporting options.</description>
+                        <type>select</type>
+                        <options>
+                        <option><name>0: generate a report if both SPF and DKIM tests failed</name><value>0</value></option>
+                        <option><name>1: generate a report if either the SPF or the DKIM test failed</name><value>1</value></option>
+                        <option><name>s: generate a report if the SPF test failed</name><value>s</value></option>
+                        <option><name>d: generate a report if the DKIM test failed</name><value>d</value></option>
+                        </options>
+                </field>
+		<field>
+                        <fielddescr>percentual</fielddescr>
+                        <fieldname>dmarcpct</fieldname>
+                        <description><![CDATA[<span>
+                        This is also optional and determines how many percent of the messages from your domain
+                        should have the DMARC verification done by other mail providers.<br>The possible values here are integers between 0 and 100(default).
+                        </span>]]></description>
+                        <type>input</type>
+                        <size>80</size>
+                </field>
+                <field>
+                        <fielddescr>DNS TXT record</fielddescr>
+                        <fieldname>dmarctxt</fieldname>
+                        <description><![CDATA[<span>
+                        This is the resulting DMARC TXT recort to add to your dns configuration based on above selected options
+                        </span>]]></description>
+                        <type>input</type>
+                        <size>80</size>
+                </field>
 	</fields>
         <custom_php_command_before_form>
                 postfix_check_dkim();
