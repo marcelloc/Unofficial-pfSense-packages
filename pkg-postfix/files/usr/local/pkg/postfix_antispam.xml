@@ -419,8 +419,17 @@
   		</field>
 		<field>
                         <fielddescr>Ignore Hosts</fielddescr>
-                        <fieldname>dmarc_ignore</fieldname>
+                        <fieldname>dmarc_ignoreH</fieldname>
                         <description><![CDATA[Ignored Hosts list. One per line]]></description>
+                        <type>textarea</type>
+                        <encoding>base64</encoding>
+                        <cols>40</cols>
+                        <rows>05</rows>
+                </field>
+		<field>
+                        <fielddescr>Ignore Mail</fielddescr>
+                        <fieldname>dmarc_ignoreM</fieldname>
+                        <description><![CDATA[Ignored Mail from list. One per line]]></description>
                         <type>textarea</type>
                         <encoding>base64</encoding>
                         <cols>40</cols>

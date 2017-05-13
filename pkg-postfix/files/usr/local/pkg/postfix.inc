@@ -477,7 +477,7 @@ function sync_package_postfix($via_rpc = "no") {
 	}
 	#check relay recipients
 	$all_relay_recipients = sync_relay_recipients('gui');
-	$dkim_config=check_dkim_config();
+	$milter_config=check_dkim_config();
 	$aliases=px_check_sa_learn('main');
 	$copyright = <<<ABOUT
 #Part of the Postfix package for pfSense
@@ -500,7 +500,7 @@ unverified_recipient_reject_code = 550
 unknown_client_reject_code = 550
 unknown_hostname_reject_code = 550
 {$aliases}
-{$dkim_config}
+{$milter_config}
 
 EOF;
 	// Header Maps
@@ -642,6 +642,7 @@ smtpd_client_restrictions = permit_mynetworks,
 smtpd_recipient_restrictions = {$postfwd_before}permit_mynetworks,{$postfwd_after}
 				reject_unauth_destination,
 				reject_unauth_pipelining,
+				SPFSPFSPF
 				check_client_access pcre:{$pf_dir}/etc/postfix/cal_pcre,
 				check_client_access cidr:{$pf_dir}/etc/postfix/cal_cidr,
 				check_sender_access hash:{$pf_dir}/etc/postfix/sender_access,
@@ -650,7 +651,7 @@ smtpd_recipient_restrictions = {$postfwd_before}permit_mynetworks,{$postfwd_afte
 				reject_non_fqdn_recipient,
 				reject_multi_recipient_bounce,
 				reject_unverified_recipient,
-				SPFSPFSPFRBLRBLRBL
+				RBLRBLRBL
 
 EOF;
 	} else {

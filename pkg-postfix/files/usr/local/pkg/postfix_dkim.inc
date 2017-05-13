@@ -204,7 +204,8 @@ function check_dkim_config (){
         if ($check_dkmi == "on") {
         	$dkim_mode .= "v";
         }
-        if ($check_dkmi == "on" || sizeof($dkim_domains) > 0 ){
+        $dmarc_config = check_dmarc_config($postfix_antispam);
+	if ($check_dkmi == "on" || sizeof($dkim_domains) > 0 ){
                 // print "configure dkim\n";
                 $config_domains = "";
                 foreach($dkim_domains as $domain => $domain_info) {
@@ -348,17 +349,30 @@ EOF;
                 check_dkim_service('YES');
                 $return=<<<EOF2
 
-# Add the DKIM milter
+# Add the DKIM/DMARC milter
 milter_default_action = accept
-milter_protocol = 2
-smtpd_milters = inet:localhost:8891
-non_smtpd_milters = inet:localhost:8891
+milter_protocol = 6
+smtpd_milters = inet:localhost:8891 {$dmarc_config} 
+non_smtpd_milters = inet:localhost:8891 {$dmarc_config}
 
 EOF2;
         } else {
                 //print "stop dkim\n";
                 check_dkim_service('NO');
-                $return="";
+		if (preg_match("/\w/",$dmarc_config)) {
+			$return3=<<<EOF3
+
+# Add the DMARC milter
+milter_default_action = accept
+milter_protocol = 6
+smtpd_milters = {$dmarc_config}
+non_smtpd_milters = {$dmarc_config}
+
+EOF3;
+		return($return3);
+		} else {
+                	$return="";
+		}
         }
         return($return);
 }

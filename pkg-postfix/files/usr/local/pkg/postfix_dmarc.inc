@@ -20,9 +20,26 @@
  */
 
 $dmarc_user="mailnull";
-$dmarc_base_dir="/home/{$dkim_user}/keys";
 
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
+
+function check_dmarc_service($status){
+        $service = "opendmarc";
+        $service_dir = "/usr/local/etc/rc.d";
+        $service_file_content = file_get_contents("{$service_dir}/{$service}");
+        $service_file_content = preg_replace("/opendmarc_enable-\"(YES|NO)\"/" , "opendmarc_enable-\"$status\"" , $service_file_content);
+        file_put_contents("{$service_dir}/{$service}" , $service_file_content,LOCK_EX);
+        if (!file_exists("{$service_dir}/{$service}.sh")) {
+                symlink ( "{$service_dir}/{$service}" , "{$service_dir}/{$service}.sh");
+        }
+        // include on install process
+        // ln -s /usr/local/lib/libmilter.so.6 /usr/local/lib/libmilter.so.5
+        if ($status=="YES"){
+                system("{$service_dir}/{$service}.sh restart");
+        }else{
+                system("{$service_dir}/{$service}.sh stop");
+        }
+}
 
 function dmarc_create_txt_record($post) {
 	//v=DMARC1; p=quarantine; rua=mailto:marcellocoutinho@gmail.com; fo=0; adkim=r; aspf=r; pct=20; rf=afrf
@@ -45,4 +62,71 @@ function dmarc_text_area_decode($text) {
         return preg_replace('/\r\n/', "\n",base64_decode($text));
 }
 
+function check_dmarc_config($cfg) {
+	global $dmarc_user;
+	if($cfg['dmarc_enabled'] != "on") {
+		check_dmarc_service('NO');
+		return "";
+	} else {
+                check_dmarc_service('YES');
+        }
+	$ignore_hosts_file = "/usr/local/etc/mail/ignore.hosts";
+	$dmarc_conf_file = "/usr/local/etc/mail/opendmarc.conf";
+	$dmarc_trusted = dmarc_text_area_decode($cfg['dmarc_trusted']);
+	if (preg_match("/\w+/" , $dmarc_trusted)) {
+		$dmarc_trusted = "TrustedAuthservIDs " . $dmarc_trusted;
+	}
+	$dmarc_ignoreM = dmarc_text_area_decode($cfg['dmarc_ignoreM']);
+	if (preg_match("/\w+/" , $dmarc_ignoreM)) {
+		$dmarc_ignoreM = "IgnoreMailFrom " . $dmarc_ignoreM;
+	}
+	$dmarc_ignoreH = preg_replace("/\s+/", "," , $cfg['dmarc_ignoreH']);
+	file_put_contents($ignore_hosts_file , $dmarc_ignoreH , LOCK_EX);
+	if (preg_match("/rejectfailures/",$cfg['dmarc_action'])) {
+		$dmarc_reject = "yes";
+	} else {
+		$dmarc_reject = "no"; 
+	}
+	if (preg_match("/header/",$cfg['dmarc_action'])) {
+                $dmarc_header = "yes";
+        } else {
+                $dmarc_header = "no";
+        }
+	if (preg_match("/email/",$cfg['dmarc_action']) && $cfg['dmarc_email'] != "") {
+                $dmarc_emailTo = "CopyFailuresTo {$cfg['dmarc_email']}";
+	} else {
+		$dmarc_emailTo = "";
+        }
+
+	$dmarc_conf=<<<EOF
+##  AuthservID (string)
+##      defaults to MTA name
+#AuthservID {$cfg['dmarc_authservid']}
+BaseDirectory /var/run/opendmarc
+{$dmarc_emailTo}
+DNSTimeout 5
+# FailureReports false
+# FailureReportsBcc postmaster@example.coom
+# FailureReportsOnNone false
+# FailureReportsSentBy USER@HOSTNAME
+HistoryFile /var/run/opendmarc/opendmarc.dat
+IgnoreHosts {$ignore_hosts_file}
+{$dmarc_ignoreM}
+RejectFailures {$dmarc_reject}
+PidFile /var/run/opendmarc.pid
+{$cfg['dmarc_reject']}
+ReportCommand /usr/local/sbin/sendmail -t
+Socket inet:8893@localhost
+SoftwareHeader {$dmarc_header}
+Syslog true
+SyslogFacility mail
+{$dmarc_trusted}
+UserID {$dmarc_user}:{$dmarc_user}
+
+EOF;
+
+file_put_contents($dmarc_conf_file , $dmarc_conf , LOCK_EX);
+
+return("inet:localhost:8893");
+}
 

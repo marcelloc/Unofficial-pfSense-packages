@@ -98,11 +98,13 @@ fetch -q -o /usr/local/etc/postfix/yahoo_static_hosts.txt https://raw.githubuser
 if [ -f master.zip ];then
   mv master.zip master.old.zip
 fi
-fetch https://github.com/jsarenik/spf-tools/archive/master.zip
-unzip master.zip
-mv spf-tools-master /usr/local/bin/spf-tools
-rm -f master.zip
 
+if [ ! -d /usr/local/bin/spf-tools ];then
+   fetch https://github.com/jsarenik/spf-tools/archive/master.zip
+   unzip master.zip
+   mv spf-tools-master /usr/local/bin/spf-tools
+   rm -f master.zip
+fi
 #check postwhite
 if [ ! -f /usr/local/etc/postfix/postscreen_spf_whitelist.cidr ];then
  /usr/local/bin/bash /usr/local/bin/postwhite

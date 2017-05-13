@@ -33,6 +33,9 @@ foreach ($config['installedpackages']['service'] as $service) {
 	if ($service['name'] == 'opendkim') {
                 $found[4]++;
         }
+	if ($service['name'] == 'opendmarc') {
+                $found[5]++;
+        }
 
 }
 if ( $found[3] == 0 ) {
@@ -49,6 +52,14 @@ if ( $found[4] == 0 ) {
                                                         'rcfile' => 'milter-opendkim.sh',
                                                         'executable' => 'opendkim',
                                                         'description' => 'Open domain keys service');
+}
+
+if ( $found[5] == 0 ) {
+        $write_config++;
+        $config['installedpackages']['service'][]=array('name' => 'opendmarc',
+                                                        'rcfile' => 'opendkim.sh',
+                                                        'executable' => 'opendmarc',
+                                                        'description' => 'Open dmarc service');
 }
 
 //Check menu configuration
