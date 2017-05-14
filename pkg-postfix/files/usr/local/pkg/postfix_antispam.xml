@@ -419,7 +419,7 @@
   		</field>
 		<field>
                         <fielddescr>Ignore Hosts</fielddescr>
-                        <fieldname>dmarc_ignoreH</fieldname>
+                        <fieldname>dmarc_ignoreh</fieldname>
                         <description><![CDATA[Ignored Hosts list. One per line]]></description>
                         <type>textarea</type>
                         <encoding>base64</encoding>
@@ -428,7 +428,7 @@
                 </field>
 		<field>
                         <fielddescr>Ignore Mail</fielddescr>
-                        <fieldname>dmarc_ignoreM</fieldname>
+                        <fieldname>dmarc_ignorem</fieldname>
                         <description><![CDATA[Ignored Mail from list. One per line]]></description>
                         <type>textarea</type>
                         <encoding>base64</encoding>
@@ -443,9 +443,8 @@
                         <options>
                         <option><name>Reject Failures</name><value>true</value></option>
                         <option><name>Append Header</name><value>false</value></option>
-                        <option><name>Email Failure</name><value>email</value></option>
                         </options>
-			<size>3</size>
+			<size>2</size>
 			<multiple/>
                 </field>
 		<field>

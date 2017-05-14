@@ -76,11 +76,11 @@ function check_dmarc_config($cfg) {
 	if (preg_match("/\w+/" , $dmarc_trusted)) {
 		$dmarc_trusted = "TrustedAuthservIDs " . $dmarc_trusted;
 	}
-	$dmarc_ignoreM = dmarc_text_area_decode($cfg['dmarc_ignoreM']);
+	$dmarc_ignoreM = dmarc_text_area_decode($cfg['dmarc_ignorem']);
 	if (preg_match("/\w+/" , $dmarc_ignoreM)) {
 		$dmarc_ignoreM = "IgnoreMailFrom " . $dmarc_ignoreM;
 	}
-	$dmarc_ignoreH = preg_replace("/\s+/", "," , $cfg['dmarc_ignoreH']);
+	$dmarc_ignoreH = preg_replace("/\s+/", "," , dmarc_text_area_decode($cfg['dmarc_ignoreh']));
 	file_put_contents($ignore_hosts_file , $dmarc_ignoreH , LOCK_EX);
 	if (preg_match("/rejectfailures/",$cfg['dmarc_action'])) {
 		$dmarc_reject = "yes";
@@ -92,7 +92,7 @@ function check_dmarc_config($cfg) {
         } else {
                 $dmarc_header = "no";
         }
-	if (preg_match("/email/",$cfg['dmarc_action']) && $cfg['dmarc_email'] != "") {
+	if ($cfg['dmarc_email'] != "") {
                 $dmarc_emailTo = "CopyFailuresTo {$cfg['dmarc_email']}";
 	} else {
 		$dmarc_emailTo = "";
@@ -113,7 +113,7 @@ HistoryFile /var/run/opendmarc/opendmarc.dat
 IgnoreHosts {$ignore_hosts_file}
 {$dmarc_ignoreM}
 RejectFailures {$dmarc_reject}
-PidFile /var/run/opendmarc.pid
+PidFile /var/run/opendmarc/pid
 {$cfg['dmarc_reject']}
 ReportCommand /usr/local/sbin/sendmail -t
 Socket inet:8893@localhost
