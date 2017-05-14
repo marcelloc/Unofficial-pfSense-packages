@@ -194,6 +194,9 @@
 			</description>
 		</field>
 	</fields>
+        <custom_php_command_before_form>
+                postfix_check_config();
+        </custom_php_command_before_form>
 	<custom_php_validation_command>
 		postfix_validate_input($_POST, $input_errors);
 	</custom_php_validation_command>

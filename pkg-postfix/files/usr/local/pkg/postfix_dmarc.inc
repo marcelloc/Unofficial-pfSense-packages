@@ -23,7 +23,13 @@ $dmarc_user="mailnull";
 
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 
-function check_dmarc_service($status){
+function check_dmarc_service($cfg){
+	global $savemsg_array;
+	if($cfg['dmarc_enabled'] != "on") {
+                $status='NO';
+        } else {
+                $status='YES';
+        }
         $service = "opendmarc";
         $service_dir = "/usr/local/etc/rc.d";
         $service_file_content = file_get_contents("{$service_dir}/{$service}");
@@ -35,9 +41,9 @@ function check_dmarc_service($status){
         // include on install process
         // ln -s /usr/local/lib/libmilter.so.6 /usr/local/lib/libmilter.so.5
         if ($status=="YES"){
-                system("{$service_dir}/{$service}.sh restart");
+                exec("{$service_dir}/{$service}.sh restart",$savemsg_array);
         }else{
-                system("{$service_dir}/{$service}.sh stop");
+                exec("{$service_dir}/{$service}.sh stop",$savemsg_array);
         }
 }
 
@@ -64,12 +70,6 @@ function dmarc_text_area_decode($text) {
 
 function check_dmarc_config($cfg) {
 	global $dmarc_user;
-	if($cfg['dmarc_enabled'] != "on") {
-		check_dmarc_service('NO');
-		return "";
-	} else {
-                check_dmarc_service('YES');
-        }
 	$ignore_hosts_file = "/usr/local/etc/mail/ignore.hosts";
 	$dmarc_conf_file = "/usr/local/etc/mail/opendmarc.conf";
 	$dmarc_trusted = dmarc_text_area_decode($cfg['dmarc_trusted']);

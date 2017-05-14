@@ -67,7 +67,24 @@ function remove_dkim_files($dkim_domain,$remove_dir){
 	}
 }
 
-function check_dkim_service($status){
+function check_dkim_service($cfg){
+	global $dkim_base_dir, $savemsg_array;
+
+	// check inbound dkim check
+	if ($cfg['check_dkim'] == "on") {
+		$status = "YES";
+	} else {
+		$status = "NO";
+	}
+
+	// check if any domain has keys
+	foreach (glob("$dkim_base_dir/*") as $domain_path) {
+		$file_domain = array_pop(split("/",$domain_path));
+		if (is_dir($domain_path) && is_domain($file_domain)) {
+			$status = "YES";
+		}
+	}
+
         $service="milter-opendkim";
         $service_dir="/usr/local/etc/rc.d";
         $service_file_content=file_get_contents("{$service_dir}/{$service}");
@@ -76,12 +93,10 @@ function check_dkim_service($status){
         if (!file_exists("{$service_dir}/{$service}.sh")) {
                 symlink ( "{$service_dir}/{$service}","{$service_dir}/{$service}.sh");
         }
-        // include on install process
-        // ln -s /usr/local/lib/libmilter.so.6 /usr/local/lib/libmilter.so.5
         if ($status=="YES"){
-                system("{$service_dir}/{$service}.sh restart");
+                exec("{$service_dir}/{$service}.sh restart",$savemsg_array);
         }else{
-                system("{$service_dir}/{$service}.sh stop");
+                exec("{$service_dir}/{$service}.sh stop",$savemsg_array);
         }
 }
 function check_dkim_dir($dir,$user){
@@ -346,7 +361,7 @@ EOF;
                         write_config("DKIM keys created for {$keys_created}");
                 }
 
-                check_dkim_service('YES');
+                //check_dkim_service('YES'); /*managed by apply button*/
                 $return=<<<EOF2
 
 # Add the DKIM/DMARC milter
@@ -358,7 +373,7 @@ non_smtpd_milters = inet:localhost:8891 {$dmarc_config}
 EOF2;
         } else {
                 //print "stop dkim\n";
-                check_dkim_service('NO');
+                //check_dkim_service('NO'); /*managed by apply button*/
 		if (preg_match("/\w/",$dmarc_config)) {
 			$return3=<<<EOF3
 

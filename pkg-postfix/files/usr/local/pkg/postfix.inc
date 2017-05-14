@@ -32,9 +32,10 @@ require_once("xmlrpc.inc");
 require_once("xmlrpc_client.inc");
 require_once("postfix_dkim.inc");
 require_once("postfix_dmarc.inc");
+require_once("postfix_postfwd.inc");
 
 define('POSTFIX_LOCALBASE','/usr/local');
-
+$savemsg_array = array();
 $uname=posix_uname();
 if ($uname['machine'] == 'amd64') {
 	ini_set('memory_limit', '250M');
@@ -42,6 +43,29 @@ if ($uname['machine'] == 'amd64') {
 
 function px_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n",base64_decode($text));
+}
+
+function postfix_check_config() {
+	global $savemsg, $config, $savemsg_array;
+
+	if (!isset($config['installedpackages']['postfix']['config'][0]['enable_postfix'])) {
+		return 1;
+	}
+
+        if (isset($_REQUEST['apply'])) {
+                postfix_start("no");
+		if (is_array($savemsg_array)) {
+			$savemsg = implode("<br/>",$savemsg_array);
+		}
+                return;
+        }
+        if (is_subsystem_dirty('postfix')) {
+                $savemsg  = gettext("Postfix configuration has been changed.") . "<br>" . gettext("The changes must be applied for them to take effect.");
+                $savemsg .= "</div><div class='pull-right'><button type='button' onclick=\"location.href='{$_SERVER['REQUEST_URI']}&apply=changes'\" class='btn btn-success'>";
+                $savemsg .= gettext("Apply Changes") . "</button><a>&nbsp;&nbsp;</a>";
+       }
+
+        return 0;
 }
 
 function px_check_sa_learn($section) {
@@ -191,7 +215,11 @@ function sync_relay_recipients($via_cron = "cron") {
 		exec ('/usr/bin/sort -u '.$recipients_file.'.unsort > '.$recipients_file);
 		unlink_if_exists ($recipients_file.'.unsort');
 		exec (POSTFIX_LOCALBASE."/sbin/postmap ".POSTFIX_LOCALBASE."/etc/postfix/relay_recipients");
-		mwexec ("/usr/local/sbin/postfix reload");
+		if($via_cron == "gui") {
+			mark_subsystem_dirty('postfix');
+		} else {
+			mwexec ("/usr/local/sbin/postfix reload");
+		}
 	}
 	if ($relay_recipients != "" || $relay_ldap_recipients!= "") {
 		return ("relay_recipient_maps = hash:".POSTFIX_LOCALBASE."/etc/postfix/relay_recipients\n");
@@ -329,65 +357,6 @@ function postfix_check_postwhite($status,$domains) {
 	}
 }
 
-function postfix_check_postfwd_service($status,$new_md5,$current_md5) {
-	$service="postfwd";
-	$service_dir="/usr/local/etc/rc.d";
-	$service_file_content=file_get_contents("{$service_dir}/{$service}");
-	$service_file_content=preg_replace("/postfwd_enable:=\"(YES|NO)\"/" , "postfwd_enable:=\"$status\"" , $service_file_content);
-	$service_file_content=preg_replace("@name}.pid@" , "name}/pid" , $service_file_content);
-	$service_file_content=preg_replace("@/usr/local/etc/\S+conf@" , '/usr/local/etc/postfix/${name}.conf' , $service_file_content);
-	$service_file_content=preg_replace("@nobody@" , 'mailnull' , $service_file_content);
-	file_put_contents("{$service_dir}/{$service}" , $service_file_content , LOCK_EX);
-	if (!file_exists("{$service_dir}/{$service}.sh")) {
-		symlink ( "{$service_dir}/{$service}" , "{$service_dir}/{$service}.sh");
-	}
-	$dir = "/var/run/postfwd";
-	if (!is_dir($dir) && !file_exists($dir)) {
-                        mkdir($dir, 0755,TRUE);
-			chown($dir, 'mailnull');
-                	chgrp($dir, 'mailnull');
-                }
-
-	if ($status=="YES"){
-		if ($new_md5 != $current_md5) {
-			system("{$service_dir}/{$service}.sh restart");
-		} else {
-			system("{$service_dir}/{$service}.sh start");
-		}
-	} else {
-		system("{$service_dir}/{$service}.sh stop");
-	}
-}
-
-function postfix_check_postfwd($status,$position,$rules){
-	$postfwd_conf_file = POSTFIX_LOCALBASE . "/etc/postfix/postfwd";
-	$rule_position= ($position != "" ? $position : "before");
-	$conf_spaces="\n\t\t\t\t";
-	$conf_inet="check_policy_service inet:127.0.0.1:10040,";
-	if ($status == 'on') {
-		if ($rule_position == "before") {
-			$postfwd_before="{$conf_inet}{$conf_spaces}";
-			$postfwd_after="";
-		} else {
-			$postfwd_after="{$conf_spaces}{$conf_inet}";
-			$postfwd_before="";
-		}
-		file_put_contents("{$postfwd_conf_file}_tmp.conf" , base64_decode($rules) , LOCK_EX);
-		$new_md5=md5_file("{$postfwd_conf_file}_tmp.conf");
-		if (file_exists("{$postfwd_conf_file}.conf")) {
-			$current_md5 = md5_file("{$postfwd_conf_file}.conf");
-		}
-		if ($new_md5 != $current_md5) {
-			rename("{$postfwd_conf_file}_tmp.conf" , "{$postfwd_conf_file}.conf");
-		}
-		$return =array($postfwd_before , $postfwd_after);
-	 } else {
-                //return empty
-                $return = array("","");
-        }
-	postfix_check_postfwd_service($status,$new_md5,$current_md5);
-	return($return);
-}
 function sync_package_postfix($via_rpc = "no") {
 	global $g, $config;
 
@@ -942,7 +911,7 @@ SPF;
 		@symlink("/usr/local/etc/postfix/aliases", "/etc/aliases");
 	}
 	exec("/usr/local/bin/newaliases");
-	postfix_start();
+	mark_subsystem_dirty('postfix');
 
 	//Do not sync during boot
 	if (!isset($boot_process) || $via_rpc == "yes") {
@@ -951,7 +920,7 @@ SPF;
 
 }
 function postfix_start() {
-	global $config;
+	global $config , $savemsg_array;
 	$pf_dir = POSTFIX_LOCALBASE;
 	$pf_start_cmd = "{$pf_dir}/sbin/postfix start";
 
@@ -980,6 +949,21 @@ EOF;
 		mwexec("/usr/local/etc/rc.d/postfix.sh stop");
 		system('/bin/chmod -x /usr/local/etc/rc.d/postfix.sh');
 	}
+
+	if (is_array($config['installedpackages']['postfixantispam'])) {
+                $cfg = $config['installedpackages']['postfixantispam']['config'][0];
+		// check dkim service
+		check_dkim_service($cfg);
+
+		// check dmarc service
+		check_dmarc_service($cfg);
+
+		// check postfwd service
+		postfix_check_postfwd_service($cfg);
+
+		// check postwhite list	
+        }
+	clear_subsystem_dirty('postfix');
 	conf_mount_ro();
 }
 

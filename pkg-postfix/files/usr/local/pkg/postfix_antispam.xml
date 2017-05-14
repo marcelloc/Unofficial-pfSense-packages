@@ -515,6 +515,9 @@
 			<size>50</size>
 		</field>
 	</fields>
+        <custom_php_command_before_form>
+                postfix_check_config();
+        </custom_php_command_before_form>
 	<custom_php_install_command>
 		postfix_php_install_command();
 	</custom_php_install_command>
