@@ -227,6 +227,7 @@ function grep_log(){
 	$grep="(MailScanner|postfix.cleanup|postfix.smtp|postfix.error|postfix.qmgr|postfix.postscreen)";
 	$curr_time = time();
 	$log_time=strtotime($postfix_arg['time'],$curr_time);
+	$message_status_preconfigured_regex = "/(spam|bounced|deferred|reject|sent|hold|incoming)/";
 
 	// file grep loop
         if ($argv[2]!= ""){
@@ -279,7 +280,6 @@ function grep_log(){
 			#Dec  5 14:06:10 srvchunk01 MailScanner[19589]: Message 775201F44B1.AED2C from 209.185.111.50 (marcellocoutinho@mailtest.com) to sede.mail.test.com is spam, SpamAssassin (not cached, escore=99.202, requerido 6, autolearn=spam, DKIM_SIGNED 0.10, DKIM_VALID -0.10, DKIM_VALID_AU -0.10, FREEMAIL_FROM 0.00, HTML_MESSAGE 0.00, RCVD_IN_DNSWL_LOW -0.70, WORM_TEST2 100.00)
 			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) MailScanner\W\d+\W+\w+\s+(\w+).* is spam, (.*)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
-				$stm_queue[$sa[$email[3]]] .= "insert or ignore into mail_status (info) values ('spam');\n";
 				if (POSTFIX_DEBUG > 3) {
 					print "\n#######################################\nSPAM:".$email[4].$email[3].$email[2]."\n#######################################\n";
 				}
@@ -290,7 +290,9 @@ function grep_log(){
 			#Nov 16 00:00:14 srvch011 postfix/smtp[7363]: 7AEB91F797D: to=<alessandra.bueno@mg.test.com>, relay=mail.mg.test.com[172.25.3.5]:25, delay=39, delays=35/1.1/0.04/2.7, dsn=5.7.1, status=bounced (host mail.mg.test.com[172.25.3.5] said: 550 5.7.1 Unable to relay for alessandra.bueno@mg.test.com (in reply to RCPT TO command))
 			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.\w+\W\d+\W+(\w+): to=\<(.*)\>, relay=(.*), delay=([0-9,.]+), .* dsn=([0-9,.]+), status=(\w+) (.*)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
-				$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$email[8]."');\n";
+				if ( ! preg_match($message_status_preconfigured_regex , $email[8])) {
+					$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$email[8]."');\n";
+				}
 				$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_to (from_id,too,status,status_info,relay,delay,dsn) values ((select id from mail_from where sid='".$email[3]."' and server='".$email[2]."'),'".strtolower($email[4])."',(select id from mail_status where info='".$email[8]."'),'".preg_replace("/(\<|\>|\s+|\'|\")/"," ",$email[9])."','".$email[5]."','".$email[6]."','".$email[7]."');\n";
 				//update status to sent only if it's not a spam message
 				$stm_queue[$sa[$email[3]]] .= "update or ignore mail_to set dsn='{$email[7]}', delay='{$email[6]}', relay='{$email[5]}', too='" . strtolower($email[4]);
@@ -315,7 +317,6 @@ function grep_log(){
 			#Nov 14 01:41:44 srvch011 postfix/smtpd[15259]: warning: 1EF3F1F573A: queue file size limit exceeded
 	  		else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.smtpd\W\d+\W+warning: (\w+): queue file size limit exceeded/",$line,$email)){
 				check_sid_day($email[3],$grep_day);
-	  			$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$email[8]."');\n";
 				$stm_queue[$sa[$email[3]]].= "update mail_to set status=(select id from mail_status where info='reject'), status_info='queue file size limit exceeded' where from_id in (select id from mail_from where sid='".$email[3]."' and server='".$email[2]."');\n";
 			}
 			#Apr 25 10:00:11 smgsc2 postfix/cleanup[19867]: EF0302869D0: info: header Subject: New message for you from asmg.test.com[200.98.16.4]; from=<notificacao@test.com> to=<user.sirname@corp.com> proto=SMTP helo=<alfa.test.com>
@@ -325,22 +326,23 @@ function grep_log(){
 			#Nov 14 01:41:35 srvch011 postfix/cleanup[58446]: 1EF3F1F573A: warning: header Subject: =?windows-1252?Q?IMOVEL_Voc=EA_=E9_um_Cliente_especial_da_=93CENTURY21=22?=??=?windows-1252?Q?Veja_o_que_tenho_para_voc=EA?= from mail-yw0-f51.google.com[209.85.213.51]; from=<sergioalexandre6308@gmail.com> to=<sinza@tr.br> proto=ESMTP helo=<mail-yw0-f51.google.com>
 			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.cleanup\W\d+\W+(\w+): (\w+): (.*) from ([a-z,A-Z,0-9,.,-]+)\W([0-9,.]+)\W+from=\<(.*)\> to=\<(.*)\>.*helo=\W([a-z,A-Z,0-9,.,-]+)(.*)/",$line,$email)){
 				check_sid_day($email[3],$grep_day);
-				$status['date']=$email[1];
-				$status['server']=$email[2];
-				$status['sid']=$email[3];
-				$status['remote_hostname']=$email[6];
-				$status['remote_ip']=$email[7];
-				$status['from']=$email[8];
-				$status['to']=$email[9];
-				$status['helo']=$email[10];
-				$status['status']=$email[4];
-				$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$email[4]."');\n";
+				$status['date'] = $email[1];
+				$status['server'] = $email[2];
+				$status['sid'] = $email[3];
+				$status['remote_hostname'] = $email[6];
+				$status['remote_ip'] = $email[7];
+				$status['from'] = $email[8];
+				$status['to'] = $email[9];
+				$status['helo'] = $email[10];
+				$status['status'] = $email[4];
+				if ( ! preg_match($message_status_preconfigured_regex , $email[4])) {
+					$stm_queue[$sa[$email[3]]] .= "insert or ignore into mail_status (info) values ('".$email[4]."');\n";
+				}
 				if ($email[4] == "info" || $email[4] == "warning" ) {
 					if (${$status['sid']}=='hold') {
 						$status['status']='hold';
 					} else {
 						$status['status']='incoming';
-						$stm_queue[$sa[$email[3]]].= "insert or ignore into mail_status (info) values ('".$status['status']."');\n";
 					}
 					#print "$line\n";
 					$status['status_info']=preg_replace("/(\<|\>|\s+|\'|\")/"," ",$email[11]);

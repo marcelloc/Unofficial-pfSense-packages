@@ -118,6 +118,13 @@ CREATE INDEX IF NOT EXISTS "to_status" on mail_to (status ASC);
 CREATE INDEX IF NOT EXISTS "to_too" on mail_to (too ASC);
 
 insert or ignore into mail_status (info) values ('spam');
+insert or ignore into mail_status (info) values ('bounced');
+insert or ignore into mail_status (info) values ('deferred');
+insert or ignore into mail_status (info) values ('reject');
+insert or ignore into mail_status (info) values ('sent');
+insert or ignore into mail_status (info) values ('hold');
+insert or ignore into mail_status (info) values ('incoming');
+
 EOF;
 
 ?>
