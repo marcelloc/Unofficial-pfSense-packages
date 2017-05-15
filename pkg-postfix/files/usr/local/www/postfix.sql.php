@@ -117,6 +117,7 @@ CREATE INDEX IF NOT EXISTS "to_info" on mail_to (status_info ASC);
 CREATE INDEX IF NOT EXISTS "to_status" on mail_to (status ASC);
 CREATE INDEX IF NOT EXISTS "to_too" on mail_to (too ASC);
 
+insert or ignore into mail_status (info) values ('spam');
 EOF;
 
 ?>
