@@ -43,7 +43,7 @@ function check_dmarc_service($cfg){
         if ($status=="YES"){
                 exec("{$service_dir}/{$service}.sh restart",$savemsg_array);
         }else{
-                exec("{$service_dir}/{$service}.sh stop",$savemsg_array);
+                exec("{$service_dir}/{$service}.sh onestop",$savemsg_array);
         }
 }
 
@@ -80,7 +80,7 @@ function check_dmarc_config($cfg) {
 	if (preg_match("/\w+/" , $dmarc_ignoreM)) {
 		$dmarc_ignoreM = "IgnoreMailFrom " . $dmarc_ignoreM;
 	}
-	$dmarc_ignoreH = preg_replace("/\s+/", "," , dmarc_text_area_decode($cfg['dmarc_ignoreh']));
+	$dmarc_ignoreH = dmarc_text_area_decode($cfg['dmarc_ignoreh']);
 	file_put_contents($ignore_hosts_file , $dmarc_ignoreH , LOCK_EX);
 	if (preg_match("/rejectfailures/",$cfg['dmarc_action'])) {
 		$dmarc_reject = "yes";

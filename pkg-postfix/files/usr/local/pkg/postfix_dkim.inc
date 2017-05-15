@@ -96,7 +96,7 @@ function check_dkim_service($cfg){
         if ($status=="YES"){
                 exec("{$service_dir}/{$service}.sh restart",$savemsg_array);
         }else{
-                exec("{$service_dir}/{$service}.sh stop",$savemsg_array);
+                exec("{$service_dir}/{$service}.sh onestop",$savemsg_array);
         }
 }
 function check_dkim_dir($dir,$user){
