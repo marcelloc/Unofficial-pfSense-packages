@@ -123,9 +123,9 @@ function px_check_sa_learn($section) {
 			break;
 		case 'master':
 			$return  = "# Spam & Ham\n";
-			$return .= 'sa-spam	unix	-	n	n	-	-	pipe user=nobody argv=/usr/local/bin/sa-wrapper.pl spam' . "\n";
-			$return .= 'sa-ham	unix	-	n	n	-	-	pipe user=nobody argv=/usr/local/bin/sa-wrapper.pl ham' . "\n";
-			$return .= 'sa-learn	unix	-	n	n	-	-	pipe user=nobody argv=/usr/local/bin/sa-learn-pipe.sh' . "\n";
+			$return .= 'sa-spam	unix	-	n	n	-	-	pipe user=spamd argv=/usr/local/bin/sa-wrapper.pl spam' . "\n";
+			$return .= 'sa-ham	unix	-	n	n	-	-	pipe user=spamd argv=/usr/local/bin/sa-wrapper.pl ham' . "\n";
+			$return .= 'sa-learn	unix	-	n	n	-	-	pipe user=spamd argv=/usr/local/bin/sa-learn-pipe.sh' . "\n";
 			break;
 	   }
 	}
