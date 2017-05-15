@@ -64,7 +64,7 @@ foreach ($config['installedpackages']['menu'] as $menu) {
 
 if ( $found[0] == 0 ) {
 $write_config++;
-$config['installedpackages']['menu'][]=array(	'name' => 'Mailscanner',
+$config['installedpackages']['menu'][]=array(	'name' => 'mailscanner',
 						'tooltiptext' => 'Configure MailScanner service',
 						'section' => 'Services',
 						'url' => '/pkg_edit.php?xml=mailscanner.xml');
