@@ -225,7 +225,52 @@
 				<option><name>6</name><value>6</value></option>
 				</options>
 		</field>
-
+		<field>
+                        <name>Reporting options</name>
+                        <type>listtopic</type>
+                </field>
+                <field>
+                        <fielddescr>Stats Reporting</fielddescr>
+                        <fieldname>report_status</fieldname>
+                        <type>checkbox</type>
+                        <description>Enable e-mail stats Reporting.(This requires mailreport package installed)</description>
+                </field>
+                 <field>
+                        <fielddescr>Frequency</fielddescr>
+                        <fieldname>report_frequency</fieldname>
+                        <type>select</type>
+                                <options>
+                                <option><name>Daily</name><value>daily</value></option>
+                                <option><name>Weekly</name><value>weekly</value></option>
+                                </options>
+                        <description>How often send the reports.</description>
+                        <multiple/>
+                        <size>2</size>
+                </field>
+                <field>
+                        <fielddescr>Sender</fielddescr>
+                        <fieldname>report_from</fieldname>
+                        <type>input</type>
+                        <size>35</size>
+                        <description>Report From address</description>
+                </field>
+                <field>
+                        <fielddescr>Destinations</fielddescr>
+                        <fieldname>report_destination</fieldname>
+                        <type>textarea</type>
+                        <cols>40</cols>
+                        <rows>3</rows>
+                        <encoding>base64</encoding>
+                        <description>
+                                Send Email report to these e-mail address(es). One per line.
+                        </description>
+                </field>
+                <field>
+                        <fielddescr>Attach raw log</fielddescr>
+                        <fieldname>report_attachment</fieldname>
+                        <type>checkbox</type>
+                        <description>Include raw data log as attachment</description>
+                </field>
 		<field>
 			<name>Widget options</name>
 			<type>listtopic</type>
@@ -261,7 +306,7 @@
                         <type>select</type>
                                 <options>
                                 <option><name>Bounced - Permanent deliver/accept error on message</name><value>bounced</value></option>
-                                <option><name>Deferred - Temporary deliver/accept error on message</name><value>defferred</value></option>
+                                <option><name>Deferred - Temporary deliver/accept error on message</name><value>deferred</value></option>
                                 <option><name>Hold - Message on mailscanner queue</name><value>hold</value></option>
                                 <option><name>Incoming - Message is incoming</name><value>incoming</value></option>
                                 <option><name>Reject - Permanent reject error</name><value>reject</value></option>

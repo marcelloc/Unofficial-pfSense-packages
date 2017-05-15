@@ -234,8 +234,16 @@ function check_cron() {
 	$cron_cmd_recipients = "/usr/local/bin/php -q /usr/local/www/postfix_recipients.php";
 	if (is_array($config['installedpackages']['postfix']['config'])) {
 		$postfix_enabled = $config['installedpackages']['postfix']['config'][0]['enable_postfix'];
+		$report_status = $config['installedpackages']['postfix']['config'][0]['report_status'];
 	}
 
+	// check report log
+	$cron_email="/usr/local/bin/php -q /root/postfix_report.php";
+	if ($report_status == "on") {        
+		install_cron_job($cron_email, true, "0", "0", "*", "*", "*", "root");
+	} else {
+		install_cron_job($cron_email, false);
+	}
 	// check ldap update
 	if (is_array($config['installedpackages']['postfixrecipients']['config'])) {
 		$postfix_recipients_config = $config['installedpackages']['postfixrecipients']['config'][0];

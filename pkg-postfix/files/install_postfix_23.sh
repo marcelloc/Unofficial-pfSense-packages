@@ -59,7 +59,12 @@ for file in 	bin/adexport.pl pkg/postfix.inc pkg/postfix.xml pkg/postfix_acl.xml
 	fetch -q -o /usr/local/$file $prefix/usr/local/$file
 done
 
+fetch -q -o /root/postfix_report.php $prefix/root/postfix_report.php
+fetch -q -o /root/mail_report.sh $prefix/root/mail_report.sh
+
 #fix some permissions
+chmod +x /root/root/mail_report.sh
+chmod +x /root/postix_report.php
 chmod +x /usr/local/bin/adexport.pl 
 chmod +x /usr/local/www/postfix.php
 chmod +x /usr/local/bin/sa-learn-pipe.sh
@@ -81,7 +86,7 @@ cp /tmp/pfSense.conf $repo2
 
 # Install postfix package
 pkg lock pkg
-pkg install postfix-sasl libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap postfix-postfwd opendmarc
+pkg install postfix-sasl libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap postfix-postfwd opendmarc pflogsumm zip
 
 # restore repository configuration state
 cp /root/pfSense.bkp.conf $repo2
