@@ -300,14 +300,14 @@ function check_cron() {
 	// update cron
 	if ($postfix_enabled == "on") {
 		if ($postfix_recipients_config['enable_ldap'] || $postfix_recipients_config['enable_url']) {
-			install_cron_job ($cron_cmd_recipients . ' > /dev/null 2>&1', true, $r_minute, $r_hour, $r_mday, $r_month, $r_wday, $r_who);
+			install_cron_job ($cron_cmd_recipients . ' > /dev/null', true, $r_minute, $r_hour, $r_mday, $r_month, $r_wday, $r_who);
 		} else {
 			install_cron_job ("{$cron_cmd_recipients}", false);
 		}
 		if ($cron_sqlite_queue != "" && $cron_sqlite_queue != "never") {
 			// First remove the previous schedule since the command was appended as well
 			install_cron_job ("{$cron_cmd_sqlite}", false);
-			install_cron_job ($cron_postfix_sqlite . ' > /dev/null 2>&1', true, $s_minute, $s_hour, $s_mday, $s_month, $s_wday, $s_who);
+			install_cron_job ($cron_postfix_sqlite . ' > /dev/null', true, $s_minute, $s_hour, $s_mday, $s_month, $s_wday, $s_who);
 		} else {
 			install_cron_job ("{$cron_cmd_sqlite}", false);
 		}
