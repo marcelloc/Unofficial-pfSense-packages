@@ -23,7 +23,7 @@ ASSUME_ALWAYS_YES=YES
 export ASSUME_ALWAYS_YES
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
-prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/postfix-DMARC/pkg-postfix/files
+prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-postfix/files
 
 # /etc/inc files
 file=/etc/inc/priv/postfix.priv.inc
