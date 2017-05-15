@@ -27,7 +27,7 @@ require_once("xmlrpc.inc");
 require_once("xmlrpc_client.inc");
 require_once("/usr/local/pkg/postfix.inc");
 
-define('POSTFIX_DEBUG', 'YES');
+define('POSTFIX_DEBUG', '0');
 $uname = posix_uname();
 if ($uname['machine'] == 'amd64') {
         ini_set('memory_limit', '768M');
@@ -75,8 +75,9 @@ function get_remote_log() {
 						$sync_to_ip = "[{$sync_to_ip}]";
 					}
 					$url = "{$protocol}://{$sync_to_ip}";
-
-					print "{$sync_to_ip} {$url}, {$port}\n";
+					if (POSTFIX_DEBUG > 4) {
+						print "{$sync_to_ip} {$url}, {$port}\n";
+					}
 					$method = 'pfsense.exec_php';
 					$execcmd  = "require_once('/usr/local/www/postfix.php');\n";
 					$execcmd .= '$toreturn = get_sql('.$log_time.');';
@@ -97,7 +98,9 @@ function get_remote_log() {
 							foreach ($c as $d) {
 								foreach ($d as $e) {
 									$update = unserialize($e['string']);
-									print $update['day'] . "\n";
+									if (POSTFIX_DEBUG > 4) {
+										print $update['day'] . "\n";
+									}
 									if ($update['day'] != "") {
 										create_db($update['day'] . ".db");
 										if ($debug) {
@@ -170,7 +173,7 @@ function read_sid_db() {
 	$sql="select sid,db from sid_date;";
 	$file="postfix_sid.db";
 	$sids=postfix_read_db($sql,$file,'sid_location');
-	if (count($sids) == 0){
+	if (count($sids) == 0 && POSTFIX_DEBUG > 0){
 		print "base vazia...\n";
 	}
 	foreach($sids as $l){
@@ -182,23 +185,33 @@ function check_sid_day($sid,$grep_day){
 	global $sa;
 	$file="postfix_sid.db";
 	$sql="select db from sid_date where sid='{$sid}'";
-	print "verificando $sid $grep_day *******\n";
-	if (isset ($sa[$sid]) && $sa[$sid] != "") {
-		 print "CACHE_HIT $sid $grep_day *******\n";
+	if (POSTFIX_DEBUG > 1) {
+		print "verificando $sid $grep_day *******\n";
+	}
+	if (isset ($sa[$sid]) && $sa[$sid] != "") { 
+		if (POSTFIX_DEBUG > 1) {
+			print "CACHE_HIT $sid $grep_day *******\n";
+		}
 	} else {
 		// verify or assign sid database to be sure logs are updated
 	        // on the same database that message belongs to
 		$sids=postfix_read_db($sql,$file,'sid_location');
-		if (count($sids) == 0){
-			print "gravando sid $sid $grep_day...\n";
+		if (count($sids) == 0) {
+			if (POSTFIX_DEBUG > 1) {
+				print "gravando sid $sid $grep_day...\n";
+			}
 			$sql="insert into sid_date ('sid','db') values ('" . $sid . "','" . $grep_day . "');";
 			postfix_write_db($sql,$file);
 			$sa[$sid]=$grep_day;
 		} else {
 			//define sid db on array to do not open sid db on every log line
-			print "sid $sid no banco";
+			if (POSTFIX_DEBUG > 1) {
+				print "sid $sid no banco";
+			}
 			$sa[$sid]=$sids['db'];
-			var_dump($sa[$sid]);
+			if (POSTFIX_DEBUG > 4) {
+				var_dump($sa[$sid]);
+			}
 		}
 	}
 }
@@ -218,10 +231,12 @@ function grep_log(){
 	// file grep loop
         if ($argv[2]!= ""){
                  $maillog_filename = $argv[2];
-               }else{
+	} else {
                 $maillog_filename = "/var/log/maillog";
         }
-        echo " checking $maillog_filename ...\n";
+	if (POSTFIX_DEBUG > 0) {
+        	echo " checking $maillog_filename ...\n";
+	}
 
 	foreach ($postfix_arg['grep'] as $grep_array) {
 		$grep=$grep_array['s'];
@@ -229,7 +244,9 @@ function grep_log(){
 		if (!file_exists($maillog_filename) || !is_readable($maillog_filename)) {
 			continue;
 		}
-		print "/usr/bin/grep -E '^{$grep}' {$maillog_filename}\n";
+		if (POSTFIX_DEBUG > 0) {
+			print "/usr/bin/grep -E '^{$grep}' {$maillog_filename}\n";
+		}
 	  	$lists=array();
 	  	exec("/usr/bin/grep -E " . escapeshellarg("^{$grep}") . " {$maillog_filename}", $lists);
 	  	foreach ($lists as $line) {
@@ -249,7 +266,9 @@ function grep_log(){
 			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) MailScanner.*Requeue: (\w+)\W\w+ to (\w+)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
 				check_sid_day($email[4],$sa[$email[3]]);
-				print "REQUEUE {$email[3]} {$email[4]} grep_day{$grep_day} e3_day {$sa[$email[3]]} e4_day {$sa[$email[3]]}\n";
+				if (POSTFIX_DEBUG > 2) {
+					print "REQUEUE {$email[3]} {$email[4]} grep_day{$grep_day} e3_day {$sa[$email[3]]} e4_day {$sa[$email[3]]}\n";
+				}
 				$stm_update_sa .= "update or ignore sid_date set sid='".$email[4]."' where sid='".$email[3]."';\n";
 				$stm_queue[$sa[$email[3]]].= "update or ignore mail_from set sid='".$email[4]."' where sid='".$email[3]."';\n";
 				//make sure db will not have duplicate entries with old and new sid
@@ -261,7 +280,9 @@ function grep_log(){
 			else if (preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) MailScanner\W\d+\W+\w+\s+(\w+).* is spam, (.*)/",$line,$email)) {
 				check_sid_day($email[3],$grep_day);
 				$stm_queue[$sa[$email[3]]] .= "insert or ignore into mail_status (info) values ('spam');\n";
-				print "\n#######################################\nSPAM:".$email[4].$email[3].$email[2]."\n#######################################\n";
+				if (POSTFIX_DEBUG > 3) {
+					print "\n#######################################\nSPAM:".$email[4].$email[3].$email[2]."\n#######################################\n";
+				}
 				$stm_queue[$sa[$email[3]]] .= "update or ignore mail_to set status=(select id from mail_status where info='spam'), status_info='".preg_replace("/(\<|\>|\s+|\'|\")/"," ",$email[4])."' where from_id in (select id from mail_from where sid='".$email[3]."' and server='".$email[2]."');\n";
 			}
 			#Nov 14 09:29:32 srvch011 postfix/error[58443]: 2B8EB1F5A5A: to=<hildae.sva@pi.email.com>, relay=none, delay=0.66, delays=0.63/0/0/0.02, dsn=4.4.3, status=deferred (delivery temporarily suspended: Host or domain name not found. Name service error for name=mail.pi.test.com type=A: Host not found, try again)
@@ -355,17 +376,23 @@ function grep_log(){
 				$values="'".$status['date']."','".$status['status']."','".$status['status_info']."','".strtolower($status['from'])."','".strtolower($status['to'])."','".$status['helo']."','".$status['server']."'";
 				//log without queue, must use curr_time info instead of sid database
 				$day=date("Y-m-d",strtotime($postfix_arg['time'],$curr_time));
-				print "\n $day {$postfix_arg['time']} $curr_time\n*****************\n";
+				if (POSTFIX_DEBUG > 4) {
+					print "\n $day {$postfix_arg['time']} $curr_time\n*****************\n";
+				}
 				$stm_noqueue[$day] .= 'insert or ignore into mail_noqueue(date,status,status_info,fromm,too,helo,server) values (' . $values . ');' . "\n";
 			}
 			if ($total_lines%1500 == 0){
-				print "Save partial logs in database($line)...\n";
+				if (POSTFIX_DEBUG > 0) {
+					print "Save partial logs in database($line)...\n";
+				}
 				//foreach($stm_noqueue as $noqueue) {
 				//	$tstmq=split(";",$noqueue);
 				//	var_dump($tstmq);
 				//}
-				var_dump($stm_noqueue);
-				var_dump($stm_queue);
+				if (POSTFIX_DEBUG > 4) {
+					var_dump($stm_noqueue);
+					var_dump($stm_queue);
+				}
 				write_db($stm_noqueue,"noqueue");
 				write_db($stm_queue,"from");
 				$stm_noqueue=array();
@@ -374,8 +401,10 @@ function grep_log(){
 			}
 		}
 	#save log in database
-	var_dump($stm_noqueue);
-        var_dump($stm_queue);
+	if (POSTFIX_DEBUG > 4) {
+		var_dump($stm_noqueue);
+        	var_dump($stm_queue);
+	}
 	write_db($stm_noqueue,"noqueue");
 	write_db($stm_queue,"from");
 	$stm_noqueue=array();
@@ -391,11 +420,15 @@ function grep_log(){
                                 $sync_to_ip = $sh['ipaddress'];
                                 $sync_type = $sh['sync_type'];
                                 $password = $sh['password'];
-                                print "checking replication to $sync_to_ip...";
+				if (POSTFIX_DEBUG > 2) {
+                                	print "checking replication to $sync_to_ip...";
+				}
                                 if ($password && $sync_to_ip && preg_match("/(both|database)/",$sync_type)) {
                                         postfix_do_xmlrpc_sync($sync_to_ip, $password,$sync_type);
 				}
-                                print "ok\n";
+				if (POSTFIX_DEBUG > 2) {
+                                	print "ok\n";
+				}
 			}
 		}
 	}
@@ -406,7 +439,9 @@ function write_db($stm, $table) {
 	global $postfix_dir, $config, $g;
 	conf_mount_rw();
 	$do_sync = array();
-	print "writing to database...";
+	if (POSTFIX_DEBUG > 0) {
+		print "writing to database...";
+	}
 	foreach ($stm as $day => $sql) {
 		if ((strlen($day) > 8)) {
 			if ($config['installedpackages']['postfixsync']['config'][0]) {
@@ -469,7 +504,9 @@ function postfix_read_db($query,$file,$db_type='daily_db') {
 function postfix_opendb($file,$db_type='daily_db') {
         global $g,$postfix_dir,$postfix_arg;
 
-	print "{$postfix_dir}{$file}\n";
+	if (POSTFIX_DEBUG > 2) {
+		print "{$postfix_dir}{$file}\n";
+	}
         if (! is_dir($postfix_dir)) {
                 mkdir($postfix_dir,0775);
         }
@@ -491,8 +528,9 @@ function postfix_write_db($queries,$file) {
         else
                 $query = $queries;
 
-        if(POSTFIX_DEBUG == 'YES')
+        if(POSTFIX_DEBUG > 0) {
                 file_put_contents("/tmp/cp.txt","postfix write db call($file)\n$query\n",FILE_APPEND);
+	}
         $DB = postfix_opendb($file);
         if ($DB) {
                 $DB->exec("BEGIN TRANSACTION");
@@ -504,8 +542,9 @@ function postfix_write_db($queries,$file) {
                 $DB->close();
                 return $result;
         } else{
-                if(POSTFIX_DEBUG == 'YES')
+                if(POSTFIX_DEBUG > 0) {
                         file_put_contents("/tmp/cp.txt","Failed to open postfix db file({$file})\n",FILE_APPEND);
+		}
                 return true;
         }
 }
@@ -516,7 +555,9 @@ $postfix_dir="/var/db/postfix/";
 $curr_time = time();
 #console script call
 if ($argv[1]!=""){
-print "Inciando leitura do log...\n";
+if (POSTFIX_DEBUG > 0) {
+	print "Inciando leitura do log...\n";
+}
 $sa=array();
 read_sid_db();
 $m[0]="/^(\w+)\s0/";
@@ -588,7 +629,9 @@ function create_grep($days,$m,$r,$curr_time){
 	$time="-0{$days} day";
 	while ($days > -1){
 		$time="-0{$days} day";
-		print "time $time\n";
+		if (POSTFIX_DEBUG > 2) {
+			print "time $time\n";
+		}
 		foreach ($hours as $hr) {
 			//print $days. " -- ". date("G",$curr_time) . "\n";
 			if ($days == 0 && $hr > date("G",$curr_time)) {
