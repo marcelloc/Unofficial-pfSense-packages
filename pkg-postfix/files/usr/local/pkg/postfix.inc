@@ -90,7 +90,7 @@ function px_check_sa_learn($section) {
 		case 'transport':
 			$return  = "spam.spam	sa-spam:\n";
 			$return .= "ham.ham	sa-ham:\n";
-			$return .= "sa-learn	sa-learn:\n";
+			$return .= "sa.learn	sa-learn:\n";
 			break;
 		case 'recipients':
 			$return  = "spam@{$antispam_domain} OK\n";
@@ -104,7 +104,7 @@ function px_check_sa_learn($section) {
 			$return .= 'myorigin = $mydomain' . "\n";
 			break;
 		case 'mydestination':
-			$return .= '$myhostname, localhost.$mydomain, $mydomain, spam.spam, ham.ham';
+			$return .= '$myhostname, localhost.$mydomain, $mydomain, spam.spam, ham.ham, sa.learn';
 			break;
 		case 'main':
 			$return  = "alias_maps = hash:/usr/local/etc/postfix/aliases\n";
