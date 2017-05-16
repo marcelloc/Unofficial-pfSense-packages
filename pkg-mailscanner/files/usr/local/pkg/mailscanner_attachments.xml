@@ -207,4 +207,7 @@
 	<custom_php_resync_config_command>
 		sync_package_mailscanner();
 	</custom_php_resync_config_command>
+	<custom_php_command_before_form>
+		mailscanner_check_config();
+	</custom_php_command_before_form>
 </packagegui>

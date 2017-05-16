@@ -32,6 +32,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 define('MAILSCANNER_PREFIX', '/usr/local');
 define('MAILSCANNER_LOCALBASE', '/usr/local');
 
+$savemsg_array = array();
 $uname=posix_uname();
 if ($uname['machine']=='amd64') {
         ini_set('memory_limit', '250M');
@@ -39,6 +40,29 @@ if ($uname['machine']=='amd64') {
 
 function ms_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n",base64_decode($text));
+}
+
+function mailscanner_check_config() {
+	global $savemsg, $config, $savemsg_array;
+
+	if (!isset($config['installedpackages']['mailscanner']['config'][0]['enable'])) {
+		return 1;
+	}
+
+	if (isset($_REQUEST['apply'])) {
+		mailscanner_start("no");
+		if (is_array($savemsg_array)) {
+			$savemsg = implode("<br/>",$savemsg_array);
+		}
+                return;
+        }
+	if (is_subsystem_dirty('mailscanner')) {
+		$savemsg  = gettext("Mailscanner configuration has been changed.") . "<br>" . gettext("The changes must be applied for them to take effect.");
+		$savemsg .= "</div><div class='pull-right'><button type='button' onclick=\"location.href='{$_SERVER['REQUEST_URI']}&apply=changes'\" class='btn btn-success'>";
+		$savemsg .= gettext("Apply Changes") . "</button><a>&nbsp;&nbsp;</a>";
+	}
+
+        return 0;
 }
 
 function check_mailscanner_cron() {
@@ -549,149 +573,94 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 	#check virus_scanner options
 	$libexec_dir=MAILSCANNER_LOCALBASE. "/libexec/MailScanner/";
 	if ($virus_scanning == "yes"){
-		if ($antivirus['virus_scanner'] =="none"){
+		if ($antivirus['virus_scanner'] == "none"){
 			unlink_if_exists($libexec_dir.'clamav-autoupdate');
 			unlink_if_exists($libexec_dir.'clamav-wrapper');
-		}
-		else{
-			$av_dirs=array('run','log','db');
+		} else {
+			$av_dirs = array('run','log','db');
 			foreach ($av_dirs as $av_dir){
-				if (!is_dir("/var/$av_dir/clamav"))
+				if (!is_dir("/var/$av_dir/clamav")) {
 					mkdir("/var/$av_dir/clamav",0774,true);
+				}
 				chown("/var/$av_dir/clamav", 'postfix');
 				chgrp("/var/$av_dir/clamav", 'wheel');
-				}
+			}
 			$av_files=array('/var/db/clamav/daily.cld','/var/db/clamav/main.cvd','/var/db/clamav/mirrors.dat',
-							'/var/log/clamav/clamd.log','/var/log/clamav/freshclam.log','/var/db/clamav/bytecode.cld');
+					'/var/log/clamav/clamd.log','/var/log/clamav/freshclam.log','/var/db/clamav/bytecode.cld');
 			foreach ($av_files as $av_file){
-				if (file_exists($av_file))
+				if (file_exists($av_file)) {
 					chown($av_file, 'postfix');
 				}
+			}
 			copy($libexec_dir.'clamav-autoupdate.sample',$libexec_dir.'clamav-autoupdate');
 			chmod ($libexec_dir.'clamav-autoupdate',0755);
 			copy($libexec_dir.'clamav-wrapper.sample',$libexec_dir.'clamav-wrapper');
 			chmod ($libexec_dir.'clamav-autoupdate',0755);
 
 			#clamav-wrapper file
-			$cconf=$libexec_dir."clamav-wrapper";
+			$cconf = $libexec_dir . "clamav-wrapper";
 			if (file_exists($cconf)){
-				$cconf_file=file_get_contents($cconf);
-				if (preg_match('/"clamav"/',$cconf_file)){
+				$cconf_file = file_get_contents($cconf);
+				if (preg_match('/"clamav"/',$cconf_file)) {
 					$cconf_file=preg_replace('/"clamav"/','"postfix"',$cconf_file);
 					file_put_contents($cconf, $cconf_file, LOCK_EX);
-					}
 				}
+			}
 
 			#freshclam conf file
-			$cconf=MAILSCANNER_LOCALBASE. "/etc/freshclam.conf";
-			if (file_exists($cconf)){
-				$cconf_file=file_get_contents($cconf);
+			$cconf = MAILSCANNER_LOCALBASE . "/etc/freshclam.conf";
+			if (file_exists($cconf)) {
+				$cconf_file = file_get_contents($cconf);
 				if (preg_match('/DatabaseOwner clamav/',$cconf_file)){
-					$cconf_file=preg_replace("/DatabaseOwner clamav/","DatabaseOwner postfix",$cconf_file);
+					$cconf_file = preg_replace("/DatabaseOwner clamav/","DatabaseOwner postfix",$cconf_file);
 					file_put_contents($cconf, $cconf_file, LOCK_EX);
-					}
 				}
+			}
 
-			#clamd conf file
-			$cconf=MAILSCANNER_LOCALBASE. "/etc/clamd.conf";
+			// clamd conf file
+			$cconf = MAILSCANNER_LOCALBASE . "/etc/clamd.conf";
 			if (file_exists($cconf)){
-				$cconf_file=file_get_contents($cconf);
+				$cconf_file = file_get_contents($cconf);
 				if (preg_match('/User clamav/',$cconf_file)){
-					$cconf_file=preg_replace("/User clamav/","User postfix",$cconf_file);
+					$cconf_file = preg_replace("/User clamav/","User postfix",$cconf_file);
 					file_put_contents($cconf, $cconf_file, LOCK_EX);
 					}
-                                $cconf_file=file_get_contents($cconf);
-                                if (preg_match('/(#|)OLE2BlockMacros/',$cconf_file)){
-                                        $cconf_file=preg_replace("/(#|)OLE2BlockMacros\s+\w+/","OLE2BlockMacros $block_macros",$cconf_file);
+                                $cconf_file = file_get_contents($cconf);
+                                if (preg_match('/(#|)OLE2BlockMacros/',$cconf_file)) {
+                                        $cconf_file = preg_replace("/(#|)OLE2BlockMacros\s+\w+/","OLE2BlockMacros $block_macros",$cconf_file);
                                         file_put_contents($cconf, $cconf_file, LOCK_EX);
-                                        }
-
-				}
-			#clamd script file
-			$script=MAILSCANNER_LOCALBASE. '/etc/rc.d/clamav-clamd';
-			if (file_exists($script)){
-				$script_file=file($script);
-				foreach ($script_file as $script_line){
-					if(preg_match("/command=/",$script_line)){
-						$new_clamav_startup.= "/bin/mkdir -p /var/run/clamav\n";
-						$new_clamav_startup.= "chown postfix /var/run/clamav\n";
-						$new_clamav_startup.=$script_line;
-						}
-					elseif(!preg_match("/(mkdir|chown|sleep|mailscanner)/",$script_line)) {
-						$new_clamav_startup.=preg_replace("/NO/","YES",$script_line);
-						}
+                                }
+			}
+			// clamd script file
+			$script = MAILSCANNER_LOCALBASE . '/etc/rc.d/clamav-clamd';
+			if (file_exists($script)) {
+				$script_file = file($script);
+				foreach ($script_file as $script_line) {
+					if(preg_match("/command=/" , $script_line)) {
+						$new_clamav_startup .= "/bin/mkdir -p /var/run/clamav\n";
+						$new_clamav_startup .= "chown postfix /var/run/clamav\n";
+						$new_clamav_startup .= $script_line;
 					}
+				}
 				file_put_contents($script, $new_clamav_startup, LOCK_EX);
 				mwexec("/usr/sbin/pw user show postfix || /usr/sbin/pw user add -n postfix -s /usr/sbin/nologin");
 				chmod ($script,0755);
-				if($config['installedpackages']['mailscanner']['config'][0]['enable']){
-					if (is_process_running('clamd')){
-						log_error("Restarting clamav-clamd daemon");
-						mwexec("$script restart");
-						}
-					else{
-						log_error("Starting clamav-clamd daemon");
-						mwexec_bg("$script start");
-						}
-				}
-				else{
-					if (is_process_running('clamd')){
-						log_error("Restarting clamav-clamd daemon");
-						mwexec("$script start");
-						}
-					}
-				}
-
-				#check clamav database
-				if (!file_exists('/var/db/clamav/main.cvd')){
-				log_error('No clamav database found, running freshclam in background.');
-				mwexec_bg(MAILSCANNER_LOCALBASE. '/bin/freshclam --config-file='.MAILSCANNER_LOCALBASE.'/etc/freshclam.conf --user=root');
-				}
-
+			}
 		}
-	}
-	else{
+	} else {
 		unlink_if_exists($libexec_dir.'clamav-autoupdate');
 		unlink_if_exists($libexec_dir.'clamav-wrapper');
 	}
 
-	#check dcc config file
-			$script=MAILSCANNER_LOCALBASE. '/dcc/dcc_conf';
-			if (file_exists($script)){
-				$script_file=file_get_contents($script);
-				if (preg_match('/DCCIFD_ENABLE=off/',$script_file)){
-					$script_file=preg_replace("/DCCIFD_ENABLE=off/","DCCIFD_ENABLE=on",$script_file);
-					file_put_contents($script, $script_file, LOCK_EX);
-					}
-				}
-
-	#check dcc startup script
-			$script=MAILSCANNER_LOCALBASE. '/etc/rc.d/dccifd';
-			if (file_exists($script)){
-				$script_file=file_get_contents($script);
-				if (preg_match('/NO/',$script_file)){
-					$script_file=preg_replace("/NO/","YES",$script_file);
-					file_put_contents($script, $script_file, LOCK_EX);
-					chmod ($script,0755);
-					}
-
-				if($config['installedpackages']['mailscanner']['config'][0]['enable']){
-					if(is_process_running('dccifd')){
-						log_error("Restarting dccifd");
-						mwexec("$script restart");
-						}
-					else{
-						log_error("Starting dccifd");
-						mwexec("$script start");
-						}
-					}
-				else{
-					if(is_process_running('dccifd')){
-						log_error("Stopping dccifd");
-						mwexec("$script stop");
-						}
-					}
-				}
+	//check dcc config file
+	$script=MAILSCANNER_LOCALBASE. '/dcc/dcc_conf';
+	if (file_exists($script)){
+		$script_file=file_get_contents($script);
+		if (preg_match('/DCCIFD_ENABLE=off/',$script_file)){
+			$script_file=preg_replace("/DCCIFD_ENABLE=off/","DCCIFD_ENABLE=on",$script_file);
+			file_put_contents($script, $script_file, LOCK_EX);
+		}
+	}
 
 	$script=MAILSCANNER_LOCALBASE. '/etc/rc.d/mailscanner';
 
@@ -714,50 +683,9 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 				file_put_contents($cconf, $cconf_file, LOCK_EX);
 			}
 		}
-
 	}
 
-	#check spam assassin rules
-	$saupdate=MAILSCANNER_PREFIX . "/bin/sa-update";
-	if (file_exists($saupdate)){
-		$rules_found=0;
-		if (file_exists("/var/db/spamassassin")){
-			foreach (glob("/var/db/spamassassin/*",GLOB_ONLYDIR) as $dirname)
-				$rules_found++;
-			}
- 		if ($rules_found==0){
- 			log_error("Mailscanner- No spamassassin rules found, forcing sa-update.");
- 			mwexec($saupdate);
- 		}
-	}
-
-	if (file_exists($script)){
-		$script_file=file_get_contents($script);
-		if (preg_match('/NO/',$script_file)){
-			$script_file=preg_replace("/NO/","YES",$script_file);
-			file_put_contents($script, $script_file, LOCK_EX);
-			chmod ($script,0755);
-			}
-		exec('/bin/pgrep -f MailScanner', $pgrep_out);
-		if($config['installedpackages']['mailscanner']['config'][0]['enable']){
-			chmod ($script,0755);
-			if (count($pgrep_out) >  0 && file_exists($script)){
-				log_error("Restarting MailScanner");
-				mwexec_bg("$script restart");
-				}
-			else{
-				log_error("Starting MailScanner");
-				mwexec("$script start");
-				}
-			}
-		else{
-			if (count($pgrep_out) >  0 && file_exists($script)){
-				log_error("Stopping MailScanner");
-				mwexec("$script stop");
-				chmod ($script,0444);
-				}
-			}
-		}
+	mark_subsystem_dirty('mailscanner');
 	conf_mount_ro();
 
 	#does not sync during boot process
@@ -814,6 +742,83 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 			log_error("[Mailscanner] xmlrpc sync is ending.");
 			}
  		}
+}
+
+function mailscanner_check_service($service,$status,$preg_prefix){
+	global $savemsg_array;
+	$service_dir="/usr/local/etc/rc.d";
+	$service_file_content=file_get_contents("{$service_dir}/{$service}");
+	$service_file_content=preg_replace("/{$preg_prefix}\"(YES|NO)\"/" , "{$preg_prefix}\"$status\"" , $service_file_content);
+	file_put_contents("{$service_dir}/{$service}" , $service_file_content , LOCK_EX);
+
+	if (!file_exists("{$service_dir}/{$service}.sh")) {
+		symlink ( "{$service_dir}/{$service}" , "{$service_dir}/{$service}.sh");
+	}
+	if ($status=="YES"){
+		log_error("Starting $service");
+		exec("{$service_dir}/{$service}.sh restart",$savemsg_array);
+	} else {
+		log_error("Stopping $service");
+		exec("{$service_dir}/{$service}.sh onestop",$savemsg_array);
+	}
+}
+
+function mailscanner_start() {
+	global $config, $save_message_array;
+
+	//check spam assassin rules
+	$saupdate = "/usr/local/bin/bin/sa-update";
+	if (file_exists($saupdate)){
+		$rules_found=0;
+		if (file_exists("/var/db/spamassassin")){
+			foreach (glob("/var/db/spamassassin/*",GLOB_ONLYDIR) as $dirname)
+				$rules_found++;
+			}
+ 		if ($rules_found==0){
+ 			log_error("Mailscanner- No spamassassin rules found, forcing sa-update.");
+ 			mwexec($saupdate);
+ 		}
+	}
+
+	// mailscanner service
+	if($config['installedpackages']['mailscanner']['config'][0]['enable']){
+		$ma_status = "YES";
+	} else {
+		$ma_status = "NO";
+		
+	}
+	mailscanner_check_service('mailscanner' , $ma_status , "mailscanner_enable=");
+	
+	if (is_array($config['installedpackages']['msantispam'])) {
+		$msantispam = $config['installedpackages']['msantispam']['config'][0];
+	}
+
+	// dcc
+	if ( preg_match("/use_dcc/",$msantispam['safeatures']) && $ma_status == "YES") {
+		$status = "YES";
+	} else {
+		$status = "NO";
+	}
+	mailscanner_check_service('dccifd' , $status , "dccifd_enable:=");
+
+	// clamd
+	if (is_array($config['installedpackages']['msantivirus'])) {
+                $msantivirus = $config['installedpackages']['msantivirus']['config'][0];
+        }
+	if ( preg_match("/clamd/",$msantispam['virus_scanner']) && $ma_status == "YES") {
+                $status = "YES";
+        } else {
+                $status = "NO";
+        }
+	mailscanner_check_service('clamav_clamd' , $status , "clamav_clamd_enable:=");
+
+	//check clamav database
+	if ( ! file_exists('/var/db/clamav/main.cvd')) {
+        	log_error('No clamav database found, running freshclam in background.');
+		mwexec_bg('/usr/local/bin/freshclam --config-file=/usr/local/etc/freshclam.conf --user=root');
+	}
+
+	clear_subsystem_dirty('mailscanner');	
 }
 
 function mailscanner_validate_input($post, &$input_errors) {
