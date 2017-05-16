@@ -244,10 +244,23 @@ function check_cron() {
 	} else {
 		install_cron_job($cron_email, false);
 	}
+
+	if (is_array($config['installedpackages']['postfixantispam']['config'])) {
+                $antispam = $config['installedpackages']['postfixantispam']['config'][0];
+        }
+
+	$postwhite_update = "/usr/local/bin/postwhite";
+	if ($antispam['postwhite'] == "on" && $postfix_enabled == "on") {
+                install_cron_job($postwhite_update . ' > /dev/null', true, "10", "0", "*/3", "*", "*", "root");
+        } else {
+                install_cron_job($postwhite_update . ' > /dev/null', false);
+        }
+
 	// check ldap update
 	if (is_array($config['installedpackages']['postfixrecipients']['config'])) {
 		$postfix_recipients_config = $config['installedpackages']['postfixrecipients']['config'][0];
 	}
+
 	// check crontab relay recipients
 	if (preg_match("/(\d+)(\w)/", $postfix_recipients_config['freq'], $matches)) {
 		$r_minute = "*";

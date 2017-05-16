@@ -64,6 +64,7 @@ fetch -q -o /root/mail_report.sh $prefix/root/mail_report.sh
 
 #fix some permissions
 chmod +x /root/mail_report.sh
+chmod +x /usr/local/bin/postwhite
 chmod +x /root/postfix_report.php
 chmod +x /usr/local/bin/adexport.pl 
 chmod +x /usr/local/www/postfix.php
