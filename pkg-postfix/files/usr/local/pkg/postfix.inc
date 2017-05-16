@@ -249,11 +249,18 @@ function check_cron() {
                 $antispam = $config['installedpackages']['postfixantispam']['config'][0];
         }
 
-	$postwhite_update = "/usr/local/bin/postwhite";
+	$postwhite_update_cmd = "/usr/local/bin/postwhite";
 	if ($antispam['postwhite'] == "on" && $postfix_enabled == "on") {
-                install_cron_job($postwhite_update . ' > /dev/null', true, "10", "0", "*/3", "*", "*", "root");
+                install_cron_job($postwhite_update_cmd . ' > /dev/null', true, "10", "0", "*/3", "*", "*", "root");
         } else {
-                install_cron_job($postwhite_update . ' > /dev/null', false);
+                install_cron_job($postwhite_update_cmd . ' > /dev/null', false);
+        }
+
+	$auto_whitelist_cmd = "/usr/local/bin/php -q /usr/local/www/postfix_cloud_domains.php clean";
+	if ($antispam['auto_whitelist'] > 0 && $postfix_enabled == "on") {
+                install_cron_job($auto_whitelist_cmd . ' > /dev/null', true, "20", "0", "*/3", "*", "*", "root");
+        } else {
+                install_cron_job($auto_whitelist_cmd . ' > /dev/null', false);
         }
 
 	// check ldap update

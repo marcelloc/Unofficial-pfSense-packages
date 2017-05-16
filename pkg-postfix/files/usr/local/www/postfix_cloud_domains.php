@@ -88,6 +88,15 @@ function postfix_hash_append($afile,$domain,$ips=array()) {
 }
 global $config;
 
+if (is_array ($argv) && $argv[1] == 'clean') {
+	$prefix = "/usr/local/etc/postfix";
+	file_put_contents("{$prefix}/auto_whitelisted_domains","",LOCK_EX);
+	file_put_contents("{$prefix}/auto_whitelisted_cidr","",LOCK_EX);
+	system("/usr/local/sbin/postmap {$prefix}/auto_whitelisted_cidr");
+	system("/usr/local/sbin/postfix reload");
+	exit;	
+}
+
 if (is_array($config['installedpackages']['postfixantispam'])) {
         $antispam=$config['installedpackages']['postfixantispam']['config'][0];
         $count=$antispam['auto_whitelist'];
