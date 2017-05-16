@@ -170,36 +170,6 @@
 			</description>
 		</field>
 		<field>
-			<name>phishing.safe.sites.conf</name>
-			<type>listtopic</type>
-		</field>
-		<field>
-			<fielddescr>phishing.safe.sites.conf</fielddescr>
-			<fieldname>phishing_safe</fieldname>
-			<dontdisplayname/>
-			<usecolspan2/>
-			<description><![CDATA[phishing.safe.sites.conf config file.<br>Leave this field blank to load sample file.]]></description>
-			<type>textarea</type>
-			<cols>90</cols>
-			<rows>15</rows>
-			<encoding>base64</encoding>
-		</field>
-		<field>
-			<name>phishing.bad.sites.conf</name>
-			<type>listtopic</type>
-		</field>
-		<field>
-			<fielddescr>phishing.bad.sites.conf</fielddescr>
-			<fieldname>phishing_bad</fieldname>
-			<dontdisplayname/>
-			<usecolspan2/>
-			<description><![CDATA[phishing.bad.sites.conf config file.<br>Leave this field blank to load sample file.]]></description>
-			<type>textarea</type>
-			<cols>90</cols>
-			<rows>15</rows>
-			<encoding>base64</encoding>
-		</field>
-		<field>
 			<name>country.domains.conf</name>
 			<type>listtopic</type>
 		</field>

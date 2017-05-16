@@ -41,6 +41,26 @@ function ms_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n",base64_decode($text));
 }
 
+function check_mailscanner_cron() {
+	global $config, $g;
+
+	if (is_array($config['installedpackages']['mailscanner']['config'])) {
+		$ms = $config['installedpackages']['mailscanner']['config'][0];
+	}
+
+	if (is_array($config['installedpackages']['msantispam']['config'])) {
+		$msa = $config['installedpackages']['msantispam']['config'][0];
+	}
+
+	$cron_sa = "/usr/local/bin/sa-updater-custom-channels.sh";
+	if ($ms['enable'] == "on" && preg_match("/use_sa/",$msa['safeatures'])) {        
+		install_cron_job($cron_sa . ' > /dev/null', true, "30", "0", "*", "*", "*", "root");
+	} else {
+		install_cron_job($cron_sa . ' > /dev/null', false);
+	}
+
+}
+
 function sync_package_mailscanner($via_rpc=false) {
 	global $config;
 
@@ -271,14 +291,6 @@ Language Strings = %report-dir%/languages.conf
 		$config['installedpackages']['msattachments']['config'][0]['filetype_rules']=base64_encode(file_get_contents($mailscanner_dir.'/archives.filetype.rules.conf.sample'));
 		$load_samples++;
 	}
-	if($content['phishing_safe'] == ""){
-		$config['installedpackages']['mscontent']['config'][0]['phishing_safe']=base64_encode(file_get_contents($mailscanner_dir.'/phishing.safe.sites.conf.sample'));
-		$load_samples++;
-	}
-	if($content['phishing_bad'] == ""){
-		$config['installedpackages']['mscontent']['config'][0]['phishing_bad']=base64_encode(file_get_contents($mailscanner_dir.'/phishing.bad.sites.conf.sample'));
-		$load_samples++;
-	}
 	if($content['country_domains'] == ""){
 		$config['installedpackages']['mscontent']['config'][0]['country_domains']=base64_encode(file_get_contents($mailscanner_dir.'/country.domains.conf.sample'));
 		$load_samples++;
@@ -497,6 +509,7 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 	$sa_temp=preg_replace($pattern,$replacement,$sa_temp);
 	#rint "pre".$sa_temp;exit;
 	$config['installedpackages']['msantispam']['config'][0]['sa_pref_file']=base64_encode($sa_temp);
+	check_mailscanner_cron();
 	write_config();
 
 	file_put_contents($mailscanner_dir."/MailScanner.conf", $mc, LOCK_EX);
@@ -504,8 +517,6 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 	file_put_contents($mailscanner_dir."/filetype.rules.conf",ms_text_area_decode($config['installedpackages']['msattachments']['config'][0]['filetype_rules']),LOCK_EX);
 	file_put_contents($mailscanner_dir."/archives.filename.rules.conf",ms_text_area_decode($config['installedpackages']['msattachments']['config'][0]['filename_rules']),LOCK_EX);
 	file_put_contents($mailscanner_dir."/archives.filetype.rules.conf",ms_text_area_decode($config['installedpackages']['msattachments']['config'][0]['filetype_rules']),LOCK_EX);
-	file_put_contents($mailscanner_dir."/phishing.safe.sites.conf",ms_text_area_decode($config['installedpackages']['mscontent']['config'][0]['phishing_safe']),LOCK_EX);
-	file_put_contents($mailscanner_dir."/phishing.bad.sites.conf",ms_text_area_decode($config['installedpackages']['mscontent']['config'][0]['phishing_bad']),LOCK_EX);
 	file_put_contents($mailscanner_dir."/country.domains.conf",ms_text_area_decode($config['installedpackages']['mscontent']['config'][0]['country_domains']),LOCK_EX);
 	file_put_contents($mailscanner_dir.'/spam.assassin.prefs.conf',$sa_temp,LOCK_EX);
 	file_put_contents($mailscanner_dir.'/spam.lists.conf',ms_text_area_decode($config['installedpackages']['msantispam']['config'][0]['rbl_file']),LOCK_EX);
