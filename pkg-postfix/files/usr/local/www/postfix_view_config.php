@@ -35,8 +35,17 @@ if (isset($_REQUEST['file'])){
         		'mime' => POSTFIX_LOCALBASE . "/etc/postfix/mime_check",
         		'body' => POSTFIX_LOCALBASE . "/etc/postfix/body_check",
         		'domains' => POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelisted_domains",
-        		'cidr' => POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelisted_cidr");
-
+        		'cidr' => POSTFIX_LOCALBASE . "/etc/postfix/auto_whitelisted_cidr",
+			'cal_pcre' => POSTFIX_LOCALBASE . "/etc/postfix/cal_pcre",
+        		'cal_cidr' => POSTFIX_LOCALBASE . "/etc/postfix/cal_cidr",
+        		'aliases' => POSTFIX_LOCALBASE . "/etc/postfix/aliases",
+        		'spf' => POSTFIX_LOCALBASE . "/etc/postfix/postscreen_spf_whitelist.cidr",
+        		'transport' => POSTFIX_LOCALBASE . "/etc/postfix/transport",
+        		'local_recipients' => POSTFIX_LOCALBASE . "/etc/postfix/local_recipients",
+        		'postfwd_conf' => POSTFIX_LOCALBASE . "/etc/postfix/postfwd.conf",
+        		'sender_access' => POSTFIX_LOCALBASE . "/etc/postfix/sender_access",
+        		'virtual' => POSTFIX_LOCALBASE . "/etc/postfix/virtual",
+        		'virtual_alias_maps' => POSTFIX_LOCALBASE . "/etc/postfix/virtual_alias_maps");
 	$file=preg_replace("/\W+/","",$_REQUEST['file']);
 
 	if ( $files[$file] != "" && file_exists($files[$file])){
@@ -93,6 +102,16 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
       <li><a href="#" onClick="get_postfix_file('body');">body_check</a></li>
       <li><a href="#" onClick="get_postfix_file('domains');">whitelisted domains</a></li>
       <li><a href="#"onClick="get_postfix_file('cidr');">whitelisted CIDRs</a></li>
+      <li><a href="#" onClick="get_postfix_file('cal_pcre');">cal_pcre</a></li>
+      <li><a href="#" onClick="get_postfix_file('cal_cidr');">cal_cidr</a></li>
+      <li><a href="#" onClick="get_postfix_file('aliases');">aliases</a></li>
+      <li><a href="#" onClick="get_postfix_file('spf');">whitelisted spf</a></li>
+      <li><a href="#" onClick="get_postfix_file('transport');">transport</a></li>
+      <li><a href="#" onClick="get_postfix_file('virtual');">virtual</a></li>
+      <li><a href="#" onClick="get_postfix_file('local_recipients');">local_recipients</a></li>
+      <li><a href="#" onClick="get_postfix_file('postfwd_conf');">postfwd.conf</a></li>
+      <li><a href="#" onClick="get_postfix_file('sender_access');">sender_access</a></li>
+      <li><a href="#" onClick="get_postfix_file('virtual_alias_maps');">virtual_alias_maps</a></li>
     </ul>
   </div>
 </nav>
