@@ -162,7 +162,7 @@ function check_dkim_config (){
                           	} else {
                                 	$dkim_domains[$domain['domain']]['bits'] = '1024';
                           	}
-                          	$internal_hosts .= "{$domain['mailserverip']}/32\n";
+				$internal_hosts .= "{$domain['mailserverip']}/32\n";
                         }
                 }
                 //var_dump($dkim_bits);
@@ -175,7 +175,11 @@ function check_dkim_config (){
                                 if (preg_match ( "@/@" , $myhost)) {
                                        $internal_hosts .= "{$myhost}\n";
                                 } else {
-                                       $internal_hosts .= "{$myhost}/32\n";
+					if (preg_match ("/[a-z]+/",$myhost)) {
+	                                       $internal_hosts .= "{$myhost}\n";
+					} else {
+						$internal_hosts .= "{$myhost}/32\n";
+					}
                                 }
                         }
                 }
