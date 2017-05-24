@@ -31,10 +31,10 @@ fetch -q -o /root/$check_service_file $prefix/$check_service_file
 
 # /usr/local files
 
-for file in sshdcond.inc sshdcond.xml sshdcond_sync.xml
+for file in pkg/sshdcond.inc pkg/sshdcond.xml pkg/sshdcond_sync.xml
  do
 	echo "fetching  /usr/local/pkg/$file from github"
-	fetch -q -o /usr/local/$file $prefix/usr/local/pkg/$file
+	fetch -q -o /usr/local/$file $prefix/usr/local/$file
 done
 
 #install services and menus
