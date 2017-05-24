@@ -20,21 +20,21 @@
 # * limitations under the License.
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
-prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-filer/files/
+prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-filer/files
 
 # /etc/inc files
 file=/etc/inc/priv/filer.priv.inc
 fetch -q -o $file $prefix/$file
 
 check_service_file=check_filer_service.php
-fetch -q -o /root/$check_service_file $prefix/files/$check_service_file
+fetch -q -o /root/$check_service_file $prefix/$check_service_file
 
 # /usr/local files
 
 for file in filer.inc filer.xml filer_sync.xml
  do
 	echo "fetching  /usr/local/pkg/$file from github"
-	fetch -q -o /usr/local/pkg/$file $prefix/$file
+	fetch -q -o /usr/local/$file $prefix/usr/local/pkg/$file
 done
 
 #install services and menus
