@@ -20,10 +20,10 @@
 # * limitations under the License.
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
-prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-sshcond/files
+prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-sshdcond/files
 
 # /etc/inc files
-file=/etc/inc/priv/sshcond.priv.inc
+file=/etc/inc/priv/sshdcond.priv.inc
 fetch -q -o $file $prefix/$file
 
 check_service_file=check_sshcond_service.php
@@ -31,7 +31,7 @@ fetch -q -o /root/$check_service_file $prefix/$check_service_file
 
 # /usr/local files
 
-for file in sshcond.inc sshcond.xml sshcond_sync.xml
+for file in sshdcond.inc sshdcond.xml sshdcond_sync.xml
  do
 	echo "fetching  /usr/local/pkg/$file from github"
 	fetch -q -o /usr/local/$file $prefix/usr/local/pkg/$file
