@@ -38,13 +38,13 @@ $write_config++;
 $config['installedpackages']['menu'][]=array(	'name' => 'SSH Conditions',
 						'tooltiptext' => '',
 						'section' => 'Services',
-						'url' => '/pkg.php?xml=sshcond.xml');
+						'url' => '/pkg.php?xml=sshdcond.xml');
 }
 
 print "$write_config";
 if ( $write_config > 0 ) {
 	print "creating menu...\n";
-	write_config('Installing unofficial sshcond package');
+	write_config('Installing unofficial sshdcond package');
 }
 
 ?>
