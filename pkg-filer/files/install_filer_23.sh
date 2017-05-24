@@ -31,10 +31,10 @@ fetch -q -o /root/$check_service_file $prefix/$check_service_file
 
 # /usr/local files
 
-for file in filer.inc filer.xml filer_sync.xml
+for file in pkg/filer.inc pkg/filer.xml pkg/filer_sync.xml
  do
-	echo "fetching  /usr/local/pkg/$file from github"
-	fetch -q -o /usr/local/$file $prefix/usr/local/pkg/$file
+	echo "fetching  /usr/local/$file from github"
+	fetch -q -o /usr/local/$file $prefix/usr/local/$file
 done
 
 #install services and menus
