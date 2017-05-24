@@ -47,6 +47,24 @@
 	<version>0.60.5</version>
 	<title>Filer</title>
 	<include_file>/usr/local/pkg/filer.inc</include_file>
+	<additional_files_needed>
+		<prefix>/usr/local/pkg/</prefix>
+		<item>https://packages.pfsense.org/packages/config/filer/filer.inc</item>
+	</additional_files_needed>
+	<additional_files_needed>
+		<prefix>/etc/inc/priv/</prefix>
+		<item>https://packages.pfsense.org/packages/config/filer/filer.priv.inc</item>
+	</additional_files_needed>
+	<additional_files_needed>
+		<prefix>/usr/local/pkg/</prefix>
+		<item>https://packages.pfsense.org/packages/config/filer/filer_sync.xml</item>
+	</additional_files_needed>
+	<menu>
+		<name>Filer</name>
+		<tooltiptext>Filer</tooltiptext>
+		<section>Diagnostics</section>
+		<configfile>filer.xml</configfile>
+	</menu>
 	<tabs>
 		<tab>
 			<text>Files</text>
@@ -84,6 +102,7 @@
 			<type>input</type>
 			<size>60</size>
 			<description>Enter full file path.</description>
+			<required/>
 		</field>
 		<field>
 			<fielddescr>Description</fielddescr>
@@ -108,7 +127,6 @@
 			<encoding>base64</encoding>
 			<cols>75</cols>
 			<rows>25</rows>
-			<required/>
 		</field>
 		<field>
 			<type>listtopic</type>
