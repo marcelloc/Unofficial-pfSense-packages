@@ -20,15 +20,14 @@
 # * limitations under the License.
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
-prefix=https://raw.githubusercontent.com/pfsense/pfsense-packages/master/config/filer
-prefix2=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-filer/files/
+prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-filer/files/
 
 # /etc/inc files
 file=/etc/inc/priv/filer.priv.inc
 fetch -q -o $file $prefix/$file
 
 check_service_file=check_filer_service.php
-fetch -q -o /root/$check_service_file $prefix2/$check_service_file
+fetch -q -o /root/$check_service_file $prefix/files/$check_service_file
 
 # /usr/local files
 
