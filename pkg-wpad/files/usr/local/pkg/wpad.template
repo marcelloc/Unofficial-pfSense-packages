@@ -1,0 +1,35 @@
+<?php
+
+$conf_template=<<<EOF
+# nginx configuration file
+	worker_processes  {$wpad_workers};
+	events {
+	    worker_connections  1024;
+	}
+	http {
+	        include       /usr/local/etc/nginx/mime.types;
+	        default_type  application/octet-stream;
+	        sendfile        on;
+	        keepalive_timeout 65;
+	
+	        server {
+	                listen {$wpad_listen_ip}:{$wpad_listen_port};
+	                server_name wpad.localdomain
+	                server name 127.0.0.1
+	                client_max_body_size 200m;
+	
+	                root "/usr/local/www/{$wpad_index}/";
+	
+	                location ~ \.php$ {
+	                        try_files $uri =404; #  This line closes a potential security hole
+	                        fastcgi_pass   unix:/var/run/php-fpm.socket;
+	                        fastcgi_index  index.php;
+	                        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+	                        fastcgi_read_timeout 180;
+	                        include        /usr/local/etc/nginx/fastcgi_params;
+	                }
+	        }
+	}
+EOF;
+
+?>

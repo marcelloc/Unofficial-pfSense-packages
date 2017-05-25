@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE packagegui SYSTEM "../schema/packages.dtd">
+<?xml-stylesheet type="text/xsl" href="../xsl/package.xsl"?>
+<packagegui>
+	<copyright>
+	<![CDATA[
+/* $Id$ */
+/*
+ * wpad.xml
+ *
+ * part of Unofficial packages for pfSense(R) softwate
+ * Copyright (c) 2015-2017 Marcello Coutinho
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+	]]>
+	</copyright>
+	<name>wpad</name>
+	<version>0.1</version>
+	<title>Wpad</title>
+	<include_file>/usr/local/pkg/wpad.inc</include_file>
+	<additional_files_needed>
+		<prefix>/usr/local/pkg/</prefix>
+		<item>https://packages.pfsense.org/packages/config/wpad/wpad.inc</item>
+	</additional_files_needed>
+	<additional_files_needed>
+		<prefix>/etc/inc/priv/</prefix>
+		<item>https://packages.pfsense.org/packages/config/wpad/wpad.priv.inc</item>
+	</additional_files_needed>
+	<additional_files_needed>
+		<prefix>/usr/local/pkg/</prefix>
+		<item>https://packages.pfsense.org/packages/config/wpad/wpad_sync.xml</item>
+	</additional_files_needed>
+	<menu>
+		<name>Filer</name>
+		<tooltiptext>Filer</tooltiptext>
+		<section>Diagnostics</section>
+		<configfile>wpad.xml</configfile>
+	</menu>
+	<tabs>
+		<tab>
+			<text>Files</text>
+			<url>/pkg.php?xml=wpad.xml</url>
+			<active/>
+		</tab>
+		<tab>
+			<text>XMLRPC Sync</text>
+			<url>/pkg_edit.php?xml=wpad_sync.xml</url>
+		</tab>
+	</tabs>
+	<adddeleteeditpagefields>
+		<columnitem>
+			<fielddescr>Status</fielddescr>
+			<fieldname>enable</fieldname>
+		</columnitem>
+		<columnitem>
+			<fielddescr>Interface</fielddescr>
+			<fieldname>interface</fieldname>
+		</columnitem>
+		<columnitem>
+                        <fielddescr>Port</fielddescr>
+                        <fieldname>listenport</fieldname>
+                </columnitem>
+		<columnitem>
+                        <fielddescr>Max Processes</fielddescr>
+                        <fieldname>workers</fieldname>
+                </columnitem>
+		<columnitem>
+			<fielddescr>Description</fielddescr>
+			<fieldname>description</fieldname>
+		</columnitem>
+	</adddeleteeditpagefields>
+	<fields>
+		 <field>
+                        <name>Listening Settings</name>
+                        <type>listtopic</type>
+                </field>
+                <field>
+                        <fielddescr>Enable this wpad</fielddescr>
+                        <fieldname>enable</fieldname>
+                        <type>checkbox</type>
+                        <description><![CDATA[Enable or disable wpad.]]></description>
+                </field>
+                <field>
+                        <fielddescr>Listen Interface(s)</fielddescr>
+                        <fieldname>interface</fieldname>
+                        <description><![CDATA[Default: <strong>LAN/loopback</strong><br>Select interface that you want to wpad service listen on.</strong>]]></description>
+                        <type>interfaces_selection</type>
+                        <showvirtualips/>
+                        <required/>
+                </field>
+                <field>
+                        <fielddescr>Listen port</fielddescr>
+                        <fieldname>listenport</fieldname>
+                        <type>input</type>
+                        <size>10</size>
+                        <description><![CDATA[Default: <strong>80</strong><br>The port that wpad listens to.<br>
+				Do not forget to disable web gui redirect on system advanced settings]]></description>
+                </field>
+		<field>
+                        <fielddescr>Max process</fielddescr>
+                        <fieldname>workers</fieldname>
+                        <type>input</type>
+                        <size>10</size>
+                        <description><![CDATA[Enter the number of nginx wpad processes to run. This defaults to 2. Increasing this will allow more users/browsers to access the GUI concurrently.
+			]]></description>
+                </field>
+		<field>
+			<fielddescr>Description</fielddescr>
+			<fieldname>description</fieldname>
+			<description>Enter a description for this file.</description>
+			<type>input</type>
+			<typehint>(Not parsed -- this is for your reference only.)</typehint>
+			<size>60</size>
+		</field>
+		<field>
+			<fielddescr>Script Contents</fielddescr>
+			<fieldname>filedata</fieldname>
+			<description><![CDATA[Wpad script file.<br>Leave empty to load a sample script]]></description>
+			<type>textarea</type>
+			<encoding>base64</encoding>
+			<cols>80</cols>
+			<rows>25</rows>
+		</field>
+	</fields>
+	<custom_php_validation_command>
+		wpad_validate_input($_POST, $input_errors);
+	</custom_php_validation_command>
+	<custom_delete_php_command>
+		sync_package_wpad();
+	</custom_delete_php_command>
+	<custom_php_resync_config_command>
+		sync_package_wpad();
+	</custom_php_resync_config_command>
+</packagegui>
