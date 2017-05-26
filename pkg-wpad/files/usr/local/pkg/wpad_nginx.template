@@ -2,8 +2,10 @@
 
 $conf_template=<<<EOF
 # nginx configuration file
+	user  root wheel;
 	worker_processes  {$wpad_workers};
 	pid	/var/run/nginx_wpad{$wpad_index}.pid;
+	error_log  syslog:server=unix:/var/run/log,facility=local5;
 	events {
 	    worker_connections  1024;
 	}
@@ -11,6 +13,7 @@ $conf_template=<<<EOF
 	        include       /usr/local/etc/nginx/mime.types;
 	        default_type  application/octet-stream;
 	        sendfile        on;
+		access_log      syslog:server=unix:/var/run/log,facility=local5 combined;
 	        keepalive_timeout 65;
 	        server {
 	                listen {$wpad_listen_ip}:{$wpad_listenport};
@@ -20,14 +23,23 @@ $conf_template=<<<EOF
 	
 	                root "/usr/local/www/wpad{$wpad_index}/";
 	
-	                location ~ \.php$ {
-	                        try_files $uri /dev/null =404; #  This line closes a potential security hole
-	                        fastcgi_pass   unix:/var/run/php-fpm.socket;
-	                        fastcgi_index  index.php;
-	                        fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
-	                        fastcgi_read_timeout 180;
-	                        include        /usr/local/etc/nginx/fastcgi_params;
-	                }
+			location / {
+                        	index index.php sgerror.php index.html index.htm;
+                	}
+
+                	location ~ \.php$ {
+                        	try_files \$uri =404; #  This line closes a potential security hole
+                        	# ensuring users can't execute uploaded files
+                        	# see: http://forum.nginx.org/read.php?2,88845,page=3
+                        	fastcgi_pass   unix:/var/run/php-fpm.socket;
+                        	fastcgi_index  index.php;
+                        	fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
+                        	# Fix httpoxy - https://httpoxy.org/#fix-now
+                        	fastcgi_param  HTTP_PROXY  "";
+                        	fastcgi_read_timeout 180;
+                        	include        /usr/local/etc/nginx/fastcgi_params;
+                	}
+
 	        }
 	}
 EOF;

@@ -35,12 +35,9 @@ function wpad_text_area_decode($text) {
 
 function wpad_clean($wpad_index) {
 	$rc_file = "/usr/local/etc/rc.d/nginx_wpad{$wpad_index}.sh";
-	//print "$wpad_index $rc_file";
 	exec("{$rc_file} stop",$x);
-	//var_dump($x);
-	//exit;
 	unlink_if_exists($rc_file);
-	$files = array("wpad.dat","wpad.da","proxy.pac");
+	$files = array("wpad.dat","wpad.da","proxy.pac","sgerror.php");
 	foreach ($files as $file) {
 		unlink_if_exists("/usr/local/www/wpad{$wpad_index}/{$file}");
 	}	
@@ -82,7 +79,7 @@ function wpad_check($wpad_index,$nginx){
 	$stop  = "if [ -f /var/run/nginx_wpad{$wpad_index}.pid ]\n\tthen\n\t";
 	$stop .= "kill `cat /var/run/nginx_wpad{$wpad_index}.pid`\nfi";
 	if (file_exists("/usr/local/etc/rc.d/nginx_wpad{$wpad_index}.sh")) {
-		system("/usr/local/etc/rc.d/nginx_wpad{$index}.sh stop");
+		system("/usr/local/etc/rc.d/nginx_wpad{$wpad_index}.sh stop");
 	}
 	write_rcfile(array("file" => "nginx_wpad{$wpad_index}.sh", "start" => $start, "stop" => $stop));
 }
@@ -103,15 +100,18 @@ function sync_package_wpad() {
 		foreach ($config['installedpackages']['wpad']['config'] as $index=> $file) {
 			if ($file['enable'] == "on") {
 				wpad_check($index,$file);
+				/* Write file. */
+				$pac_file = "/usr/local/www/wpad{$index}/proxy.pac";
+				file_put_contents($pac_file, wpad_text_area_decode($file['filedata']), LOCK_EX);
+				wpad_symlink($pac_file, "/usr/local/www/wpad{$index}/wpad.da");
+				wpad_symlink($pac_file, "/usr/local/www/wpad{$index}/wpad.dat");
+				if ($file['sgerror'] != "on" && file_exists("/usr/local/www/sgerror.php")) {
+					copy("/usr/local/www/sgerror.php" , "/usr/local/www/wpad{$index}/sgerror.php");
+				}
+				system("/usr/local/etc/rc.d/nginx_wpad{$index}.sh start");
 			} else {
 				wpad_clean($index);
 			}
-			/* Write file. */
-			$pac_file = "/usr/local/www/wpad{$index}/proxy.pac";
-			file_put_contents($pac_file, wpad_text_area_decode($file['filedata']), LOCK_EX);
-			wpad_symlink($pac_file, "/usr/local/www/wpad{$index}/wpad.da");
-			wpad_symlink($pac_file, "/usr/local/www/wpad{$index}/wpad.dat");
-			system("/usr/local/etc/rc.d/nginx_wpad{$index}.sh start");
 		}
 	}
 
