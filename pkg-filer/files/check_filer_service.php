@@ -5,7 +5,6 @@ require_once("/etc/inc/pkg-utils.inc");
 require_once("/etc/inc/globals.inc");
 require_once("xmlrpc.inc");
 require_once("xmlrpc_client.inc");
-require_once("/usr/local/pkg/postfix.inc");
 
 
 global $config;
