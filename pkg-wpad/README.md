@@ -8,6 +8,8 @@ This is not supported by Netgate or pfSense team. Use it at your own risk.
 
 Feedbacks and contributions are always welcome.
 
+The wpad package confgigures antoher nginx http instance to host wpad file and proxy/squidguard error page as well. This way you can keep you firewall GUI under HTTPS.
+
 # Install instructions
 
 Under console/ssh, fetch the install script, check what it does if you want and then execute it.
