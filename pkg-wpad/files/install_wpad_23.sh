@@ -20,5 +20,5 @@
 # * limitations under the License.
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
-  pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/pkg-wpad/files/pfSense-pkg-Wpad-0.1.txz
+  pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/repo/pfSense-pkg-Wpad-0.2.txz
 fi

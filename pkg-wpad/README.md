@@ -12,7 +12,9 @@ The wpad package confgigures antoher nginx http instance to host wpad file and p
 
 # Install instructions
 
-Under console/ssh, fetch the install script, check what it does if you want and then execute it.
+If you enabled the Unofficial repo, you can add this package under System -> Package Manager
+
+Or add it under console/ssh.
 
 cd /root
 
