@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-Wpad
 PORTVERSION=	0.1
-CATEGORIES=	services
+CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
 EXTRACT_ONLY=	# empty
@@ -27,15 +27,17 @@ do-install:
 	${MKDIR} ${STAGEDIR}${DATADIR}
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/wpad.xml \
 		${STAGEDIR}${PREFIX}/pkg
+	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/wpad_sync.xml \
+		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/wpad.priv.inc \
 		${STAGEDIR}/etc/inc/priv
-	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/wpad.inc \
+	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/wpad.inc \
 		${STAGEDIR}${PREFIX}/pkg
-	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/wpad_nginx.template \
+	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/wpad_nginx.template \
 		${STAGEDIR}${PREFIX}/pkg
-	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/wpad_script.template \
+	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/wpad_script.template \
 		${STAGEDIR}${PREFIX}/pkg
-	${INSTALL_DATA} ${FILESDIR}${DATADIR}/info.xml \
+	${INSTALL_DATA} -m 0644 ${FILESDIR}${DATADIR}/info.xml \
 		${STAGEDIR}${DATADIR}
 	@${REINPLACE_CMD} -i '' -e "s|%%PKGVERSION%%|${PKGVERSION}|" \
 		${STAGEDIR}${DATADIR}/info.xml
