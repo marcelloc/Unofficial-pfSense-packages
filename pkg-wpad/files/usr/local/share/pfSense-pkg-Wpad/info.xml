@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+	<package>
+		<name>Wpad</name>
+		<descr><![CDATA[Distribute proxy configuration scripts on a different nginx dir, process and port.]]></descr>
+		<pkginfolink/>
+		<version>%%PKGVERSION%%</version>
+		<configurationfile>wpad.xml</configurationfile>
+	</package>
+</pfsensepkgs>

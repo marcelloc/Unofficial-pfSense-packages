@@ -1,0 +1,8 @@
+pkg/wpad.xml
+pkg/wpad.inc
+pkg/wpad_sync.xml
+pkg/wpad_script.template
+pkg/wpad_nginx.template
+/etc/inc/priv/wpad.priv.inc
+%%DATADIR%%/info.xml
+@dir /etc/inc/priv
