@@ -8,7 +8,7 @@ DISTFILES=	# empty
 EXTRACT_ONLY=	# empty
 
 MAINTAINER=	marcellocoutinho@gmail.com
-COMMENT=	pfSense Unofficial package Wpad
+COMMENT=	pfSense Unofficial wpad package
 
 LICENSE=	APACHE20
 
