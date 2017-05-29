@@ -11,7 +11,7 @@
 	part of pfSense (https://www.pfSense.org/)
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2011 Brian Scholer
-	Copyright (C) 2012 Marcello Coutinho
+	Copyright (C) 2012-2017 Marcello Coutinho
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
 */
@@ -44,21 +44,9 @@
 	]]>
 	</copyright>
 	<name>filer</name>
-	<version>0.60.5</version>
+	<version>0.61</version>
 	<title>Filer</title>
 	<include_file>/usr/local/pkg/filer.inc</include_file>
-	<additional_files_needed>
-		<prefix>/usr/local/pkg/</prefix>
-		<item>https://packages.pfsense.org/packages/config/filer/filer.inc</item>
-	</additional_files_needed>
-	<additional_files_needed>
-		<prefix>/etc/inc/priv/</prefix>
-		<item>https://packages.pfsense.org/packages/config/filer/filer.priv.inc</item>
-	</additional_files_needed>
-	<additional_files_needed>
-		<prefix>/usr/local/pkg/</prefix>
-		<item>https://packages.pfsense.org/packages/config/filer/filer_sync.xml</item>
-	</additional_files_needed>
 	<menu>
 		<name>Filer</name>
 		<tooltiptext>Filer</tooltiptext>

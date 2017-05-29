@@ -8,20 +8,18 @@ This is not supported by Netgate or pfSense team. Use it at your own risk.
 
 Feedbacks and contributions are always welcome.
 
+The filer package allows you to create files/scripts on file system and keep it on config.xml backup
+
 # Install instructions
 
-You can enable unoffical repo by downloading repo file with
+If you enabled the Unofficial repo, you can add this package under System -> Package Manager
 
-fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.conf
+Or add it under console/ssh.
 
-and select the package under GUI
+cd /root
 
-or
+fetch https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-filer/files/install_filer_23.sh
 
-Using console/ssh, fetch the package manually.
-
-pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/pkg-wpad/files/pfSense-pkg-Wpad-0.1.txz
-
-This package does not include any binary files.
+sh ./install_filer_23.sh
 
 Once it finishes, all must be in place. If you do not see the menu after it finishes, try to install any pfSense package from GUI, like cron for example.

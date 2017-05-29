@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+	<package>
+		<name>Filer</name>
+		<descr><![CDATA[Create files/scripts on pfSense file system and keep it on config.xml backups.]]></descr>
+		<pkginfolink/>
+		<version>%%PKGVERSION%%</version>
+		<configurationfile>filer.xml</configurationfile>
+	</package>
+</pfsensepkgs>
