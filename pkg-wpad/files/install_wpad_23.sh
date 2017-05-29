@@ -20,26 +20,5 @@
 # * limitations under the License.
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
-prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-wpad/files
-
-# /etc/inc files
-file=/etc/inc/priv/wpad.priv.inc
-fetch -q -o $file $prefix/$file
-
-check_service_file=check_wpad_service.php
-fetch -q -o /root/$check_service_file $prefix/$check_service_file
-
-# /usr/local files
-
-for file in pkg/wpad.inc pkg/wpad.xml pkg/wpad_sync.xml pkg/wpad_nginx.template \
-	pkg/wpad_script.template
-
- do
-	echo "fetching  /usr/local/$file from github"
-	fetch -q -o /usr/local/$file $prefix/usr/local/$file
-done
-
-#install services and menus
-php /root/check_wpad_service.php
-
+  pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/pkg-wpad/files/pfSense-pkg-Wpad-0.1.txz
 fi
