@@ -1,5 +1,9 @@
 function FindProxyForURL(url, host) {
 	
+	// No proxy for hosts with local domain
+	// you ca replace this with your local domain
+ 	if (shExpMatch(host, ".local")) return "DIRECT";
+
 	// No proxy for internal networks.
 	if (isPlainHostName(host) ||
 	isInNet(dnsResolve(host), "192.168.0.0",  "255.255.0.0") ||
