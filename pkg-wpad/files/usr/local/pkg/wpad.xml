@@ -30,18 +30,6 @@
 	<version>0.1</version>
 	<title>Wpad</title>
 	<include_file>/usr/local/pkg/wpad.inc</include_file>
-	<additional_files_needed>
-		<prefix>/usr/local/pkg/</prefix>
-		<item>https://packages.pfsense.org/packages/config/wpad/wpad.inc</item>
-	</additional_files_needed>
-	<additional_files_needed>
-		<prefix>/etc/inc/priv/</prefix>
-		<item>https://packages.pfsense.org/packages/config/wpad/wpad.priv.inc</item>
-	</additional_files_needed>
-	<additional_files_needed>
-		<prefix>/usr/local/pkg/</prefix>
-		<item>https://packages.pfsense.org/packages/config/wpad/wpad_sync.xml</item>
-	</additional_files_needed>
 	<menu>
 		<name>Filer</name>
 		<tooltiptext>Filer</tooltiptext>
