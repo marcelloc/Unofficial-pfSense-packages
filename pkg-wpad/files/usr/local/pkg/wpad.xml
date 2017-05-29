@@ -31,9 +31,9 @@
 	<title>Wpad</title>
 	<include_file>/usr/local/pkg/wpad.inc</include_file>
 	<menu>
-		<name>Filer</name>
-		<tooltiptext>Filer</tooltiptext>
-		<section>Diagnostics</section>
+		<name>Wpad</name>
+		<tooltiptext>Automatic proxy configuration</tooltiptext>
+		<section>services</section>
 		<configfile>wpad.xml</configfile>
 	</menu>
 	<tabs>
