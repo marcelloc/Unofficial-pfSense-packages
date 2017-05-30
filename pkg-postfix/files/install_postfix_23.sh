@@ -86,7 +86,7 @@ cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
 cp /tmp/pfSense.conf $repo2
 
 # Install postfix package
-pkg lock pkg
+# pkg lock pkg
 pkg install postfix-sasl libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap postfix-postfwd opendmarc pflogsumm zip
 
 # restore repository configuration state
@@ -133,7 +133,7 @@ echo "update mail_noqueue set status='soft bounce' where status_info like '%Serv
 echo " ok"
 done
 
-pkg unlock pkg
+# pkg unlock pkg
 
 php /usr/local/www/postfix_migrate_config.php
 fi
