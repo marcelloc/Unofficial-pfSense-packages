@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-E2guardian
-PORTVERSION=	1.0
+PORTVERSION=	0.9
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -13,7 +13,7 @@ COMMENT=	pfSense Unofficial E2guardian package
 LICENSE=	APACHE20
 
 RUN_DEPENDS=	${LOCALBASE}/sbin/e2guardian:www/e2guardian \
-		${LOCALBASE}/sbin/tinyproxy:www/tinyproxy
+		/usr/local/share/certs/ca-root-nss.crt:security/ca_root_nss
 
 NO_BUILD=	yes
 NO_MTREE=	yes
@@ -29,6 +29,7 @@ do-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/www
 	${MKDIR} ${STAGEDIR}${PREFIX}/www/shortcuts
 	${MKDIR} ${STAGEDIR}/etc/inc/priv
+	${MKDIR} ${STAGEDIR}/root
 	${MKDIR} ${STAGEDIR}${DATADIR}
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian.xml \
 		${STAGEDIR}${PREFIX}/pkg
@@ -96,6 +97,12 @@ do-install:
 		${STAGEDIR}${PREFIX}/www/shortcuts
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${DATADIR}/info.xml \
 		${STAGEDIR}${DATADIR}
+	${INSTALL_DATA} -m 0700 ${FILESDIR}/root/e2guardian.bsd.sh \
+		${STAGEDIR}/root
+	${INSTALL_DATA} -m 0644 ${FILESDIR}/root/pkg_edit.patch \
+		${STAGEDIR}/root
+	${INSTALL_DATA} -m 0644 ${FILESDIR}/root/pkg.patch \
+		${STAGEDIR}/root
 	@${REINPLACE_CMD} -i '' -e "s|%%PKGVERSION%%|${PKGVERSION}|" \
 		${STAGEDIR}${DATADIR}/info.xml
 	@${REINPLACE_CMD} -i '' -e "s|%%PKGVERSION%%|${PKGVERSION}|" \

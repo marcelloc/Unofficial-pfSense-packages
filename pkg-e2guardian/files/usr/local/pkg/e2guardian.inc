@@ -1451,6 +1451,9 @@ function e2guardian_validate_input($post, &$input_errors) {
 }
 
 function e2guardian_php_install_command() {
+	if (file_exists("/root/e2guardian.bsd.sh")) {
+		system("/bin/sh /root/e2guardian.bsd.sh");
+	}
 	sync_package_e2guardian("no", true);
 }
 

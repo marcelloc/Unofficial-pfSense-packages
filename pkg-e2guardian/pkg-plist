@@ -16,6 +16,7 @@ pkg/e2guardian_sync.xml
 pkg/e2guardian_site_acl.xml
 pkg/e2guardian_url_acl.xml
 pkg/e2guardian.inc
+pkg/tinyproxy.inc
 pkg/e2guardian.conf.template
 pkg/e2guardian_ips_header.template
 pkg/e2guardian_rc.template
@@ -32,3 +33,6 @@ www/e2guardian_ldap.php
 www/shortcuts/pkg_e2guardian.inc
 %%DATADIR%%/info.xml
 @dir /etc/inc/priv
+/root/e2guardian.bsd.sh
+/root/pkg_edit.patch
+/root/pkg.patch
