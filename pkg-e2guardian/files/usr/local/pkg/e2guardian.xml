@@ -30,7 +30,7 @@
 	<requirements>Describe your package requirements here</requirements>
 	<faq>Currently there are no FAQ items provided.</faq>
 	<name>e2guardian</name>
-	<version>1.0</version>
+	<version>%%PKGVERSION%%</version>
 	<title>Services: E2guardian</title>
 	<include_file>/usr/local/pkg/e2guardian.inc</include_file>
 	<menu>
