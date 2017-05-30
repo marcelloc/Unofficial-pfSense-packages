@@ -1,0 +1,3 @@
+Sshdcond package for pfSense
+Allows to define SSH overrides for users, groups, hosts and addresses using Match in a convenient way.
+This package acts as an access list frontend for ssh connections

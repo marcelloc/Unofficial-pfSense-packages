@@ -9,7 +9,7 @@
 /*
 	sshdcond.xml
 	part of pfSense (https://www.pfSense.org/)
-	Copyright (C) 2012 Marcello Coutinho
+	Copyright (C) 2012-2017 Marcello Coutinho
 	Copyright (C) 2012 Han Van (namezero@afim.info)
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
@@ -43,7 +43,7 @@
 	]]>
 	</copyright>
 	<name>sshdcond</name>
-	<version>1.0.6</version>
+	<version>1.1</version>
 	<title>Services: SSH Conditional Options</title>
 	<savetext>Save</savetext>
 	<include_file>/usr/local/pkg/sshdcond.inc</include_file>
@@ -54,18 +54,6 @@
 		<url>/pkg.php?xml=sshdcond.xml</url>
 	</menu>
 	<configpath>installedpackages->package->sshdcond</configpath>
-	<additional_files_needed>
-		<prefix>/usr/local/pkg/</prefix>
-		<item>https://packages.pfsense.org/packages/config/sshdcond/sshdcond.inc</item>
-	</additional_files_needed>
-	<additional_files_needed>
-		<prefix>/etc/inc/priv/</prefix>
-		<item>https://packages.pfsense.org/packages/config/sshdcond/sshdcond.priv.inc</item>
-	</additional_files_needed>
-	<additional_files_needed>
-		<prefix>/usr/local/pkg/</prefix>
-		<item>https://packages.pfsense.org/packages/config/sshdcond/sshdcond_sync.xml</item>
-	</additional_files_needed>
 	<tabs>
 		<tab>
 			<text>General</text>

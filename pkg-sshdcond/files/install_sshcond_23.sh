@@ -4,7 +4,7 @@
 # * install_sshcond_23.sh
 # *
 # * part of unofficial packages for pfSense(R) software
-# * Copyright (c) 2011-2017 Marcello Coutinho
+# * Copyright (c) 2017 Marcello Coutinho
 # * All rights reserved.
 # *
 # * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,24 +20,5 @@
 # * limitations under the License.
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
-prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-sshdcond/files
-
-# /etc/inc files
-file=/etc/inc/priv/sshdcond.priv.inc
-fetch -q -o $file $prefix/$file
-
-check_service_file=check_sshcond_service.php
-fetch -q -o /root/$check_service_file $prefix/$check_service_file
-
-# /usr/local files
-
-for file in pkg/sshdcond.inc pkg/sshdcond.xml pkg/sshdcond_sync.xml
- do
-	echo "fetching  /usr/local/pkg/$file from github"
-	fetch -q -o /usr/local/$file $prefix/usr/local/$file
-done
-
-#install services and menus
-php /root/check_sshcond_service.php
-
+  pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/repo/pfSense-pkg-SshdCond-1.1.txz
 fi

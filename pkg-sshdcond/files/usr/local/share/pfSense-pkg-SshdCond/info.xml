@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+	<package>
+		<name>SshdCond</name>
+		<descr><![CDATA[Allows to define SSH overrides for users, groups, hosts and addresses using Match in a convenient way.<br>
+		This package acts as an access list frontend for ssh connections]]></descr>
+		<pkginfolink/>
+		<version>%%PKGVERSION%%</version>
+		<configurationfile>sshdcond.xml</configurationfile>
+	</package>
+</pfsensepkgs>

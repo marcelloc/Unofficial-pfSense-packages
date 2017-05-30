@@ -9,7 +9,7 @@
 /*
 	sshdcond_sync.xml
 	part of pfSense (https://www.pfSense.org/)
-	Copyright (C) 2012 Marcello Coutinho
+	Copyright (C) 2012-2017 Marcello Coutinho
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
 */
@@ -42,7 +42,7 @@
 	]]>
 	</copyright>
 	<name>sshdcondsync</name>
-	<version>1.0.6</version>
+	<version>1.1</version>
 	<title>Services: SSH Conditional Options - Sync</title>
 	<include_file>/usr/local/pkg/sshdcond.inc</include_file>
 	<tabs>
