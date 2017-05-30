@@ -33,7 +33,7 @@
 	<menu>
 		<name>Wpad</name>
 		<tooltiptext>Automatic proxy configuration</tooltiptext>
-		<section>services</section>
+		<section>Services</section>
 		<configfile>wpad.xml</configfile>
 	</menu>
 	<tabs>
