@@ -34,7 +34,7 @@
 	<title>Services: E2guardian</title>
 	<include_file>/usr/local/pkg/e2guardian.inc</include_file>
 	<menu>
-		<name>E2guardian proxy</name>
+		<name>E2guardian Proxy</name>
 		<tooltiptext>Configure e2guardian</tooltiptext>
 		<section>Services</section>
 		<url>/pkg_edit.php?xml=e2guardian.xml</url>
