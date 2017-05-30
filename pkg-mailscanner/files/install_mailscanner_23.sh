@@ -55,7 +55,7 @@ chmod +x /usr/local/bin/sa-updater-custom-channels.sh
 chmod +x /usr/local/bin/sa-wrapper.pl
 
 # Install mailscanner package
-pkg lock pkg
+# pkg lock pkg
 pkg install mailscanner bash dcc-dccd spamassassin p7zip rsync
 
 #install services and menus
@@ -123,4 +123,4 @@ for PatchFile in ConfigDefs.pl.patch Message.pm.patch SweepContent.pm.patch
   do
   fetch -o - -q $prefix/$PatchFile | patch -N -b -p0
   done
-pkg unlock pkg
+# pkg unlock pkg
