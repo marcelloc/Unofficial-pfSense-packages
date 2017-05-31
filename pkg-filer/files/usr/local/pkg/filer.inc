@@ -34,7 +34,10 @@ require_once("config.inc");
 require_once("globals.inc");
 require_once("notices.inc");
 require_once("util.inc");
-require_once("xmlrpc.inc");
+$pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
+if ($pfs_version == "2.3" ) {
+        require_once("xmlrpc.inc");
+}
 require_once("xmlrpc_client.inc");
 
 function filer_text_area_decode($text) {
