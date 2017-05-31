@@ -26,8 +26,11 @@ require_once("notices.inc");
 require_once("pkg-utils.inc");
 require_once("services.inc");
 require_once("util.inc");
-require_once("xmlrpc.inc");
-require_once("xmlrpc_client.inc");
+$pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
+if ($pfs_version == "2.3" ) {
+	require_once("xmlrpc.inc");
+	require_once("xmlrpc_client.inc");
+}
 require_once("tinyproxy.inc");
 $shortcut_section = "e2guardian";
 
