@@ -26,10 +26,11 @@ require_once('service-utils.inc');
 require_once('util.inc');
 require_once("notices.inc");
 require_once("interfaces.inc");
-if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
+$pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
+if ($pfs_version == "2.3" ) {
 	require_once("xmlrpc.inc");
 	require_once("xmlrpc_client.inc");
-fi
+}
 
 function wpad_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
