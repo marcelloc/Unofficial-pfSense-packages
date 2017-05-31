@@ -75,23 +75,19 @@ cp /usr/local/$dtdir/DataTables-1.10.13/images/sort_both.png /usr/local/$dtdir/i
 cp /usr/local/$dtdir/DataTables-1.10.13/images/sort_asc.png /usr/local/$dtdir/images/sort_asc.png
 
 # Enable freebsd Repo
-repo1=/usr/local/etc/pkg/repos/FreeBSD.conf
-repo2=/usr/local/etc/pkg/repos/pfSense.conf
-cp $repo1 /root/FreeBSD.bkp.conf
-echo "FreeBSD: { enabled: yes  }" > $repo1
-
-cp $repo2 /root/pfSense.bkp.conf
-cp /usr/local/etc/pkg/repos/pfSense.conf /root/pfSense.bkp.conf
-cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
-cp /tmp/pfSense.conf $repo2
+repo_dir=/root/repo.bkp
+mkdir -p $repo_dir
+rm -f $repo_dir/*conf
+cp /usr/local/etc/pkg/repos/*conf $repo_dir
+sed -i "" -E "s/(FreeBSD.*enabled:) no/\1 yes/" /usr/local/etc/pkg/repos/*conf
 
 # Install postfix package
-# pkg lock pkg
+pkg update
 pkg install postfix-sasl libspf2 opendkim libmilter py27-postfix-policyd-spf-python p5-perl-ldap postfix-postfwd opendmarc pflogsumm zip
 
 # restore repository configuration state
-cp /root/pfSense.bkp.conf $repo2
-cp /root/FreeBSD.bkp.conf $repo1
+#cp /root/pfSense.bkp.conf $repo2
+cp $repo_dir/*conf /usr/local/etc/pkg/repos/.
 
 #check some libs
 if [ ! -f /usr/local/lib/libmilter.so.5 ];then
