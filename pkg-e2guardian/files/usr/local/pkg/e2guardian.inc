@@ -509,6 +509,17 @@ print "<PRE>inicio";
 			'greysite_enabled' => "on",
 			'urlsite_enabled' => "on");
 	}
+
+	//Blacklist 
+	if (!is_array($config['installedpackages']['e2guardianblacklist']['config'])) {
+		$config['installedpackages']['e2guardianblacklist']['config'][0] = array(
+			'liston' => 'banned',
+			'cron' => '02days',
+			'url' => "http://www.shallalist.de/Downloads/shallalist.tar.gz",
+ 			'enable_custom_script' => "",
+			'update_script' => "");
+	}
+
 	//loop on array
 	$count = 0;
 	foreach ($config['installedpackages']['e2guardiansiteacl']['config'] as $e2guardian_site) {
