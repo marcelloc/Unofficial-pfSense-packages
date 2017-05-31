@@ -40,15 +40,11 @@ do
 done
 
 # Enable freebsd Repo
-repo1=/usr/local/etc/pkg/repos/FreeBSD.conf
-repo2=/usr/local/etc/pkg/repos/pfSense.conf
-cp $repo1 /root/FreeBSD.bkp.conf
-echo "FreeBSD: { enabled: yes  }" > $repo1
-
-cp $repo2 /root/pfSense.bkp.conf
-cp /usr/local/etc/pkg/repos/pfSense.conf /root/pfSense.bkp.conf
-cat $repo2 | sed "s/enabled: no/enabled: yes/" > /tmp/pfSense.conf &&
-cp /tmp/pfSense.conf $repo2
+repo_dir=/root/repo.bkp
+mkdir -p $repo_dir
+rm -f $repo_dir/*conf
+cp /usr/local/etc/pkg/repos/*conf $repo_dir
+sed -i "" -E "s/(FreeBSD.*enabled:) no/\1 yes/" /usr/local/etc/pkg/repos/*conf
 
 #fix permission
 chmod +x /usr/local/bin/sa-updater-custom-channels.sh
@@ -56,7 +52,11 @@ chmod +x /usr/local/bin/sa-wrapper.pl
 
 # Install mailscanner package
 # pkg lock pkg
+pkg update
 pkg install mailscanner bash dcc-dccd spamassassin p7zip rsync
+
+# restore repository configuration state
+cp $repo_dir/*conf /usr/local/etc/pkg/repos/.
 
 #install services and menus
 php /root/check_mailscanner_service.php
@@ -123,4 +123,4 @@ for PatchFile in ConfigDefs.pl.patch Message.pm.patch SweepContent.pm.patch
   do
   fetch -o - -q $prefix/$PatchFile | patch -N -b -p0
   done
-# pkg unlock pkg
+
