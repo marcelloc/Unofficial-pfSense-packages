@@ -96,6 +96,15 @@
 			<fielddescr>Description</fielddescr>
 			<fieldname>description</fieldname>
 		</columnitem>
+		 <columnitem>
+                        <fielddescr>Group Options</fielddescr>
+                        <fieldname>lgroupoptions</fieldname>
+                </columnitem>
+		<columnitem>
+                        <fielddescr>Filter mode</fielddescr>
+                        <fieldname>lfiltermode</fieldname>
+                </columnitem>
+
 		<movable>on</movable>
 	</adddeleteeditpagefields>
 	<fields>
@@ -119,6 +128,7 @@
 		<field>
 			<name>Access Lists</name>
 			<type>listtopic</type>
+			<fieldname>lgroupoptions</fieldname>
 		</field>
 		<field>
 			<fielddescr>Group Options</fielddescr>
@@ -230,6 +240,7 @@
 		<field>
 			<name>Values</name>
 			<type>listtopic</type>
+			<fieldname>lfiltermode</fieldname>
 		</field>
 		<field>
 			<fielddescr>Filter Group Mode</fielddescr>

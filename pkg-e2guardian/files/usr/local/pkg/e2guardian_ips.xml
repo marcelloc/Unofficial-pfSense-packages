@@ -113,7 +113,7 @@
 			<cols>80</cols><rows>12</rows>
 			<encoding>base64</encoding>
 		</field>		<field>
-			<name>GrupoAdmin (0)</name>
+			<name>GrupoAdmin (1)</name>
 			<type>listtopic</type>
 		</field>
 		<field>

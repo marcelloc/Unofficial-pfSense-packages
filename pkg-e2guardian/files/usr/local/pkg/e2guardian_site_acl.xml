@@ -212,6 +212,27 @@
 			<rows>10</rows>
 			<encoding>base64</encoding>
 		</field>
+                <field>
+                        <name>SSL Regex</name>
+                        <type>listtopic</type>
+		</field>
+	        <field>
+                        <fielddescr>Enable</fielddescr>
+                        <fieldname>sslregex_enabled</fieldname>
+                        <type>checkbox</type>
+                        <description></description>
+                </field>
+		<field>
+                        <fielddescr>File</fielddescr>
+                        <fieldname>sslregex_sitelist</fieldname>
+                        <description><![CDATA[<span class="text-info">SSL site rewriting (i.e. CNAME)<br>
+				Rewrite hostname in ssl connect better than adding CNAME records to DNS<br>
+				Use to enforce Youtube restricted mode</span>]]></description>
+                        <type>textarea</type>
+                        <cols>80</cols>
+                        <rows>10</rows>
+                        <encoding>base64</encoding>
+                </field>
 		<field>
 			<name>Log</name>
 			<type>listtopic</type>

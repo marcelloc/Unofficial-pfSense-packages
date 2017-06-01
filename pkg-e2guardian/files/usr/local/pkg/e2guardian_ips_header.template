@@ -51,7 +51,7 @@
 			<url>/pkg_edit.php?xml=e2guardian_blacklist.xml&amp;id=0</url>
 		</tab>
 		<tab>
-			<text>Access Lists</text>
+			<text>ACLs</text>
 			<url>/pkg_edit.php?xml=e2guardian_site_acl.xml&amp;id=0</url>
 		</tab>
 		<tab>

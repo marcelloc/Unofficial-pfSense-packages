@@ -30,156 +30,21 @@
 	<requirements>Describe your package requirements here</requirements>
 	<faq>Currently there are no FAQ items provided.</faq>
 	<name>e2guardian</name>
-	<version>1.0</version>
+	<version>0.9.2</version>
 	<title>Services: E2guardian</title>
 	<include_file>/usr/local/pkg/e2guardian.inc</include_file>
 	<menu>
-		<name>E2guardian</name>
+		<name>E2guardian Proxy</name>
 		<tooltiptext>Configure e2guardian</tooltiptext>
 		<section>Services</section>
 		<url>/pkg_edit.php?xml=e2guardian.xml</url>
 	</menu>
 	<service>
 		<name>e2guardian</name>
-		<rcfile>e2guardian</rcfile>
+		<rcfile>e2guardian.sh</rcfile>
 		<executable>e2guardian</executable>
-		<description><![CDATA[Award winning Open Source web content filter]]></description>
+		<description><![CDATA[Full content Open Source web content filter]]></description>
 	</service>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian.inc</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian.php</item>
-		<prefix>/usr/local/www/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_ldap.php</item>
-		<prefix>/usr/local/www/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_ldap.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_limits.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_ips_header.template</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_users_header.template</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_users_footer.template</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_about.php</item>
-		<prefix>/usr/local/www/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_config.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_sync.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardianfx.conf.template</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_url_acl.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_site_acl.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_search_acl.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_pics_acl.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_phrase_acl.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_log.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_header_acl.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_groups.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_file_acl.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_content_acl.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_blacklist.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_antivirus_acl.xml</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian.conf.template</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/e2guardian_rc.template</item>
-		<prefix>/usr/local/pkg/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
-	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/e2guardian/pkg_e2guardian.inc</item>
-		<prefix>/usr/local/www/shortcuts/</prefix>
-		<chmod>0755</chmod>
-	</additional_files_needed>
 	<tabs>
 		<tab>
 			<text>Daemon</text>
@@ -273,12 +138,12 @@
 		<field>
 			<fielddescr>Http workers</fielddescr>
 			<fieldname>httpworkers</fieldname>
-			<type>input</type>
-			<size>10</size>
-			<description><![CDATA[Default: <strong>100</strong><br>
-				This figure is the maximum number of concurrent connections.<br>
-				If more connections are made, connections will queue until a worker thread is free.<br>
-				On large site you might want to try 5000 (max value 20000)]]></description>
+                        <type>input</type>
+                        <size>10</size>
+                        <description><![CDATA[Default: <strong>100</strong><br>
+                               This figure is the maximum number of concurrent connections.<br>
+                               If more connections are made, connections will queue until a worker thread is free.<br>
+                               On large site you might want to try 5000 (max value 20000)]]></description>
 		</field>
 		<field>
 			<fielddescr>Max IPs</fielddescr>

@@ -26,8 +26,11 @@ require_once("notices.inc");
 require_once("pkg-utils.inc");
 require_once("services.inc");
 require_once("util.inc");
-require_once("xmlrpc.inc");
-require_once("xmlrpc_client.inc");
+$pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
+if ($pfs_version == "2.3" ) {
+	require_once("xmlrpc.inc");
+	require_once("xmlrpc_client.inc");
+}
 require_once("tinyproxy.inc");
 $shortcut_section = "e2guardian";
 
@@ -220,6 +223,7 @@ print "<PRE>inicio";
 	$softrestart = (preg_match('/softrestart/', $e2guardian['daemon_options']) ? "on" : "off");
 	$nodaemon = (preg_match('/nodaemon/', $e2guardian['daemon_options']) ? "yes" : "off");
 	$httpworkers=($e2guardian['httpworkers'] ? $e2guardian['httpworkers'] : "100");
+	$preforkchildren = ($e2guardian['preforkchildren']? $e2guardian['preforkchildren'] : "10");
 	$proxyip = ($e2guardian['proxyip'] ? $e2guardian['proxyip'] : "127.0.0.1");
 	$proxyport = ($e2guardian['proxyport']?$e2guardian['proxyport'] : "3128");
 	$proxytimeout = ($e2guardian['proxytimeout'] ? $e2guardian['proxytimeout'] : "30");
@@ -325,6 +329,7 @@ print "<PRE>inicio";
 		"/lists/greysitelist",
 		"/lists/logsitelist",
 		"/lists/bannedregexpurllist",
+		"/lists/sslsiteregexplist",
 		"/lists/bannedurllist",
 		"/lists/exceptionregexpurllist",
 		"/lists/exceptionurllist",
@@ -345,7 +350,6 @@ print "<PRE>inicio";
 		"/lists/bannedmimetypelist",
 		"/lists/headerregexplist",
 		"/lists/bannedregexpheaderlist",
-		"/lists/sslsiteregexplist",
 		"/lists/authplugins/ipgroups",
 		"/lists/contentscanners/exceptionvirusextensionlist",
 		"/lists/contentscanners/exceptionvirusmimetypelist",
@@ -377,7 +381,7 @@ print "<PRE>inicio";
 			mkdir ($dir, 0755, true);
 		}
 	}
-        $enablessl=($e2guardian_config["enablessl"] == "on" ? "on" : "off");
+	$enablessl=($e2guardian_config["enablessl"] == "on" ? "on" : "off");
 	$ca_cert = lookup_ca($e2guardian_config["dca"]);
 	if ($ca_cert != false) {
 		if (base64_decode($ca_cert['prv'])) {
@@ -492,6 +496,17 @@ print "<PRE>inicio";
 			'greysite_enabled' => "on",
 			'urlsite_enabled' => "on");
 	}
+
+	//Blacklist 
+	if (!is_array($config['installedpackages']['e2guardianblacklist']['config'])) {
+		$config['installedpackages']['e2guardianblacklist']['config'][0] = array(
+			'liston' => 'banned',
+			'cron' => '02days',
+			'url' => "http://www.shallalist.de/Downloads/shallalist.tar.gz",
+ 			'enable_custom_script' => "",
+			'update_script' => "");
+	}
+
 	//loop on array
 	$count = 0;
 	foreach ($config['installedpackages']['e2guardiansiteacl']['config'] as $e2guardian_site) {
@@ -525,6 +540,13 @@ print "<PRE>inicio";
 		}
 		file_put_contents($e2guardian_dir . "/lists/greysitelist." . $e2guardian_site['name'], ($e2guardian_site['greysite_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardiansiteacl']['config'][$count]['grey_sitelist']) : ""), LOCK_EX);
 
+		//sslregex_sitelist
+		if ($e2guardian_site['sslregex_sitelist'] == "" && file_exists($e2guardian_dir . '/lists/sslsiteregexplist.sample')) {
+			$config['installedpackages']['e2guardiansiteacl']['config'][$count]['sslregex_sitelist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/sslsiteregexplist.sample'));
+			$load_samples++;
+		}
+		file_put_contents($e2guardian_dir . "/lists/sslsiteregexplist." . $e2guardian_site['name'], ($e2guardian_site['sslregex_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardiansiteacl']['config'][$count]['sslregex_sitelist']) : ""), LOCK_EX);
+		
 		//logsitelist
 		if ($e2guardian_site['log_sitelist'] == "" && file_exists($e2guardian_dir . '/lists/logsitelist.sample')) {
 			$config['installedpackages']['e2guardiansiteacl']['config'][$count]['log_sitelist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/logsitelist.sample'));
@@ -873,6 +895,7 @@ print "<PRE>inicio";
 			case "3":
 				$groupreportinglevel = "reportinglevel = " . $e2guardian_groups['reportinglevel'];
 				$groupaccessdeniedaddress = "";
+				$htmltemplate = "htmltemplate='template.html'";
 				break;
 			default:
 				$groupreportinglevel = "";
@@ -887,7 +910,7 @@ print "<PRE>inicio";
 		//create group list files
 		$lists = array(
 			"phraseacl" => array("bannedphrase", "weightedphrase", "exceptionphrase"),
-			"siteacl" => array("bannedsite", "greysite", "exceptionsite", "exceptionfilesite", "logsite"),
+			"siteacl" => array("bannedsite", "greysite", "exceptionsite", "exceptionfilesite", "logsite", "sslsiteregexp"),
 			"urlacl" => array("bannedurl", "greyurl", "exceptionurl", "exceptionregexpurl", "bannedregexpurl", "urlregexp", "exceptionfileurl", "logurl", "logregexpurl"),
 			"contentacl" => array("contentregexp"),
 			"extensionacl" => array("exceptionextension", "exceptionmimetype", "bannedextension", "bannedmimetype"),
@@ -1405,6 +1428,14 @@ function e2guardian_validate_input($post, &$input_errors) {
                 squid_update_clamav();
                 return;
         }
+	
+	if (sizeof ($post['group_options']) > 0) {
+		$_POST['lgroupoptions'] = implode(" ",$_POST['group_options']);
+	}
+	if ( is_numeric($post['mode'])) {
+		$fmode=array('Banned','Filtered','Unfiltered');
+                $_POST['lfiltermode'] = $fmode[$_POST['mode']];
+        }
 
 	foreach ($post as $key => $value) {
 		if (preg_match("/^(name|description)$/", $key) && $value == "") {
@@ -1429,6 +1460,9 @@ function e2guardian_validate_input($post, &$input_errors) {
 }
 
 function e2guardian_php_install_command() {
+	if (file_exists("/root/e2guardian.bsd.sh")) {
+		system("/bin/sh /root/e2guardian.bsd.sh");
+	}
 	sync_package_e2guardian("no", true);
 }
 
