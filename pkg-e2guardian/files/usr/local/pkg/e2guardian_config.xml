@@ -124,6 +124,7 @@
 				<option><name>Reverse address lookups (off)</name><value>reverseaddresslookups</value></option>
 				<option><name>Reverse client ip lookups (off)</name><value>reverseclientiplookups</value></option>
 				<option><name>Log client hostnames (off)</name><value>logclienthostnames</value></option>
+				<option><name>Log user agent (off)</name><value>loguseragent</value></option>
 				<option><name>Create list cache files (on)</name><value>createlistcachefiles</value></option>
 				<option><name>Prefer cached lists (off)</name><value>prefercachedlists</value></option>
 				<option><name>deletedownloadedtempfiles (on)</name><value>deletedownloadedtempfiles</value></option>

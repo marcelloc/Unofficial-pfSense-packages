@@ -310,6 +310,7 @@ print "<PRE>inicio";
 	$logconnectionhandlingerrors = (preg_match('/logconnectionhandlingerrors/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$nologger = (preg_match('/nologger/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$logadblocks = (preg_match('/logadblocks/', $e2guardian_log['logging_options']) ? "on" : "off");
+	$loguseragent = (preg_match('/loguseragent/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$anonymizelogs = (preg_match('/anonymizelogs/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$logsslerrors = (preg_match('/logsslerrors/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$loglevel = ($e2guardian_log['loglevel'] ? $e2guardian_log['loglevel'] : "2");
