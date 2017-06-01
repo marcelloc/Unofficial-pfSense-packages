@@ -310,7 +310,6 @@ print "<PRE>inicio";
 	$logconnectionhandlingerrors = (preg_match('/logconnectionhandlingerrors/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$nologger = (preg_match('/nologger/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$logadblocks = (preg_match('/logadblocks/', $e2guardian_log['logging_options']) ? "on" : "off");
-	$loguseragent = (preg_match('/loguseragent/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$anonymizelogs = (preg_match('/anonymizelogs/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$logsslerrors = (preg_match('/logsslerrors/', $e2guardian_log['logging_options']) ? "on" : "off");
 	$loglevel = ($e2guardian_log['loglevel'] ? $e2guardian_log['loglevel'] : "2");
@@ -1429,14 +1428,20 @@ function e2guardian_validate_input($post, &$input_errors) {
                 squid_update_clamav();
                 return;
         }
-	
+
 	if (sizeof ($post['group_options']) > 0) {
-		$_POST['lgroupoptions'] = implode(" ",$_POST['group_options']);
+		$_POST['lgroupoptions'] = implode (" ",$post['group_options']);
 	}
-	if ( is_numeric($post['mode'])) {
-		$fmode=array('Banned','Filtered','Unfiltered');
-                $_POST['lfiltermode'] = $fmode[$_POST['mode']];
-        }
+
+	if ($post['reportinglevel'] != "") {
+		 $rpa = array ( 'global' => 'Use Global log option',
+ 				'-1' => 'Stealth mode',
+				'0' => 'Just say Access Denied',
+				'1' => 'Report why but not what',
+				'2' => 'Report fully',
+				'3' => 'Use HTML template');
+		$_POST['lreportinglevel'] = $rpa[$post['reportinglevel']];
+	}
 
 	foreach ($post as $key => $value) {
 		if (preg_match("/^(name|description)$/", $key) && $value == "") {

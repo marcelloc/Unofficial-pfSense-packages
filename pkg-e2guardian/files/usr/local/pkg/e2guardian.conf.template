@@ -456,7 +456,7 @@ trickledelay = {$trickledelay}
 # and other matching mechanisms.
 #
 downloadmanager = '{$e2guardian_dir}/downloadmanagers/fancy.conf'
-#downloadmanager = '{$e2guardian_dir}/downloadmanagers/trickle.conf'
+downloadmanager = '{$e2guardian_dir}/downloadmanagers/trickle.conf'
 downloadmanager = '{$e2guardian_dir}/downloadmanagers/default.conf'
 
 # Content Scanners (Also known as AV scanners)

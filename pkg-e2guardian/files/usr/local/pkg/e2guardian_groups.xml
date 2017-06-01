@@ -90,21 +90,16 @@
 		</columnitem>
 		<columnitem>
 			<fielddescr>Reporting level</fielddescr>
-			<fieldname>reportinglevel</fieldname>
+			<fieldname>lreportinglevel</fieldname>
 		</columnitem>
 		<columnitem>
 			<fielddescr>Description</fielddescr>
 			<fieldname>description</fieldname>
 		</columnitem>
-		 <columnitem>
+		<columnitem>
                         <fielddescr>Group Options</fielddescr>
                         <fieldname>lgroupoptions</fieldname>
                 </columnitem>
-		<columnitem>
-                        <fielddescr>Filter mode</fielddescr>
-                        <fieldname>lfiltermode</fieldname>
-                </columnitem>
-
 		<movable>on</movable>
 	</adddeleteeditpagefields>
 	<fields>
@@ -240,19 +235,7 @@
 		<field>
 			<name>Values</name>
 			<type>listtopic</type>
-			<fieldname>lfiltermode</fieldname>
-		</field>
-		<field>
-			<fielddescr>Filter Group Mode</fielddescr>
-			<fieldname>mode</fieldname>
-			<description><![CDATA[ This option determines whether members of this group have their web access unfiltered, filtered, or banned.<br>
-				This mechanism replaces the "banneduserlist"]]></description>
-			<type>select</type>
-			<options>
-				<option><name>Filtered (default)</name><value>1</value></option>
-				<option><name>unfiltered (exception)</name><value>2</value></option>
-				<option><name>banned</name><value>0</value></option>
-			</options>
+			<fieldname>lreportinglevel</fieldname>
 		</field>
 		<field>
 			<fielddescr>Reporting Level</fielddescr>
@@ -261,7 +244,7 @@
 				If defined, this overrides the global setting in e2guardian.conf for members of this filter group.]]></description>
 			<type>select</type>
 			<options>
-				<option><name>Use General log option selected on Report and log - recommended</name><value>global</value></option>
+				<option><name>Use Global log option selected on Report and log - recommended</name><value>global</value></option>
 				<option><name>Use HTML template file (accessdeniedaddress ignored)</name><value>3</value></option>
 				<option><name>Report fully</name><value>2</value></option>
 				<option><name>Report why but not what denied phrase</name><value>1</value></option>
