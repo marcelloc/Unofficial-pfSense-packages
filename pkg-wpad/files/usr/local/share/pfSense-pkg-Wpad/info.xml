@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <pfsensepkgs>
 	<package>
-		<name>Wpad</name>
-		<descr><![CDATA[Distribute proxy configuration scripts on a different nginx dir, process and port.]]></descr>
+		<name>WPAD</name>
+		<descr><![CDATA[Distribute Web Proxy Auto-Discovery Protocol configuration scripts on a seperate NGINX directory, process and port to the webconfigurator. In order to run webconfigurator on secure HTTPS, while maintaining functional WPAD capabilities for your devices on HTTP. ]]></descr>
 		<pkginfolink/>
 		<version>%%PKGVERSION%%</version>
 		<configurationfile>wpad.xml</configurationfile>
