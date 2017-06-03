@@ -29,8 +29,8 @@ require_once("interfaces.inc");
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 if ($pfs_version == "2.3" ) {
 	require_once("xmlrpc.inc");
+	require_once("xmlrpc_client.inc");
 }
-require_once("xmlrpc_client.inc");
 
 function wpad_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
@@ -76,7 +76,10 @@ function wpad_check($wpad_index,$nginx){
 	file_put_contents($wpad_cf,$conf_template,LOCK_EX);
 	
 	//nginx start stop script
-	$start  = "/usr/local/sbin/nginx -c {$wpad_cf}\n";
+	$start  = "if [ -f /var/run/nginx_wpad{$wpad_index}.pid ];then\n\t";
+	$start .= "cat /var/run/nginx_wpad{$wpad_index}.pid | xargs ps ||\n\t";
+	$start .= "/usr/local/sbin/nginx -c {$wpad_cf}\nelse\n\t";
+	$start .= "/usr/local/sbin/nginx -c {$wpad_cf}\nfi\n";
 	$start .= "chmod go+rw /var/run/php-fpm.socket";
 	//$stop = "/bin/ps -ax | /usr/bin/grep \"nginx -c {$wpad_cf}\" | /usr/bin/grep -v grep | /usr/bin/awk '{print $1}' | /usr/bin/xargs kill"; 
 	$stop  = "if [ -f /var/run/nginx_wpad{$wpad_index}.pid ]\n\tthen\n\t";
