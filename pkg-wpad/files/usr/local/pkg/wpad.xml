@@ -26,7 +26,7 @@
  */
 	]]>
 	</copyright>
-	<name>wpad</name>
+	<name>WPAD</name>
 	<version>0.2.5</version>
 	<title>WPAD</title>
 	<include_file>/usr/local/pkg/wpad.inc</include_file>

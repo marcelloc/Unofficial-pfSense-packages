@@ -1,7 +1,7 @@
 # $FreeBSD$
 
-PORTNAME=	pfSense-pkg-Wpad
-PORTVERSION=	0.2.5.1
+PORTNAME=	pfSense-pkg-WPAD
+PORTVERSION=	0.2.5.2
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
