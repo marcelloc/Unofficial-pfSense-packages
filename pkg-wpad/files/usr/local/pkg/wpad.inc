@@ -75,12 +75,20 @@ function wpad_check($wpad_index,$nginx){
 	include("/usr/local/pkg/wpad_nginx.template");
 	file_put_contents($wpad_cf,$conf_template,LOCK_EX);
 	if (file_exists("/usr/local/etc/nginx/mime.types")) {
-		$mimes  = file_get_contents("/usr/local/etc/nginx/mime.types");
+		$mimes = file("/usr/local/etc/nginx/mime.types");
+		$mf = "";
+		foreach ($mimes as $mime) {
+			if (preg_match('/}/', $mime)) {
+				$mf .= "\n\tapplication/x-ns-proxy-autoconfig     pac;\n";
+			        $mf .= "\tapplication/x-ns-proxy-autoconfig     dat;\n";
+       				$mf .= "\tapplication/x-ns-proxy-autoconfig     da;\n}\n";
+			} else {
+				$mf .= $mime;
+			}
+
+		}
 	}
-	$mimes .= "\n\tapplication/x-ns-proxy-autoconfig     pac;\n";
-    	$mimes .= "\tapplication/x-ns-proxy-autoconfig     dat;\n";
-    	$mimes .= "\tapplication/x-ns-proxy-autoconfig     da;\n";
-	file_put_contents("/usr/local/etc/nginx/mime_wpad.types",$mimes,LOCK_EX);
+	file_put_contents("/usr/local/etc/nginx/mime_wpad.types",$mf,LOCK_EX);
 
 	//nginx start stop script
 	$start  = "if [ -f /var/run/nginx_wpad{$wpad_index}.pid ];then\n\t";
