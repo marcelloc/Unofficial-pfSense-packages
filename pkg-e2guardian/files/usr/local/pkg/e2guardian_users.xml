@@ -86,12 +86,12 @@
 	</tabs>
 	<fields>
 		<field>
-			<name>GrupoAdmin (0)</name>
+			<name>Admins Group (0)</name>
 			<type>listtopic</type>
 		</field>
 		<field>
 			<fieldname>admin</fieldname>
-			<fielddescr>admin</fielddescr>
+			<fielddescr>Admin</fielddescr>
 			<description><![CDATA[Include users for this group one per line<br>Hint:PFSENSE\marcelloc #Marcello Coutinho]]></description>
 			<type>textarea</type>
 

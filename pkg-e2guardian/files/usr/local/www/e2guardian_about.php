@@ -46,7 +46,6 @@ $tab_array[] = array(gettext("Help"), true, "/e2guardian_about.php");
 display_top_tabs($tab_array);
 
 ?>
-<link rel="stylesheet" href="/vendor/datatable/css/jquery.dataTables.min.css">
 <div class="panel panel-default">
         <div class="panel-heading"><h2 class="panel-title"><?=gettext("About E2guardian"); ?></h2></div>
         <div class="panel-body">
