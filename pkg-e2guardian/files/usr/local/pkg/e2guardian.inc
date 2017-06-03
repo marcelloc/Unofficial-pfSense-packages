@@ -152,7 +152,6 @@ function check_ca_hashes() {
 }
 function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	global $config, $g, $savemsg;
-print "<PRE>inicio";
 
 	# detect boot process
 	if (is_array($_POST)) {
@@ -1337,13 +1336,17 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 	}
 	$script = '/usr/local/etc/rc.d/e2guardian.sh';
 	unlink_if_exists('/usr/local/etc/rc.d/e2guardian');
-	if ($config['installedpackages']['e2guardian']['config'][0]['enable'] == "on") {
+	if (is_array($config['installedpackages']['e2guardian']['config'])) {
+		$e2g_cfg = $config['installedpackages']['e2guardian']['config'][0];
+	} else {
+		log_error('Cannot find E2guardian daemon configuration');
+	}
+	if ($e2g_cfg['enable'] == "on") {
 		copy('/usr/local/pkg/e2guardian_rc.template', $script);
 		chmod ($script, 0755);
-		start_tinyproxy();
 		if (is_process_running('e2guardian')) {
 			log_error('Reloading E2guardian');
-			exec("/usr/local/sbin/e2guardian -r");
+			exec("/usr/local/sbin/e2guardian -Q");
 		} else {
 			log_error('Starting E2guardian');
 			mwexec("$script start");

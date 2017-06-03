@@ -182,15 +182,15 @@
 			<description><![CDATA[This option handles max time to wait for proxy server.]]></description>
 			<type>select</type>
 			<options>
-				<option><name>30 seconds (default)</name><value>30</value></option>
-				<option><name>20 seconds</name><value>20</value></option>
+				<option><name>20 seconds (default)</name><value>20</value></option>
+				<option><name>05 seconds</name><value>5</value></option>
+				<option><name>10 seconds</name><value>10</value></option>
+				<option><name>30 seconds</name><value>30</value></option>
 				<option><name>40 seconds</name><value>40</value></option>
 				<option><name>50 seconds</name><value>50</value></option>
 				<option><name>60 seconds</name><value>60</value></option>
-				<option><name>70 seconds</name><value>70</value></option>
-				<option><name>80 seconds</name><value>80</value></option>
 				<option><name>90 seconds</name><value>90</value></option>
-				<default_value>30</default_value>
+				<default_value>20</default_value>
 			</options>
 		</field>
 	</fields>
