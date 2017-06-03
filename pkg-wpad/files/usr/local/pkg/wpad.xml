@@ -27,11 +27,11 @@
 	]]>
 	</copyright>
 	<name>wpad</name>
-	<version>0.1</version>
-	<title>Wpad</title>
+	<version>%%PKGVERSION%%</version>
+	<title>WPAD</title>
 	<include_file>/usr/local/pkg/wpad.inc</include_file>
 	<menu>
-		<name>Wpad</name>
+		<name>WPAD</name>
 		<tooltiptext>Automatic proxy configuration</tooltiptext>
 		<section>Services</section>
 		<configfile>wpad.xml</configfile>

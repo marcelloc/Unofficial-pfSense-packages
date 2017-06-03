@@ -10,7 +10,7 @@ $conf_template=<<<EOF
 	    worker_connections  1024;
 	}
 	http {
-	        include       /usr/local/etc/nginx/mime.types;
+	        include       /usr/local/etc/nginx/mime_wpad.types;
 	        default_type  application/octet-stream;
 	        sendfile        on;
 		access_log      syslog:server=unix:/var/run/log,facility=local5 combined;

@@ -74,7 +74,14 @@ function wpad_check($wpad_index,$nginx){
 	$wpad_listen_ip = wpad_get_real_interface_address($nginx['interface']);
 	include("/usr/local/pkg/wpad_nginx.template");
 	file_put_contents($wpad_cf,$conf_template,LOCK_EX);
-	
+	if (file_exists("/usr/local/etc/nginx/mime.types")) {
+		$mimes  = file_get_contents("/usr/local/etc/nginx/mime.types");
+	}
+	$mimes .= "\n\tapplication/x-ns-proxy-autoconfig     pac;\n";
+    	$mimes .= "\tapplication/x-ns-proxy-autoconfig     dat;\n";
+    	$mimes .= "\tapplication/x-ns-proxy-autoconfig     da;\n";
+	file_put_contents("/usr/local/etc/nginx/mime_wpad.types",$mimes,LOCK_EX);
+
 	//nginx start stop script
 	$start  = "if [ -f /var/run/nginx_wpad{$wpad_index}.pid ];then\n\t";
 	$start .= "cat /var/run/nginx_wpad{$wpad_index}.pid | xargs ps ||\n\t";
