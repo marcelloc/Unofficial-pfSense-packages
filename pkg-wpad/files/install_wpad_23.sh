@@ -19,16 +19,16 @@
 # * See the License for the specific language governing permissions and
 # * limitations under the License.
 
-version="0.2.5.1" 
+version="0.2.5.2" 
 echo `uname -m` system
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
   if [ "$(uname -m)" == "amd64" ]; then
-  	pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/repo/pfSense-pkg-Wpad-${version}.txz
+  	pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/repo/pfSense-pkg-WPAD-${version}.txz
   else
-	pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/repo-i386/pfSense-pkg-Wpad-${version}.txz
+	pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/repo-i386/pfSense-pkg-WPAD-${version}.txz
  fi
 fi
 
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.4" ]; then
-  pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/repo-24/pfSense-pkg-Wpad-${version}.txz
+  pkg add https://github.com/marcelloc/Unofficial-pfSense-packages/raw/master/repo-24/pfSense-pkg-WPAD-${version}.txz
 fi
