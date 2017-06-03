@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+	<package>
+		<name>Tinyproxy</name>
+		<descr><![CDATA[Lightweight proxy/cache daemon. ]]></descr>
+		<pkginfolink/>
+		<version>%%PKGVERSION%%</version>
+		<configurationfile>tinyproxy.xml</configurationfile>
+	</package>
+</pfsensepkgs>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE packagegui SYSTEM "../schema/packages.dtd">
+<?xml-stylesheet type="text/xsl" href="../xsl/package.xsl"?>
+<packagegui>
+	<copyright>
+	<![CDATA[
+/* $Id$ */
+/*
+ * tinyproxy.xml
+ *
+ * part of Unofficial packages for pfSense(R) softwate
+ * Copyright (c) 2017 Marcello Coutinho
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+	]]>
+	</copyright>
+	<name>Tinyproxy</name>
+	<version>0.1</version>
+	<title>Tinyproxy</title>
+	<include_file>/usr/local/pkg/tinyproxy.inc</include_file>
+	<menu>
+		<name>Tinyproxy</name>
+		<tooltiptext>Lightweight proxy/cache daemon</tooltiptext>
+		<section>Services</section>
+		<url>/pkg_edit.php?xml=tinyproxy.xml</url>
+	</menu>
+	<tabs>
+		<tab>
+			<text>Settings</text>
+			<url>/pkg_edit.php?xml=tinyproxy.xml</url>
+			<active/>
+		</tab>
+		<tab>
+			<text>XMLRPC Sync</text>
+			<url>/pkg_edit.php?xml=tinyproxy_sync.xml</url>
+		</tab>
+	</tabs>
+	<advanced_options>enabled</advanced_options>
+	<fields>
+		 <field>
+                        <name>Listening Settings</name>
+                        <type>listtopic</type>
+                </field>
+                <field>
+                        <fielddescr>Enable tinyproxy</fielddescr>
+                        <fieldname>enable</fieldname>
+                        <type>checkbox</type>
+                        <description><![CDATA[Enable or disable tinyproxy.]]></description>
+                </field>
+                <field>
+                        <fielddescr>Listen Interface(s)</fielddescr>
+                        <fieldname>interface</fieldname>
+                        <description><![CDATA[Default: <strong>LAN/loopback</strong><br>Select interface that you want to tinyproxy service listen on.</strong>]]></description>
+                        <type>interfaces_selection</type>
+                        <showvirtualips/>
+                        <required/>
+                </field>
+                <field>
+                        <fielddescr>Listen port</fielddescr>
+                        <fieldname>listenport</fieldname>
+                        <type>input</type>
+                        <size>10</size>
+                        <description><![CDATA[Default: <strong>8888</strong><br>The port that tinyproxy listens to.</description>
+			<required/>
+                </field>
+ 		<field>
+                        <name>Access List</name>
+                        <type>listtopic</type>
+                </field>
+                <field>
+                        <fielddescr>Allow</fielddescr>
+                        <fieldname>acl</fieldname>
+                        <description><![CDATA[What ips can use this proxy.]]></description>
+                        <type>textarea</type>
+                        <encoding>base64</encoding>
+                        <cols>30</cols>
+                        <rows>10</rows>
+                </field>
+		<field>
+                        <name>Daemon Settings</name>
+                        <type>listtopic</type>
+                </field>
+		<field>
+                        <fielddescr>Max Clients</fielddescr>
+                        <fieldname>maxclients</fieldname>
+                        <type>input</type>
+                        <size>10</size>
+                        <description><![CDATA[Enter the max number of connected clients.]]></description>
+			<advancedfield/>
+                </field>
+		<field>
+                        <fielddescr>Max Request per Child</fielddescr>
+                        <fieldname>maxperchild</fieldname>
+                        <type>input</type>
+                        <size>10</size>
+                        <description><![CDATA[Enter the max number of connected clients.]]></description>
+			<advancedfield/>
+                </field>
+		<field>
+			<fielddescr>MinSpareServers</fielddescr>
+			<fieldname>min</fieldname>
+			<description>Minimum Spare Servers.</description>
+			<type>input</type>
+			<size>10</size>
+			<advancedfield/>
+		</field>
+		<field>
+                        <fielddescr>MaxSpareServers</fielddescr>
+                        <fieldname>max</fieldname>
+                        <description>Max Spare Servers.</description>
+                        <type>input</type>
+                        <size>10</size>
+			<advancedfield/>
+                </field>
+		 <field>
+                        <fielddescr>StartServers</fielddescr>
+                        <fieldname>start</fieldname>
+                        <description>How many servers to start.</description>
+                        <type>input</type>
+                        <size>10</size>
+			<advancedfield/>
+                </field>
+	</fields>
+	<custom_php_validation_command>
+		tinyproxy_validate_input($_POST, $input_errors);
+	</custom_php_validation_command>
+	<custom_delete_php_command>
+		sync_package_tinyproxy();
+	</custom_delete_php_command>
+	<custom_php_resync_config_command>
+		sync_package_tinyproxy();
+	</custom_php_resync_config_command>
+</packagegui>
