@@ -42,6 +42,6 @@ do-install:
 	@${REINPLACE_CMD} -i '' -e "s|%%PKGVERSION%%|${PKGVERSION}|" \
 		${STAGEDIR}${DATADIR}/info.xml
 	@${REINPLACE_CMD} -i '' -e "s|%%PKGVERSION%%|${PKGVERSION}|" \
-		${STAGEDIR}${DATADIR}/tinyproxy.xml
+		${STAGEDIR}/usr/local/pkg/*.xml
 
 .include <bsd.port.mk>

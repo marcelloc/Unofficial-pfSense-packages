@@ -27,7 +27,7 @@
 	]]>
 	</copyright>
 	<name>Tinyproxy</name>
-	<version>0.1</version>
+	<version>%%PKGVERSION%%</version>
 	<title>Tinyproxy</title>
 	<include_file>/usr/local/pkg/tinyproxy.inc</include_file>
 	<menu>
