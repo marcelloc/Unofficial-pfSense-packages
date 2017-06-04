@@ -93,7 +93,7 @@
                         <fieldname>maxclients</fieldname>
                         <type>input</type>
                         <size>10</size>
-                        <description><![CDATA[Enter the max number of connected clients.]]></description>
+                        <description><![CDATA[Enter the max number of connected clients. Default is 1000.]]></description>
 			<advancedfield/>
                 </field>
 		<field>
@@ -101,13 +101,13 @@
                         <fieldname>maxperchild</fieldname>
                         <type>input</type>
                         <size>10</size>
-                        <description><![CDATA[Enter the max number of connected clients.]]></description>
+                        <description><![CDATA[Enter the max number of connected clients. Default is 0.]]></description>
 			<advancedfield/>
                 </field>
 		<field>
 			<fielddescr>MinSpareServers</fielddescr>
 			<fieldname>min</fieldname>
-			<description>Minimum Spare Servers.</description>
+			<description>Minimum Spare Servers. Default is 5.</description>
 			<type>input</type>
 			<size>10</size>
 			<advancedfield/>
@@ -115,7 +115,7 @@
 		<field>
                         <fielddescr>MaxSpareServers</fielddescr>
                         <fieldname>max</fieldname>
-                        <description>Max Spare Servers.</description>
+                        <description>Max Spare Servers. Default is 20.</description>
                         <type>input</type>
                         <size>10</size>
 			<advancedfield/>
@@ -123,7 +123,7 @@
 		 <field>
                         <fielddescr>StartServers</fielddescr>
                         <fieldname>start</fieldname>
-                        <description>How many servers to start.</description>
+                        <description>How many servers to start. Default is 5.</description>
                         <type>input</type>
                         <size>10</size>
 			<advancedfield/>

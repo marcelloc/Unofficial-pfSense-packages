@@ -61,12 +61,24 @@ function sync_package_tinyproxy(){
 
 	$tinyproxy_server = $config['system']['hostname']. "." .$config['system']['domain'];
 	if (is_array($config['installedpackages']['tinyproxy']['config'])) {
-		$tpc = $config['installedpackages']['tinyproxy']['config'][0];
+		$e2g_config = $config['installedpackages']['tinyproxy']['config'][0];
+		$tpc['ip'] = tinyproxy_get_real_interface_address($e2g_config['interface']);
+		$tpc['port'] = $e2g_config['listenport'];
+		$tpc['maxclients'] = (is_numeric($e2g_config['maxclients']) ? $e2g_config['maxclients'] : 1000);
+		$tpc['min'] = (is_numeric($e2g_config['min']) ? $e2g_config['min'] : 5);
+		$tpc['max'] = (is_numeric($e2g_config['max']) ? $e2g_config['max'] : 20);
+		$tpc['start'] = (is_numeric($e2g_config['start']) ? $e2g_config['start'] : 20);
+		$tpc['maxperchild'] = (is_numeric($e2g_config['maxperchild']) ? $e2g_config['maxperchild'] : 0);
 		//check acl
-		
+		$tpc['allow'] = "Allow 127.0.0.1\n";
+		$lines = explode ("\s",tinyproxy_text_area_decode($tcp['maxperchild']));
+		foreach ($lines as $allow) {
+			$tcp['allow'] .= "Allow $allow\n";
+		}
+
 		//load template
 		include("/usr/local/pkg/tinyproxy.template");
-		file_put_contents("/usr/local/etc/tinyproxy.conf", $tcf_file, LOCK_EX);
+		file_put_contents("/usr/local/etc/tinyproxy.conf", $tpf_file, LOCK_EX);
 
 		 //nginx start stop script
 		$rc_prefix = "/usr/local/etc/rc.d/tinyproxy";
@@ -74,8 +86,8 @@ function sync_package_tinyproxy(){
 			@symlink($rc_prefix, "{$rc_prefix}.sh");		
 		}
 
-	//mark config changes
-	mark_subsystem_dirty('e2guardian');
+		//mark config changes
+		mark_subsystem_dirty('tinyproxy');
 	}
 	
 
@@ -119,11 +131,11 @@ function tinyproxy_start($via_rpc = "no", $install_process = false, $force_start
         } else {
                 log_error('Cannot find tinyproxy daemon configuration');
         }
-        if (tiny_cfg['enable'] == "on") {
+        if ($tiny_cfg['enable'] == "on") {
 		start_tinyproxy();
 	} else {
 		stop_tinyproxy();
-	}	
+	}
 }
 
 function tinyproxy_validate_input($post, &$input_errors) {
