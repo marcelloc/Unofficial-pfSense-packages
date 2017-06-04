@@ -26,6 +26,9 @@ require_once('service-utils.inc');
 require_once('util.inc');
 require_once("notices.inc");
 require_once("interfaces.inc");
+
+$shortcut_section = "tinyproxy";
+
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 if ($pfs_version == "2.3" ) {
 	require_once("xmlrpc.inc");

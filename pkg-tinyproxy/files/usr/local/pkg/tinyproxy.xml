@@ -36,6 +36,12 @@
 		<section>Services</section>
 		<url>/pkg_edit.php?xml=tinyproxy.xml</url>
 	</menu>
+        <service>
+                <name>tinyproxy</name>
+                <rcfile>tinyproxy.sh</rcfile>
+                <executable>tinyproxy</executable>
+                <description><![CDATA[Lighweight proxy/cache server.]]></description>
+        </service>
 	<tabs>
 		<tab>
 			<text>Settings</text>
