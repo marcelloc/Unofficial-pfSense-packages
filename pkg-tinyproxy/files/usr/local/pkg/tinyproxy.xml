@@ -72,7 +72,7 @@
                         <fieldname>listenport</fieldname>
                         <type>input</type>
                         <size>10</size>
-                        <description><![CDATA[Default: <strong>8888</strong><br>The port that tinyproxy listens to.</description>
+                        <description><![CDATA[Default: <strong>8888</strong><br>The port that tinyproxy listens to.]]></description>
 			<required/>
                 </field>
  		<field>
@@ -87,10 +87,6 @@
                         <encoding>base64</encoding>
                         <cols>30</cols>
                         <rows>10</rows>
-                </field>
-		<field>
-                        <name>Daemon Settings</name>
-                        <type>listtopic</type>
                 </field>
 		<field>
                         <fielddescr>Max Clients</fielddescr>
@@ -133,6 +129,9 @@
 			<advancedfield/>
                 </field>
 	</fields>
+	<custom_php_command_before_form>
+                tinyproxy_check_config();
+        </custom_php_command_before_form>
 	<custom_php_validation_command>
 		tinyproxy_validate_input($_POST, $input_errors);
 	</custom_php_validation_command>

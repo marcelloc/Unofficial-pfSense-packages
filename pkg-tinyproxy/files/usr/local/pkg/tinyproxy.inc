@@ -36,57 +36,58 @@ function tinyproxy_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
 }
 
+function tinyproxy_check_config() {
+        global $savemsg, $config;
 
-function sync_tinyproxy(){
+        if (!isset($config['installedpackages']['tinyproxy']['config'][0]['enable'])) {
+                return 1;
+        }
+
+        if (isset($_REQUEST['apply'])) {
+                tinyproxy_start("no", false, true);
+                return;
+        }
+        if (is_subsystem_dirty('tinyproxy')) {
+                $savemsg  = gettext("Tinyproxy configuration has been changed.") . "<br>" . gettext("The changes must be applied for them to take effect.");
+                $savemsg .= "</div><div class='pull-right'><button type='button' onclick=\"location.href='{$_SERVER['REQUEST_URI']}&apply=apply changes'\" class='btn btn-success'>";
+                $savemsg .= gettext("Apply Changes") . "</button><a>&nbsp;&nbsp;</a>";
+        }
+        return 0;
+}
+
+
+function sync_package_tinyproxy(){
 	global $config;
-	$tinyproxy_server=$config['system']['hostname']. "." .$config['system']['domain'];
 
-	$tcf_file=<<<EOF
+	$tinyproxy_server = $config['system']['hostname']. "." .$config['system']['domain'];
+	if (is_array($config['installedpackages']['tinyproxy']['config'])) {
+		$tpc = $config['installedpackages']['tinyproxy']['config'][0];
+		//check acl
+		
+		//load template
+		include("/usr/local/pkg/tinyproxy.template");
+		file_put_contents("/usr/local/etc/tinyproxy.conf", $tcf_file, LOCK_EX);
 
-User nobody
-Group nobody
-Listen 127.0.0.1
-Port 8888
-Timeout 600
-DefaultErrorFile "/usr/local/share/tinyproxy/default.html"
-StatFile "/usr/local/share/tinyproxy/stats.html"
-LogFile "/var/log/tinyproxy.log"
-LogLevel Info
-PidFile "/var/run/tinyproxy.pid"
-MaxClients 1000
-MinSpareServers 5
-MaxSpareServers 20
-StartServers 20
-MaxRequestsPerChild 0
-Allow 127.0.0.1
-ViaProxyName "tinyproxy"
-ConnectPort 443
-ConnectPort 563
+		 //nginx start stop script
+		$rc_prefix = "/usr/local/etc/rc.d/tinyproxy";
+		if ( file_exists($rc_prefix) && !file_exists("{$rc_prefix}.sh")) {
+			@symlink($rc_prefix, "{$rc_prefix}.sh");		
+		}
 
-EOF;
+	//mark config changes
+	mark_subsystem_dirty('e2guardian');
+	}
+	
 
-	file_put_contents("/usr/local/etc/tinyproxy.conf",$tcf_file,LOCK_EX);
 }
 
 function start_tinyproxy(){
-	exec('/usr/local/etc/rc.d/tinyproxy onerestart || /usr/local/etc/rc.d/tinyproxy onestart');
+	exec('/usr/local/etc/rc.d/tinyproxy.sh onerestart || /usr/local/etc/rc.d/tinyproxy.sh onestart');
 }
 
 
 function stop_tinyproxy(){
-	exec('/usr/local/etc/rc.d/tinyproxy onestop');
-}
-function tinyproxy_clean($tinyproxy_index) {
-	$rc_file = "/usr/local/etc/rc.d/nginx_tinyproxy{$tinyproxy_index}.sh";
-	exec("{$rc_file} stop",$x);
-	unlink_if_exists($rc_file);
-	$files = array("tinyproxy.dat","tinyproxy.da","proxy.pac","sgerror.php");
-	foreach ($files as $file) {
-		unlink_if_exists("/usr/local/www/tinyproxy{$tinyproxy_index}/{$file}");
-	}	
-	if (file_exists ("/usr/local/www/tinyproxy{$tinyproxy_index}")) {
-		rmdir("/usr/local/www/tinyproxy{$tinyproxy_index}");
-	}
+	exec('/usr/local/etc/rc.d/tinyproxy.sh onestop');
 }
 
 function tinyproxy_get_real_interface_address($iface) {
@@ -101,90 +102,28 @@ function tinyproxy_get_real_interface_address($iface) {
 	}
 }
 
+function tinyproxy_start($via_rpc = "no", $install_process = false, $force_start = false) {
+        global $g, $config, $savemsg;
 
-function tinyproxy_check($tinyproxy_index,$nginx){
-	
-	if (!is_dir("/usr/local/www/tinyproxy{$tinyproxy_index}")) {
-                        mkdir ("/usr/local/www/tinyproxy{$tinyproxy_index}", 0755, true);
+        clear_subsystem_dirty('tinyproxy');
+
+        if (!$force_start) {
+                if (tinyproxy_check_config() <> 0) {
+                        return;
                 }
-	//nginx conf file
-	$tinyproxy_workers = ( $nginx['workers'] != "" ? $nginx['workers'] : "10" );
-	$tinyproxy_listenport = ( $nginx['listenport'] != "" ? $nginx['listenport'] : "80" );
-	$tinyproxy_cf = "/usr/local/etc/nginx/nginx_tinyproxy{$tinyproxy_index}.conf";
-	$tinyproxy_listen_ip = tinyproxy_get_real_interface_address($nginx['interface']);
-	include("/usr/local/pkg/tinyproxy_nginx.template");
-	file_put_contents($tinyproxy_cf,$conf_template,LOCK_EX);
-	$mime_prefix = "    application/x-ns-proxy-autoconfig    ";
-	if (file_exists("/usr/local/etc/nginx/mime.types")) {
-		$mimes = file("/usr/local/etc/nginx/mime.types");
-		$mf = "";
-		foreach ($mimes as $mime) {
-			if (preg_match('/}/', $mime)) {
-				$mf .= "\n{$mime_prefix} pac;\n";
-			        $mf .= "{$mime_prefix} dat;\n";
-       				$mf .= "{$mime_prefix} da;\n}\n";
-			} else {
-				$mf .= $mime;
-			}
-
-		}
-	}
-	file_put_contents("/usr/local/etc/nginx/mime_tinyproxy.types",$mf,LOCK_EX);
-
-	//nginx start stop script
-	$start  = "if [ -f /var/run/nginx_tinyproxy{$tinyproxy_index}.pid ];then\n\t";
-	$start .= "cat /var/run/nginx_tinyproxy{$tinyproxy_index}.pid | xargs ps ||\n\t";
-	$start .= "/usr/local/sbin/nginx -c {$tinyproxy_cf}\nelse\n\t";
-	$start .= "/usr/local/sbin/nginx -c {$tinyproxy_cf}\nfi\n";
-	$start .= "chmod go+rw /var/run/php-fpm.socket";
-	//$stop = "/bin/ps -ax | /usr/bin/grep \"nginx -c {$tinyproxy_cf}\" | /usr/bin/grep -v grep | /usr/bin/awk '{print $1}' | /usr/bin/xargs kill"; 
-	$stop  = "if [ -f /var/run/nginx_tinyproxy{$tinyproxy_index}.pid ]\n\tthen\n\t";
-	$stop .= "kill `cat /var/run/nginx_tinyproxy{$tinyproxy_index}.pid`\nfi";
-	if (file_exists("/usr/local/etc/rc.d/nginx_tinyproxy{$tinyproxy_index}.sh")) {
-		system("/usr/local/etc/rc.d/nginx_tinyproxy{$tinyproxy_index}.sh stop");
-	}
-	write_rcfile(array("file" => "nginx_tinyproxy{$tinyproxy_index}.sh", "start" => $start, "stop" => $stop));
-}
-
-function tinyproxy_symlink($file1,$file2) {
-	if (! file_exists($file2)) {
-		if (file_exists($file1)) {
-			@symlink($file1, $file2);
-		}
-	}
-}
-function sync_package_tinyproxy() {
-	global $config, $g;
-
-	$index = 0;
-	/* Loop on configured files. */
-	if ($config['installedpackages']['tinyproxy']['config'] != "") {
-		foreach ($config['installedpackages']['tinyproxy']['config'] as $index=> $file) {
-			if ($file['enable'] == "on") {
-				tinyproxy_check($index,$file);
-				/* Write file. */
-				$pac_file = "/usr/local/www/tinyproxy{$index}/proxy.pac";
-				file_put_contents($pac_file, tinyproxy_text_area_decode($file['filedata']), LOCK_EX);
-				tinyproxy_symlink($pac_file, "/usr/local/www/tinyproxy{$index}/tinyproxy.da");
-				tinyproxy_symlink($pac_file, "/usr/local/www/tinyproxy{$index}/tinyproxy.dat");
-				if ($file['sgerror'] != "on" && file_exists("/usr/local/www/sgerror.php")) {
-					copy("/usr/local/www/sgerror.php" , "/usr/local/www/tinyproxy{$index}/sgerror.php");
-				}
-				system("/usr/local/etc/rc.d/nginx_tinyproxy{$index}.sh start");
-			} else {
-				tinyproxy_clean($index);
-			}
-		}
-	}
-
-	// check if there is scripts to remove
-	$index = $index + 1;
-	while (file_exists("/usr/local/etc/rc.d/nginx_tinyproxy{$index}.sh")) {
-		tinyproxy_clean($index);
-		$index = $index + 1;		
-	}
-
-	tinyproxy_sync_on_changes();
+        }
+	
+        $script = '/usr/local/etc/rc.d/tinyproxy.sh';
+        if (is_array($config['installedpackages']['tinyproxy']['config'])) {
+                $tiny_cfg = $config['installedpackages']['tinyproxy']['config'][0];
+        } else {
+                log_error('Cannot find tinyproxy daemon configuration');
+        }
+        if (tiny_cfg['enable'] == "on") {
+		start_tinyproxy();
+	} else {
+		stop_tinyproxy();
+	}	
 }
 
 function tinyproxy_validate_input($post, &$input_errors) {
@@ -197,15 +136,7 @@ function tinyproxy_validate_input($post, &$input_errors) {
 			$input_errors[] = "Port 80 cannot be used until Webgui redirect is disabled under system -> advanced";
 		}
 	}
-	if ($post['description'] && !preg_match("@^[a-zA-Z0-9 _/.-]+$@", $post['description'])) {
-		$input_errors[] = "Do not use special characters in description.";
-	}
 
-	if (array_key_exists('filedata',$post)){
-		if ($post['filedata'] == "") {
-			$_POST['filedata'] = file_get_contents("/usr/local/pkg/tinyproxy_script.template");
-		}
-	}
 }
 
 /* Uses XMLRPC to synchronize the changes to a remote node. */

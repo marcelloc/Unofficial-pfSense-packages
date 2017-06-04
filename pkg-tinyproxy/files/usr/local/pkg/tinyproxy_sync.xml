@@ -33,8 +33,8 @@
 	<include_file>/usr/local/pkg/tinyproxy.inc</include_file>
 	<tabs>
 		<tab>
-			<text>Files</text>
-			<url>/pkg.php?xml=tinyproxy.xml</url>
+			<text>Settings</text>
+			<url>/pkg_edit.php?xml=tinyproxy.xml</url>
 		</tab>
 		<tab>
 			<text>XMLRPC Sync</text>
