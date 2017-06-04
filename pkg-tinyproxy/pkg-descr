@@ -1,3 +1,4 @@
-Wpad package for pfSense.
+Tinyproxy Unofficial package for pfSense software.
 
-Distribute your wpad file in a separate http nginx process.
+Lighweight proxy/cache server.
+

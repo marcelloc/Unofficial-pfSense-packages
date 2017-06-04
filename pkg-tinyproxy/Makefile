@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-Tinyproxy
-PORTVERSION=	0.1
+PORTVERSION=	0.2.1
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -34,6 +34,8 @@ do-install:
 	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/tinyproxy.priv.inc \
 		${STAGEDIR}/etc/inc/priv
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/tinyproxy.inc \
+		${STAGEDIR}${PREFIX}/pkg
+	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/pkg_tinyproxy.inc \
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/tinyproxy.template \
 		${STAGEDIR}${PREFIX}/pkg
