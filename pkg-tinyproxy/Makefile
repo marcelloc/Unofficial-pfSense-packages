@@ -12,6 +12,8 @@ COMMENT=	pfSense Unofficial tinyproxy package
 
 LICENSE=	APACHE20
 
+RUN_DEPENDS=    ${LOCALBASE}/sbin/tinyproxy:www/tinyproxy
+
 NO_BUILD=	yes
 NO_MTREE=	yes
 
