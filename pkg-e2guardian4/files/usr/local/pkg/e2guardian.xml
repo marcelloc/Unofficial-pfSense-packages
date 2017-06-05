@@ -136,6 +136,17 @@
 			<size>3</size>
 		</field>
 		<field>
+                        <fielddescr>Apply action</fielddescr>
+                        <fieldname>applyaction</fieldname>
+                        <description><![CDATA[Select action to do on E2guardian daemon within applyconfig]]></description>
+                        <type>select</type>
+                        <options>
+                                <option><name>Kill any running copy and start a new one</name><value>-Q</value></option>
+                                <option><name>Restart by SO rc.d script</name><value>rc.d</value></option>
+                                <option><name>Reload lists and groups files issuing a HUP</name><value>-r</value></option>
+                        </options>
+                </field>
+		<field>
 			<fielddescr>Http workers</fielddescr>
 			<fieldname>httpworkers</fieldname>
                         <type>input</type>

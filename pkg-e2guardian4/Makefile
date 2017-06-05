@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-E2guardian4
-PORTVERSION=	0.1.1
+PORTVERSION=	0.2
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -106,6 +106,6 @@ do-install:
 	@${REINPLACE_CMD} -i '' -e "s|%%PKGVERSION%%|${PKGVERSION}|" \
 		${STAGEDIR}${DATADIR}/info.xml
 	@${REINPLACE_CMD} -i '' -e "s|%%PKGVERSION%%|${PKGVERSION}|" \
-		${STAGEDIR}${PREFIX}/pkg/e2guardian.xml
+		${STAGEDIR}/usr/local/pkg/e2guardian.xml
 .include <bsd.port.mk>
 

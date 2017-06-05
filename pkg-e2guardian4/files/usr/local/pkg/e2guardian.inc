@@ -31,7 +31,6 @@ if ($pfs_version == "2.3" ) {
 	require_once("xmlrpc.inc");
 	require_once("xmlrpc_client.inc");
 }
-require_once("tinyproxy.inc");
 $shortcut_section = "e2guardian";
 
 $pf_version = substr(trim(file_get_contents("/etc/version")), 0, 3);
@@ -1238,9 +1237,6 @@ EOF;
 	//create config files
 	file_put_contents($e2guardian_dir . "/e2guardian.conf", $dg, LOCK_EX);
 
-	//configure local proxy server
-	sync_tinyproxy();
-
 	//check virus_scanner options
 	$libexec_dir = E2GUARDIAN_DIR . "/libexec/e2guardian/";
 	if ($install_process == true) {
@@ -1345,14 +1341,25 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 		copy('/usr/local/pkg/e2guardian_rc.template', $script);
 		chmod ($script, 0755);
 		if (is_process_running('e2guardian')) {
-			log_error('Reloading E2guardian');
-			exec("/usr/local/sbin/e2guardian -Q");
+			switch ($e2g_cfg['applyaction']){
+				case "rc.d":
+					log_error("Restarting e2g with rc.d script");
+					 mwexec("$script start");
+					break;
+				case "-r":
+					log_error("Sending HUP to e2g processes");
+					exec("/usr/local/sbin/e2guardian -r");
+					break;
+				default:
+					log_error("Restarting e2g by sending -Q action to e2g binaries");
+					exec("/usr/local/sbin/e2guardian -Q");
+					break;
+			}
 		} else {
 			log_error('Starting E2guardian');
 			mwexec("$script start");
 		}
 	} else {
-		stop_tinyproxy();
 		if (is_process_running('e2guardian')) {
 			log_error('E2guardian is disabled, stopping process...');
 			mwexec("$script stop");
