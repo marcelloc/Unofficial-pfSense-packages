@@ -67,8 +67,6 @@ do-install:
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian.inc \
 		${STAGEDIR}${PREFIX}/pkg
-	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/tinyproxy.inc \
-		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/pkg_e2guardian.inc \
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian.conf.template \
