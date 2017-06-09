@@ -1,0 +1,17 @@
+name: "pfSense-pkg-snort-dev"
+version: "3.2.9.3"
+origin: security/pkg-snort-dev
+comment: <<EOD
+pfSense package snort
+EOD
+maintainer: coreteam@pfsense.org
+prefix: /usr/local
+categories: [ security, ]
+licenselogic: single
+licenses: [ APACHE20, ]
+deps: { 
+"barnyard2": {origin: "security/barnyard2", version: "1.13_1"}
+"snort": {origin: "security/snort", version: "2.9.8.3"}
+}
+options: {
+}
