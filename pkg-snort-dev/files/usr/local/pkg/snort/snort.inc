@@ -42,6 +42,18 @@ $rebuild_rules = false;
 if (!is_array($config['installedpackages']['snortglobal']))
 	$config['installedpackages']['snortglobal'] = array();
 
+function snort_check_sched($iface_sched){
+	global $config;
+	$a_schedules = &$config['schedules']['schedule'];
+	$check_snort_status = true;
+	foreach ($a_schedules as $schedule){
+		if ($schedule['name'] == $iface_sched && $iface_sched <> 'Always') {
+			$check_snort_status = filter_get_time_based_rule_status($schedule);
+		}
+	}
+	return($check_snort_status);
+}
+
 function snort_is_single_addr_alias($alias) {
 	/***************************************************/
 	/* This function evaluates the passed Alias to     */
@@ -284,8 +296,11 @@ function snort_build_list($snortcfg, $listname = "", $whitelist = false, $extern
 		$wandns = $list['wandnsips'];
 		$vips = $list['vips'];
 		$vpns = $list['vpnips'];
-		if (!empty($list['address']) && is_alias($list['address']))
-			$home_net = explode(" ", trim(filter_expand_alias($list['address'])));
+		if (!empty($list['address']) && is_alias($list['address'])) {
+			exec("/sbin/pfctl -t " . escapeshellarg($list['address']) . " -T show" , $home_net);
+			//$home_net = explode(" ", trim(filter_expand_alias($list['address'])));
+			//to be compatible with aliases, fetch ips from resulting table instead of alias content.
+		}
 	}
 
 	/* Always add loopback addresses to HOME_NET and whitelist */
@@ -787,6 +802,15 @@ function snort_cron_job_exists($crontask, $match_time=FALSE, $minute="0", $hour=
 		}
 	}
 	return FALSE;
+}
+
+function snort_check_sched_cron($sched_count){
+	$cron_cmd = "/usr/local/bin/php -q /usr/local/pkg/snort/snort_check_scheds.php";
+	if ($sched_count > 0) {
+		install_cron_job ($cron_cmd . ' > /dev/null', true, "*", "*", "*", "*", "*" , "root");
+ 	} else {
+ 		install_cron_job ($cron_cmd, false);
+ 	}
 }
 
 function snort_snortloglimit_install_cron($should_install=TRUE) {

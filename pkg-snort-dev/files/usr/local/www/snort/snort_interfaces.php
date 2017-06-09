@@ -207,8 +207,8 @@ if ($savemsg)
 	$tab_array[] = array(gettext("Log Mgmt"), false, "/snort/snort_log_mgmt.php");
 	$tab_array[] = array(gettext("Sync"), false, "/pkg_edit.php?xml=snort/snort_sync.xml");
 	display_top_tabs($tab_array, true);
-?>
 
+?>
 <form action="snort_interfaces.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <input type="hidden" name="id" id="id" value="">
 <input type="hidden" name="toggle" id="toggle" value="">
@@ -224,6 +224,7 @@ if ($savemsg)
 					<th>&nbsp;</th>
 					<th><?=gettext("Interface"); ?></th>
 					<th><?=gettext("Snort Status"); ?></th>
+					<th><?=gettext("Schedule"); ?></th>
 					<th><?=gettext("Pattern Match"); ?></th>
 					<th><?=gettext("Blocking"); ?></th>
 					<th><?=gettext("Barnyard2 Status"); ?></th>
@@ -246,6 +247,16 @@ if ($savemsg)
 					$no_rules = false;
 				else
 					$no_rules = true;
+
+				// Sum total of snort interfaces with schedules to substract from configured
+				// Needs double loop to get total of scheduled intefaces before next loop
+				$sched_count = 0;
+				foreach ($a_nat as $natent) {
+					if ($natent['sched'] != "" && $natent['sched'] != 'Always') {
+                                		$sched_count++;
+                                	}
+				}
+				snort_check_sched_cron($sched_count);
 
 				foreach ($a_nat as $natent): ?>
 				<tr id="fr<?=$nnats?>">
@@ -277,10 +288,12 @@ if ($savemsg)
 					if (isset($natent['ips_policy']) && !empty($natent['ips_policy']))
 						$no_rules = false;
 					/* Do not display the "no rules" warning if interface disabled */
-					if ($natent['enable'] == "off")
+					if ($natent['enable'] == "off") {
 						$no_rules = false;
-					if ($no_rules)
+					}
+					if ($no_rules) {
 						$no_rules_footnote = true;
+					}
 				?>
 					<td>
 						<input type="checkbox" id="frc<?=$nnats?>" name="rule[]" value="<?=$i?>" onClick="fr_bgcolor('<?=$nnats?>')" style="margin: 0; padding: 0;">
@@ -302,8 +315,17 @@ if ($savemsg)
 								&nbsp;&nbsp;
 								<i class="fa fa-play-circle icon-pointer icon-primary text-info" onclick="javascript:snort_iface_toggle('start', '<?=$nnats?>');" title="<?=gettext($icon_snort_msg);?>"></i>
 							<?php endif; ?>
+							<?php if (snort_check_sched($natent['sched'])) : ?>
+								<i class="fa fa-clock-o icon-black icon-primary" title="<?=gettext('Schedule is currently active');?>"></i>
+							<?php endif; ?>
 						<?php else : ?>
 							<?=gettext('DISABLED');?>&nbsp;
+						<?php endif; ?>
+					<td id="frd<?=$nnats?>" ondblclick="document.location='snort_interfaces_edit.php?id=<?=$nnats?>';">
+						<?php if ($config['installedpackages']['snortglobal']['rule'][$nnats]['sched'] != "") : ?>
+							<?=gettext(strtoupper($config['installedpackages']['snortglobal']['rule'][$nnats]['sched']))?>
+						<?php else: ?>
+							<?=gettext('Always');?>
 						<?php endif; ?>
 					</td>
 					<td id="frd<?=$nnats?>" ondblclick="document.location='snort_interfaces_edit.php?id=<?=$nnats?>';">
@@ -341,7 +363,7 @@ if ($savemsg)
 					</td>
 					<td>
 						<a href="snort_interfaces_edit.php?id=<?=$nnats;?>" class="fa fa-pencil icon-primary" title="<?=gettext('Edit this Snort interface mapping');?>"></a>
-						<?php if ($id_gen < count($ifaces)): ?>
+						<?php if ($id_gen < (count($ifaces) + $sched_count)) : ?>
 							<a href="snort_interfaces_edit.php?id=<?=$nnats?>&action=dup" class="fa fa-clone" title="<?=gettext('Clone this Snort instance to an available interface');?>"></a>
 						<?php endif; ?>
 						<a style="cursor:pointer;" class="fa fa-trash no-confirm icon-primary" id="Xldel_<?=$nnats?>" title="<?=gettext('Delete this Snort interface mapping'); ?>"></a>
@@ -356,7 +378,7 @@ if ($savemsg)
 </div>
 
 <nav class="action-buttons">
-	<?php if ($id_gen < count($ifaces)): ?>
+	<?php if ($id_gen < (count($ifaces) + $sched_count)): ?>
 		<a href="snort_interfaces_edit.php?id=<?=$id_gen?>" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add Snort interface mapping');?>">
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext("Add");?>

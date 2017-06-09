@@ -42,6 +42,8 @@ do-install:
 		${STAGEDIR}${PREFIX}/pkg/snort
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/snort/snort_conf_template.inc \
 		${STAGEDIR}${PREFIX}/pkg/snort
+        ${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/snort/snort_check_scheds.php \
+		${STAGEDIR}${PREFIX}/pkg/snort
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/snort/snort_migrate_config.php \
 		${STAGEDIR}${PREFIX}/pkg/snort
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/snort/snort_post_install.php \

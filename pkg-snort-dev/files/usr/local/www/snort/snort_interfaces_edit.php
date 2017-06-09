@@ -100,11 +100,13 @@ $pconfig = array();
 if (empty($config['installedpackages']['snortglobal']['rule'][$id]['uuid'])) {
 	/* Adding new interface, so flag rules to build. */
 	$pconfig['uuid'] = snort_generate_id();
+	$pconfig['sched'] = 'Always';
 	$rebuild_rules = true;
 }
 else {
 	$pconfig['uuid'] = $a_rule[$id]['uuid'];
 	$pconfig['descr'] = $a_rule[$id]['descr'];
+	$pconfig['sched'] = $a_rule[$id]['sched'];
 	$rebuild_rules = false;
 }
 $snort_uuid = $pconfig['uuid'];
@@ -125,17 +127,23 @@ if (isset($id) && $a_rule[$id]) {
 elseif (isset($id) && !isset($a_rule[$id])) {
 	$ifaces = get_configured_interface_list();
 	$ifrules = array();
-	foreach($a_rule as $r)
+	$sched_count = 0;
+	foreach($a_rule as $r) {
 		$ifrules[] = $r['interface'];
+		if ($r['sched'] != "" && $r['sched'] != "Always" ) {
+			$sched_count++;
+		}
+	}
 	foreach ($ifaces as $i) {
 		if (!in_array($i, $ifrules)) {
 			$pconfig['interface'] = $i;
 			$pconfig['descr'] = convert_friendly_interface_to_friendly_descr($i);
+			$pconfig['sched'] = 'Always';
 			$pconfig['enable'] = 'on';
 			break;
 		}
 	}
-	if (count($ifrules) == count($ifaces)) {
+	if ((count($ifrules) - $sched_count) == count($ifaces)) {
 		$input_errors[] = "No more available interfaces to configure for Snort!";
 		$interfaces = array();
 		$pconfig = array();
@@ -153,6 +161,9 @@ if (empty($pconfig['alertsystemlog_facility']))
 	$pconfig['alertsystemlog_facility'] = "log_auth";
 if (empty($pconfig['alertsystemlog_priority']))
 	$pconfig['alertsystemlog_priority'] = "log_alert";
+if (empty($pconfig['sched']))
+	$pconfig['sched'] = "Always";
+
 
 // See if creating a new interface by duplicating an existing one
 if (strcasecmp($action, 'dup') == 0) {
@@ -160,17 +171,23 @@ if (strcasecmp($action, 'dup') == 0) {
 	// Try to pick the next available physical interface to use
 	$ifaces = get_configured_interface_list();
 	$ifrules = array();
-	foreach($a_rule as $r)
+	$sched_count = 0;
+	foreach($a_rule as $r) {
 		$ifrules[] = $r['interface'];
+		if ($r['sched'] != "" && $r['sched'] != "Always") {
+		$sched_count++;
+		}
+	}
 	foreach ($ifaces as $i) {
 		if (!in_array($i, $ifrules)) {
 			$pconfig['interface'] = $i;
 			$pconfig['enable'] = 'on';
 			$pconfig['descr'] = convert_friendly_interface_to_friendly_descr($i);
+			$pconfig['sched'] = 'Always';
 			break;
 		}
 	}
-	if (count($ifrules) == count($ifaces)) {
+	if ((count($ifrules) - $sched_count) == count($ifaces)) {
 		$input_errors[] = gettext("No more available interfaces to configure for Snort!");
 		$interfaces = array();
 		$pconfig = array();
@@ -191,8 +208,14 @@ if ($_POST['save'] && !$input_errors) {
 	if (isset($_POST['interface'])) {
 		foreach ($a_rule as $k => $v) {
 			if (($v['interface'] == $_POST['interface']) && ($id <> $k)) {
-				$input_errors[] = gettext("The '{$_POST['interface']}' interface is already assigned to another Snort instance.");
-				break;
+				if ($_POST['interface'] == "Always") {
+					$input_errors[] = gettext("You can't assign full schedule to '{$_POST['interface']}' because there is another instance configured.");
+					break;
+				}
+				if ($v['sched'] == "Always") {
+					$input_errors[] = gettext("The '{$_POST['interface']}' interface is already assigned to another Snort instance with full schedule.");
+					break;
+				}
 			}
 		}
 	}
@@ -238,6 +261,7 @@ if ($_POST['save'] && !$input_errors) {
 			$snort_reload = true;
 
 		if ($_POST['descr']) $natent['descr'] =  $_POST['descr']; else $natent['descr'] = convert_friendly_interface_to_friendly_descr($natent['interface']);
+		if ($_POST['sched']) $natent['sched'] =  $_POST['sched']; else $natent['sched'] = 'Always';
 		if ($_POST['performance']) $natent['performance'] = $_POST['performance']; else  unset($natent['performance']);
 		/* if post = on use on off or rewrite the conf */
 		if ($_POST['blockoffenders7'] == "on") $natent['blockoffenders7'] = 'on'; else $natent['blockoffenders7'] = 'off';
@@ -473,6 +497,17 @@ if (empty($if_friendly)) {
 $pgtitle = array(gettext("Services"), gettext("Snort"), gettext("Edit Interface"), gettext("{$if_friendly}"));
 include("head.inc");
 
+//build list of configured schedules
+$schedules = array();
+$schedules[] = "Always"; //Default value
+if(is_array($config['schedules']['schedule'])) {
+	foreach ($config['schedules']['schedule'] as $schedule) {
+		if ($schedule['name'] <> "") {
+			$schedules[$schedule['name']] = $schedule['name'];
+		}
+	}
+}
+
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -494,12 +529,21 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['enable'] == 'on' ? true:false,
 	'on'
 ));
+
 $section->addInput(new Form_Select(
 	'interface',
 	'Interface',
 	$pconfig['interface'],
 	$interfaces
 ))->setHelp('Choose the interface where this Snort instance will inspect traffic.');
+
+$section->addInput(new Form_Select(
+        'sched',
+        'Schedule',
+        $pconfig['sched'],
+	$schedules
+))->setHelp('Enter a schedule for this snort instance to run. Leave as "Always" to have it enabled all the time.');
+
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
@@ -757,10 +801,9 @@ $tab_array = array();
 	$tab_array[] = array($menu_iface . gettext("IP Rep"), false, "/snort/snort_ip_reputation.php?id={$id}");
 	$tab_array[] = array($menu_iface . gettext("Logs"), false, "/snort/snort_interface_logs.php?id={$id}");
 display_top_tabs($tab_array, true, 'nav nav-tabs');
-
 print($form);
-?>
 
+?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function(){

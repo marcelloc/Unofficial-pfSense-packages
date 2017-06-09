@@ -141,8 +141,9 @@ if ($_POST['save']) {
 	if ($_POST['address']) {
 		if (!is_alias($_POST['address']))
 			$input_errors[] = gettext("A valid alias must be provided.");
-		if (is_alias($_POST['address']) && trim(filter_expand_alias($_POST['address'])) == "")
-			$input_errors[] = gettext("FQDN aliases are not supported in Snort.");
+		//if (is_alias($_POST['address']) && trim(filter_expand_alias($_POST['address'])) == "")
+		//	$input_errors[] = gettext("FQDN aliases are not supported in Snort.");
+		// is supported if you get ip address from resulting table instead of alias list :)
 	}
 
 	if (!$input_errors) {
