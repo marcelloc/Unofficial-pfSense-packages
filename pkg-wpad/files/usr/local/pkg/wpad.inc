@@ -29,8 +29,8 @@ require_once("interfaces.inc");
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 if ($pfs_version == "2.3" ) {
 	require_once("xmlrpc.inc");
-	require_once("xmlrpc_client.inc");
 }
+require_once("xmlrpc_client.inc");
 
 function wpad_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
