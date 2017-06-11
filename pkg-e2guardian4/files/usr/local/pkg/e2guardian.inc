@@ -1585,9 +1585,9 @@ function e2guardian_do_xmlrpc_sync($sync_to_ip, $username, $password, $sync_type
 
 		/* tell e2guardian to reload our settings on the destination sync host. */
 		$method = 'pfsense.exec_php';
-		$execcmd = "require_once('/usr/local/pkg/e2guardian.inc');\n";
+		$execcmd  = "require_once('/usr/local/pkg/e2guardian.inc');\n";
 		$execcmd .= "sync_package_e2guardian('yes');";
-		$execcmd .= "e2guardian_start("no", false, true);";
+		$execcmd .= "e2guardian_start('no', false, true);";
 
 		/* assemble xmlrpc payload */
 		$params = array(
