@@ -63,6 +63,7 @@ bannedphraselist = '{$e2_dir}/etc/e2guardian/lists/bannedphraselist.g_{$e2guardi
 weightedphraselist = '{$e2_dir}/etc/e2guardian/lists/weightedphraselist.g_{$e2guardian_groups['name']}'
 exceptionphraselist = '{$e2_dir}/etc/e2guardian/lists/exceptionphraselist.g_{$e2guardian_groups['name']}'
 bannedsitelist = '{$e2_dir}/etc/e2guardian/lists/bannedsitelist.g_{$e2guardian_groups['name']}'
+bannedsitelistwithbypass = '{$e2_dir}/etc/e2guardian/lists/bannedsitewithbypasslist.g_{$e2guardian_groups['name']}'
 greysitelist = '{$e2_dir}/etc/e2guardian/lists/greysitelist.g_{$e2guardian_groups['name']}'
 # Note: bannedsslsitelist is ignored if MITM is enabled
 # bannedsslsitelist = '/usr/local/etc/e2guardian/lists/bannedsslsitelist'			TODO INCLUDE ON GUI

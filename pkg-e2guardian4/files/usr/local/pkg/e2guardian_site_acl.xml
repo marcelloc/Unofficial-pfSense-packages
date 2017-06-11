@@ -152,6 +152,16 @@
 			<encoding>base64</encoding>
 		</field>
 		<field>
+			<fielddescr>withbypass</fielddescr>
+                        <fieldname>banned_sitelist_withbypass</fieldname>
+                        <description><![CDATA[<span class="text-info">Enter Banned Site List that accept bypass key.<br>
+                                Leave empty to load e2guardian defaults</span>]]></description>
+                        <type>textarea</type>
+                        <cols>80</cols>
+                        <rows>10</rows>
+                        <encoding>base64</encoding>
+                </field>
+		<field>
 			<name>Grey</name>
 			<type>listtopic</type>
 		</field>

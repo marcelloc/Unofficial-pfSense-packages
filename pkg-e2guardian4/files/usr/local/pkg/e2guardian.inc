@@ -152,7 +152,7 @@ function check_ca_hashes() {
 function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	global $config, $g, $savemsg;
 
-	# detect boot process
+	// detect boot process
 	if (is_array($_POST)) {
 		if (preg_match("/\w+/", $_POST['__csrf_magic'])) {
 			unset($boot_process);
@@ -168,16 +168,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		log_error("[E2guardian] - Save settings package call pr:" . is_process_running('e2guardian') . " bp:" . isset($boot_process) . " rpc:" . $via_rpc);
 	}
 
-	/*
-	// Moved to before form call
-	if (isset($_POST["apply"])) {
-		e2guardian_start($via_rpc, $install_process);
-		clear_subsystem_dirty('e2guardian');
-		return;
-	}
-	*/
-
-	#assign xml arrays
+	// assign xml arrays
 	if (!is_array($config['installedpackages']['e2guardian'])) {
 		$config['installedpackages']['e2guardian']['config'][0] = array(
 			'interface' => 'lo0',
@@ -215,7 +206,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		$e2guardian_blacklist = $config['installedpackages']['e2guardianblacklist']['config'][0];
 	}
 
-	#daemon options
+	// daemon options
 	$e2guardian_enabled = $e2guardian['enable_dg'];
 	$filterport = ($e2guardian['filterports'] ? $e2guardian['filterports'] : "8080");
 	$softrestart = (preg_match('/softrestart/', $e2guardian['daemon_options']) ? "on" : "off");
@@ -226,7 +217,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$proxyport = ($e2guardian['proxyport']?$e2guardian['proxyport'] : "3128");
 	$proxytimeout = ($e2guardian['proxytimeout'] ? $e2guardian['proxytimeout'] : "30");
 
-	#general options
+	// general options
 	$urlcachenumber = ($e2guardian_config['urlcachenumber'] ? $e2guardian_config['urlcachenumber'] : "1000");
 	$urlcacheage = ($e2guardian_config['urlcacheage'] ? $e2guardian_config['urlcacheage'] : "900");
 	$scancleancache = (preg_match('/scancleancache/', $e2guardian_config['scan_options']) ? "on" : "off");
@@ -275,7 +266,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		include("/usr/local/pkg/icapscan.conf.template");
 		file_put_contents(E2GUARDIAN_DIR . "/etc/e2guardian/contentscanners/icapscan.conf", $icap_conf_file , LOCK_EX);
 	}
-	#limits
+	// limits
 	// moved to groups
 	//$maxuploadsize = ($e2guardian_limits['maxuploadsize'] ? $e2guardian_limits['maxuploadsize'] : "-1");
 	$maxcontentfiltersize = ($e2guardian_limits['maxcontentfiltersize'] ? $e2guardian_limits['maxcontentfiltersize'] : "256");
@@ -284,7 +275,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$initialtrickledelay = ($e2guardian_limits['initialtrickledelay'] ? $e2guardian_limits['initialtrickledelay'] : "20");
 	$trickledelay = ($e2guardian_limits['trickledelay'] ? $e2guardian_limits['trickledelay'] : "20");
 
-	#report and log
+	// report and log
 	$reportlevel = ($e2guardian_log['report_level'] ? $e2guardian_log['report_level'] : "3");
 	if ($reportlevel == 1 || $reportlevel == 2) {
 		if (preg_match("@(\w+://[a-zA-Z0-9.:/\-]+)@", $e2guardian_log['reportingcgi'], $cgimatches)) {
@@ -314,7 +305,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$logexceptionhits = ($e2guardian_log['logexceptionhits'] ? $e2guardian_log['logexceptionhits'] : "2");
 	$logfileformat = ($e2guardian_log['logfileformat'] ? $e2guardian_log['logfileformat'] : "1");
 
-	#check files
+	// check files
 	#create sample files
 	$files = array(
 		"/e2guardianf1.conf",
@@ -324,6 +315,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		"/lists/weightedphraselist",
 		"/lists/exceptionsitelist",
 		"/lists/bannedsitelist",
+		"/lists/bannedsitewithbypasslist",
 		"/lists/greysitelist",
 		"/lists/logsitelist",
 		"/lists/bannedregexpurllist",
@@ -526,6 +518,11 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		//bannedsitelist
 		if ($e2guardian_site['banned_sitelist'] == "" && file_exists($e2guardian_dir . '/lists/bannedsitelist.sample')) {
 			$config['installedpackages']['e2guardiansiteacl']['config'][$count]['banned_sitelist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/bannedsitelist.sample'));
+			$load_samples++;
+		}
+		//bannedsitelist
+		if ($e2guardian_site['banned_sitelist'] == "" && file_exists($e2guardian_dir . '/lists/bannedsitelist.sample')) {
+			$config['installedpackages']['e2guardiansiteacl']['config'][$count]['banned_sitelist_withbypass'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/bannedsitewithbypasslist.sample'));
 			$load_samples++;
 		}
 		$includes = preg_replace($match, $replace, $e2guardian_site['banned_includes']);
@@ -908,7 +905,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		//create group list files
 		$lists = array(
 			"phraseacl" => array("bannedphrase", "weightedphrase", "exceptionphrase"),
-			"siteacl" => array("bannedsite", "greysite", "exceptionsite", "exceptionfilesite", "logsite", "sslsiteregexp"),
+			"siteacl" => array("bannedsite", "greysite", "exceptionsite", "exceptionfilesite", "logsite", "sslsiteregexp","bannedsitewithbypass"),
 			"urlacl" => array("bannedurl", "greyurl", "exceptionurl", "exceptionregexpurl", "bannedregexpurl", "urlregexp", "exceptionfileurl", "logurl", "logregexpurl"),
 			"contentacl" => array("contentregexp"),
 			"extensionacl" => array("exceptionextension", "exceptionmimetype", "bannedextension", "bannedmimetype"),
@@ -1590,6 +1587,7 @@ function e2guardian_do_xmlrpc_sync($sync_to_ip, $username, $password, $sync_type
 		$method = 'pfsense.exec_php';
 		$execcmd = "require_once('/usr/local/pkg/e2guardian.inc');\n";
 		$execcmd .= "sync_package_e2guardian('yes');";
+		$execcmd .= "e2guardian_start("no", false, true);";
 
 		/* assemble xmlrpc payload */
 		$params = array(
