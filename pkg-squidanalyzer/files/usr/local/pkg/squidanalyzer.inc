@@ -101,8 +101,8 @@ function sync_squidanalyzer() {
 		$sa_userreport = ($settings['userreport'] == 'on') ? '1':'0';
 		include("/usr/local/pkg/squidanalyzer.template");
 
-		if (!file_exists('/usr/local/www/squidreport')) {
-      			mwexec('mkdir /usr/local/www/squidreport');
+		if (!file_exists('/usr/local/squidreport')) {
+      			mwexec('mkdir /usr/local/squidreport');
 		}
 
 		// write config file

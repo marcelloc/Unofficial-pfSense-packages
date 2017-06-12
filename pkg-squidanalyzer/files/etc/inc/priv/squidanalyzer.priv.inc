@@ -22,12 +22,13 @@
 
 global $priv_list;
 
-$priv_list['page-services-squidanalyzer'] = array();
-$priv_list['page-services-squidanalyzerr']['name'] = "WebCfg -Services: Wpad package";
-$priv_list['page-services-squidanalyzer']['descr'] = "Allow access to Wpad package GUI";
+$priv_list['page-status-squidanalyzer'] = array();
+$priv_list['page-status-squidanalyzer']['name'] = "WebCfg - Status: SquidAnalyzer package";
+$priv_list['page-status-squidanalyzer']['descr'] = "Allow access to SquidAnalyzer package GUI";
 
-$priv_list['page-services-squidanalyzer']['match'] = array();
-$priv_list['page-services-squidanalyzer']['match'][] = "pkg_edit.php?xml=squidanalyzer.xml*";
-$priv_list['page-services-squidanalyzer']['match'][] = "pkg_edit.php?xml=squidanalyzer_sync.xml*";
-
+$priv_list['page-status-squidanalyzer']['match'] = array();
+$priv_list['page-status-squidanalyzer']['match'][] = "pkg_edit.php?xml=squidanalyzer.xml*";
+$priv_list['page-status-squidanalyzer']['match'][] = "pkg_edit.php?xml=squidanalyzer_sync.xml*";
+$priv_list['page-status-squidanalyzer']['match'][] = "squidanalyzer_reports.php*";
+$priv_list['page-status-squidanalyzer']['match'][] = "squidanalyzer_frame.php*";
 ?>

@@ -49,7 +49,7 @@
 		</tab>
 		<tab>
       			<text>SquidAnalyzer Report</text>
-      			<url>/squidreport</url>
+      			<url>/squidanalyzer_reports.php</url>
     		</tab>
 		<tab>
 			<text>XMLRPC Sync</text>

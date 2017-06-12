@@ -2,6 +2,8 @@ pkg/squidanalyzer.xml
 pkg/squidanalyzer.inc
 pkg/squidanalyzer_sync.xml
 pkg/squidanalyzer.template
+www/squidanalyzer_frame.php
+www/squidanalyzer_reports.php
 /etc/inc/priv/squidanalyzer.priv.inc
 %%DATADIR%%/info.xml
 @dir /etc/inc/priv

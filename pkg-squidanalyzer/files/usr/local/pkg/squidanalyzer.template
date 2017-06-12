@@ -1,7 +1,7 @@
 <?php
 
 $sa_config = <<<EOD
-Output  /usr/local/www/squidreport
+Output  /usr/local/squidreport
 WebUrl  /squidreport
 LogFile {$settings['squidlog']}
 UseClientDNSName        {$sa_useclientdns}
