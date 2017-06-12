@@ -25,36 +25,7 @@ require_once("/etc/inc/pkg-utils.inc");
 require_once("/etc/inc/globals.inc");
 require_once("guiconfig.inc");
 
-define('POSTFIX_LOCALBASE','/usr/local');
-/*
-$pgtitle = array(gettext("Package"), gettext("Status: Squid Analyzer"), gettext("View"), gettext("Report"));
-include("head.inc");
-
-if ($savemsg) {
-        print_info_box($savemsg);
-}
-
-$uname=posix_uname();
-if ($uname['machine']=='amd64')
-        ini_set('memory_limit', '512M');
-
-$pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
-
-
-        $tab_array = array();
-        $tab_array[] = array(gettext("General Settings"), false, "/pkg_edit.php?xml=squidanalyzer.xml&id=0");
-        $tab_array[] = array(gettext("SquidAnalyzer Report"), true, "/squidanalyzer_reports.php");
-        $tab_array[] = array(gettext("XMLRPC Sync"), false, "/pkg_edit.php?xml=squidanalyzer_sync.xml&id=0");
-        display_top_tabs($tab_array);
-*/
 ?>
-<!--
-<div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("View Postfix configuration files"); ?></h2></div>
-        <div class="panel-body">
-        <div class="table-responsive"> 
-        <div class="panel-body">
-        <div id="file_contents" class="table-responsive">-->
 	</div>
 	<script type="text/javascript">
         	//<![CDATA[
