@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE packagegui SYSTEM "../schema/packages.dtd">
+<?xml-stylesheet type="text/xsl" href="../xsl/package.xsl"?>
+<packagegui>
+        <copyright>
+        <![CDATA[
+/* $Id$ */
+/* ========================================================================== */
+/*
+ * squidanalyzer.xml
+ *
+ * part of Unofficial packages for pfSense(R) softwate
+ * Copyright (C) 2016 Luiz Gustavo <me@luizgustavo.pro.br>
+ * Copyright (c) 2017 Marcello Coutinho
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+
+                                                                              */
+/* ========================================================================== */
+        ]]>
+	</copyright>
+  	<faq>Currently there are no FAQ items provided.</faq>
+	<name>squidanalyzer</name>
+	<version>6.5</version>
+	<title>Squid log analyzer</title>
+	<include_file>/usr/local/pkg/squidanalyzer.inc</include_file>
+	<tabs>
+		<tab>
+			<text>General Settings</text>
+			<url>/pkg_edit.php?xml=squidanalyzer.xml&amp;id=0</url>
+			<active/>
+		</tab>
+		<tab>
+      			<text>SquidAnalyzer Report</text>
+      			<url>/squidreport</url>
+    		</tab>
+		<tab>
+			<text>XMLRPC Sync</text>
+			<url>/pkg_edit.php?xml=squidanalyzer_sync.xml&amp;id=0</url>
+		</tab>
+	</tabs>
+	<fields>
+	<field>
+      		<fielddescr>Enable</fielddescr>
+      		<fieldname>saenable</fieldname>
+      		<description>Enable Squidanalyzer LOG capture.</description>
+      		<type>checkbox</type>
+      		<enablefields>squidlog,useclientdnsname,urlreport,userreport,topnumber,topurluser,lang,dateformat,locale,frequency</enablefields>
+    	</field>
+	<field>
+      		<fielddescr>Squid log</fielddescr>
+      		<fieldname>squidlog</fieldname>
+      		<description>Set the path to the Squid/squidguard/e2guardian log file(s) separeted by space.</description>
+      		<type>input</type>
+      		<size>60</size>
+      		<default_value>/var/squid/logs/access.log</default_value>
+    	</field>
+	<field>
+      		<fielddescr>Client DNS name</fielddescr>
+      		<fieldname>useclientdnsname</fieldname>
+      		<description>If you want to use DNS name instead of client Ip address as username enable this directive.</description>
+      		<type>checkbox</type>
+    	</field>
+	<field>
+      		<fielddescr>URL Report</fielddescr>
+      		<fieldname>urlreport</fieldname>
+      		<description>Should SquidAnalyzer display user details. This will show all URL read by user. Take care to have enougth space disk for large user.</description>
+      		<type>checkbox</type>
+    	</field>
+	<field>
+      		<fielddescr>User Report</fielddescr>
+      		<fieldname>userreport</fieldname>
+      		<description>Should SquidAnalyzer display user details. This will show statistics about user.</description>
+      		<type>checkbox</type>
+    	</field>
+	<field>
+      		<fielddescr>Top Number</fielddescr>
+      		<fieldname>topnumber</fieldname>
+      		<description>Used to set the number of top url and second level domain to show. Default is top 100.</description>
+      		<type>input</type>
+      		<size>30</size>
+      		<default_value>100</default_value>
+    	</field>
+	<field>
+      		<fielddescr>Top URL User</fielddescr>
+      		<fieldname>topurluser</fieldname>
+      		<description>Use this directive to show the top N users that look at an URL or a domain. Set it to 0 to disable this feature. Default is top 10. </description>
+      		<type>input</type>
+      		<size>30</size>
+      		<default_value>10</default_value>
+    	</field>
+	<field>
+      		<fielddescr>Language</fielddescr>
+      		<fieldname>lang</fieldname>
+      		<description>Used to set the translation file to be used.</description>
+      		<type>select</type>
+ 		<options>
+ 			<option><name>English</name><value>en_US</value></option>
+        		<option><name>Portugues Brasileiro</name><value>pt_BR</value></option>
+        		<option><name>Spanish</name><value>es_ES</value></option>
+ 		</options>
+    	</field>
+	<field>
+                <fielddescr>Transfer Unit</fielddescr>
+                <fieldname>transferunit</fieldname>
+                <description>Set the default unit for transfert size. Default is BYTES</description>
+                <type>select</type>
+                <options>
+                        <option><name>Bytes(default)</name><value>BYTES</value></option>
+                        <option><name>KBytes</name><value>KB</value></option>
+                        <option><name>Mega Bytes</name><value>MB</value></option>
+                        <option><name>Giga Bytes</name><value>GB</value></option>
+                </options>
+	        <default_value>BYTES</default_value>
+        </field>
+	<field>
+	 	<fielddescr>Date Format</fielddescr>
+		<fieldname>dateformat</fieldname>
+	 	<description>Date format to use in reports.</description>
+		<type>select</type>
+		<options>
+			<option><name>American yy/mm/dd (default)</name><value>%y-%m-%d</value></option>
+			<option><name>American yy/MM/dd</name><value>%y-%M-%d</value></option>
+			<option><name>European dd/mm/yy</name><value>%d-%m-%y</value></option>
+			<option><name>European dd/MM/yy</name><value>%d-%M-%y</value></option>
+		</options>
+	<default_value>%y-%m-%d</default_value>
+	</field>
+    	<field>
+      		<type>listtopic</type>
+      		<name>Schedule Option</name>
+    	</field>
+	<field>
+      		<fielddescr>Frequency</fielddescr>
+      		<fieldname>frequency</fieldname>
+      		<type>input</type>
+      		<size>5</size>
+      		<description>
+        	<![CDATA[
+        	How often should this report be updated.<br />
+        	Valid options are: minutes(m), hours(h), days(d)<br />
+        	<strong>Example:</strong> To update every hour, use 1h<br /><br />
+		<button class="btn btn-success btn-sm" name='force_update' id='force_update' type='submit' value='force_update'>
+		<i class="fa fa-refresh icon-embed-btn"></i>
+		Force update now
+		</button>
+        	]]>
+      		</description>
+      		<default_value>1h</default_value>
+    	</field>
+	</fields>
+	<custom_php_validation_command>
+        	validate_form_sa($_POST, $input_errors);
+	</custom_php_validation_command>
+	<custom_php_resync_config_command>
+        	sync_squidanalyzer();
+	</custom_php_resync_config_command>
+</packagegui>

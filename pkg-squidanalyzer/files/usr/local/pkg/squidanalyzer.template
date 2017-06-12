@@ -1,0 +1,26 @@
+<?php
+
+$sa_config = <<<EOD
+Output  /usr/local/www/squidreport
+WebUrl  /squidreport
+LogFile {$settings['squidlog']}
+UseClientDNSName        {$sa_useclientdns}
+DNSLookupTimeout        0.0001
+OrderNetwork    bytes
+OrderUser       bytes
+OrderUrl        bytes
+OrderMime       bytes
+UrlReport       {$sa_urlreport}
+UrlHitsOnly     0
+UserReport {$sa_userreport}
+QuietMode       1
+Lang    /usr/local/etc/squidreport/lang/{$settings['lang']}.txt
+DateFormat      {$settings['dateformat']}
+TopNumber       {$sa_topnumber}
+TopUrlUser      {$sa_topurluser}
+TransferUnit	{$settings['transferunit']}
+Locale {$settings['lang']}
+
+EOD;
+
+?>

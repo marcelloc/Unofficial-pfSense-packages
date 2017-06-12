@@ -1,0 +1,7 @@
+pkg/squidanalyzer.xml
+pkg/squidanalyzer.inc
+pkg/squidanalyzer_sync.xml
+pkg/squidanalyzer.template
+/etc/inc/priv/squidanalyzer.priv.inc
+%%DATADIR%%/info.xml
+@dir /etc/inc/priv

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+	<package>
+		<name>Squidanalyzer</name>
+		<descr><![CDATA[Create graphical reports from proxy log files. ]]></descr>
+		<pkginfolink/>
+		<version>%%PKGVERSION%%</version>
+		<configurationfile>squidanalyzer.xml</configurationfile>
+	</package>
+</pfsensepkgs>
