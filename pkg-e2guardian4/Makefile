@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-E2guardian4
-PORTVERSION=	0.2.1
+PORTVERSION=	0.2.2
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -27,6 +27,7 @@ do-extract:
 do-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/pkg
 	${MKDIR} ${STAGEDIR}${PREFIX}/www
+	${MKDIR} ${STAGEDIR}${PREFIX}/www/widgets/widgets
 	${MKDIR} ${STAGEDIR}${PREFIX}/www/shortcuts
 	${MKDIR} ${STAGEDIR}/etc/inc/priv
 	${MKDIR} ${STAGEDIR}/root
@@ -91,6 +92,8 @@ do-install:
 		${STAGEDIR}${PREFIX}/www
 	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/www/e2guardian_ldap.php \
 		${STAGEDIR}${PREFIX}/www
+	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/www/widgets/widgets/e2guardian.widget.php \
+		${STAGEDIR}${PREFIX}/www/widgets/widgets
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/www/shortcuts/pkg_e2guardian.inc \
 		${STAGEDIR}${PREFIX}/www/shortcuts
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${DATADIR}/info.xml \
