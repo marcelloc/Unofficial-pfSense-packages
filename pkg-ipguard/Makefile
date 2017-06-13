@@ -25,6 +25,7 @@ do-extract:
 
 do-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/pkg
+	${MKDIR} ${STAGEDIR}${PREFIX}/www
 	${MKDIR} ${STAGEDIR}${PREFIX}/www/shortcuts
 	${MKDIR} ${STAGEDIR}/etc/inc/priv
 	${MKDIR} ${STAGEDIR}${DATADIR}
