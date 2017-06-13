@@ -33,6 +33,8 @@ require_once("notices.inc");
 require_once("util.inc");
 require_once("xmlrpc_client.inc");
 
+$shortcut_section = "ipguard";
+
 function ipguard_custom_php_deinstall_command() {
 	unlink_if_exists("/usr/local/etc/rc.d/ipguard.sh");
 	$files = glob("/usr/local/etc/ipguard_*.conf");
@@ -62,7 +64,6 @@ function ipguard_custom_php_write_config() {
 
 	$start = "";
 	$stop = "/bin/pkill -anx ipguard";
-	conf_mount_rw();
 	/* Create rc script and restart service if ipguard is enabled */
 	if (count($new_config) > 0 && $ipguard['enable']) {
 			foreach ($new_config as $key => $value) {
@@ -90,7 +91,6 @@ function ipguard_custom_php_write_config() {
 		unlink_if_exists("/usr/local/etc/rc.d/ipguard.sh");
 
 	}
-	conf_mount_ro();
 
 	ipguard_sync_on_changes();
 }

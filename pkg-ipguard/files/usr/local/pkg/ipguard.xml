@@ -92,18 +92,13 @@
 			<fieldname>description</fieldname>
 		</columnitem>
 		<movable>on</movable>
-		<description>
-			<![CDATA[
-			If firewall receives traffic with MAC/IP pair not listed here, it will send ARP reply with configured fake address.<br />
-			This will prevent not permitted host from working properly in the specified ethernet segment.
-			]]>
-		</description>
 	</adddeleteeditpagefields>
 	<fields>
 		<field>
 			<type>listtopic</type>
 			<name>IPguard Options</name>
 			<fieldname>temp</fieldname>
+			
 		</field>
 		<field>
 			<fielddescr>sortable</fielddescr>
@@ -129,11 +124,21 @@
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
 			<description>
-				<![CDATA[
-				Enable this MAC rule.<br />
-				<strong>Important Note:</strong> Always create rules for pfSense MAC and IP address to avoid denying access to pfFense GUI!
+				<![CDATA[Enable this MAC rule.
+				Important Note:Always create rules for pfSense MAC and IP address to avoid denying access to pfFense GUI!
 				]]>
 			</description>
+		</field>
+		<field>
+			<fielddescr>Info</fielddescr>
+                        <fieldname>info</fieldname>
+                        <type>info</type>
+		 	<description>
+                        <![CDATA[
+                        If firewall receives traffic with MAC/IP pair not listed on any rule, it will send ARP reply with configured fake address.<br />
+                        This will prevent not permitted host from working properly in the specified ethernet segment.
+                        ]]>
+                	</description>
 		</field>
 		<field>
 			<fielddescr>Interface</fielddescr>
