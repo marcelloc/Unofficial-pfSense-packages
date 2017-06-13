@@ -32,6 +32,8 @@ do-install:
 	${MKDIR} ${STAGEDIR}/etc/inc/priv
 	${MKDIR} ${STAGEDIR}/root
 	${MKDIR} ${STAGEDIR}${DATADIR}
+	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/e2guardian.priv.inc \
+		${STAGEDIR}/etc/inc/priv
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian.xml \
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian_antivirus_acl.xml \

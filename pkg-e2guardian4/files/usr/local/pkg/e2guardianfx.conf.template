@@ -490,7 +490,7 @@ onlymitmsslgrey = off
 # Enable MITM site certificate checking
 # ignored if  sslmitm is off
 # default (recommended) is 'on'
-mitmcheckcert = on
+mitmcheckcert = {$e2guardian_groups['sslcheckcert']}
 
 #{$e2guardian_groups['mitmkey']}			TODO CHECK ALL THESE SSL OPTIONS
 
