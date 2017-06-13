@@ -1,0 +1,6 @@
+pkg/ipguard.xml
+pkg/ipguard.inc
+pkg/ipguard_sync.xml
+/etc/inc/priv/ipguard.priv.inc
+%%DATADIR%%/info.xml
+@dir /etc/inc/priv

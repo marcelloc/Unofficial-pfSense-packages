@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE packagegui SYSTEM "../schema/packages.dtd">
+<?xml-stylesheet type="text/xsl" href="../xsl/package.xsl"?>
+<packagegui>
+	<copyright>
+<![CDATA[
+/* $Id$ */
+/* ====================================================================================== */
+/*
+	ipguard.xml
+	part of pfSense (https://www.pfSense.org/)
+	Copyright (C) 2012-2017 Marcello Coutinho
+	Copyright (C) 2015 ESF, LLC
+	All rights reserved.
+*/
+/* ====================================================================================== */
+/*
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+/* ====================================================================================== */
+	]]>
+	</copyright>
+	<name>ipguard</name>
+	<version>0.1.3</version>
+	<title>Firewall: IPguard</title>
+	<savetext>Save</savetext>
+	<include_file>/usr/local/pkg/ipguard.inc</include_file>
+	<menu>
+		<name>IPguard</name>
+		<section>Firewall</section>
+		<url>/pkg.php?xml=ipguard.xml</url>
+	</menu>
+	<service>
+		<name>ipguard</name>
+		<rcfile>ipguard.sh</rcfile>
+		<executable>ipguard</executable>
+		<description>IPguard ARP Spoofing Daemon</description>
+	</service>
+	<configpath>installedpackages->package->ipguard</configpath>
+	<tabs>
+		<tab>
+			<text>General</text>
+			<url>/pkg.php?xml=ipguard.xml</url>
+			<active/>
+		</tab>
+		<tab>
+			<text>Sync</text>
+			<url>/pkg_edit.php?xml=ipguard_sync.xml</url>
+		</tab>
+	</tabs>
+	<adddeleteeditpagefields>
+		<columnitem>
+			<fielddescr>Enable</fielddescr>
+			<fieldname>enable</fieldname>
+			<type>checkbox</type>
+		</columnitem>
+		<columnitem>
+			<fielddescr>Interface</fielddescr>
+			<fieldname>interface</fieldname>
+		</columnitem>
+		<columnitem>
+			<fielddescr>MAC Address</fielddescr>
+			<fieldname>mac</fieldname>
+		</columnitem>
+		<columnitem>
+			<fielddescr>IP Address(es)</fielddescr>
+			<fieldname>ip</fieldname>
+		</columnitem>
+		<columnitem>
+			<fielddescr>Description</fielddescr>
+			<fieldname>description</fieldname>
+		</columnitem>
+		<movable>on</movable>
+		<description>
+			<![CDATA[
+			If firewall receives traffic with MAC/IP pair not listed here, it will send ARP reply with configured fake address.<br />
+			This will prevent not permitted host from working properly in the specified ethernet segment.
+			]]>
+		</description>
+	</adddeleteeditpagefields>
+	<fields>
+		<field>
+			<type>listtopic</type>
+			<name>IPguard Options</name>
+			<fieldname>temp</fieldname>
+		</field>
+		<field>
+			<fielddescr>sortable</fielddescr>
+			<fieldname>sortable</fieldname>
+			<display_maximum_rows>20</display_maximum_rows>
+			<type>sorting</type>
+			<include_filtering_inputbox/>
+			<sortablefields>
+				<item>
+					<name>MAC Address</name>
+					<fieldname>mac</fieldname>
+					<regex>/%FILTERTEXT%/i</regex>
+				</item>
+				<item>
+					<name>IP Address</name>
+					<fieldname>ip</fieldname>
+					<regex>/%FILTERTEXT%/i</regex>
+				</item>
+			</sortablefields>
+		</field>
+		<field>
+			<fielddescr>Enable</fielddescr>
+			<fieldname>enable</fieldname>
+			<type>checkbox</type>
+			<description>
+				<![CDATA[
+				Enable this MAC rule.<br />
+				<strong>Important Note:</strong> Always create rules for pfSense MAC and IP address to avoid denying access to pfFense GUI!
+				]]>
+			</description>
+		</field>
+		<field>
+			<fielddescr>Interface</fielddescr>
+			<fieldname>interface</fieldname>
+			<description>The interface on which IPguard server will check this MAC.</description>
+			<type>interfaces_selection</type>
+			<required/>
+			<default_value>lan</default_value>
+		</field>
+		<field>
+			<fielddescr>Description</fielddescr>
+			<fieldname>description</fieldname>
+			<description>Describe this MAC rule.</description>
+			<type>input</type>
+			<size>50</size>
+			<required/>
+		</field>
+		<field>
+			<fielddescr>MAC Address</fielddescr>
+			<fieldname>mac</fieldname>
+			<description>
+				<![CDATA[
+				Insert MAC address you want to filter.<br />
+				<strong>To include a permit rule, use MAC 00:00:00:00:00:00</strong>
+				]]>
+			</description>
+			<type>input</type>
+			<size>25</size>
+			<required/>
+		</field>
+		<field>
+			<fielddescr>IP Address</fielddescr>
+			<fieldname>ip</fieldname>
+			<description>
+				<![CDATA[
+				Insert IP address, hostname or network CIDR you want to apply on this IPguard rule.<br>
+				<strong>To include a permit rule, use your LAN CIDR or 0.0.0.0</strong>
+				]]>
+			</description>
+			<type>input</type>
+			<size>40</size>
+			<required/>
+		</field>
+	</fields>
+	<custom_delete_php_command>
+		ipguard_custom_php_write_config();
+	</custom_delete_php_command>
+	<custom_add_php_command>
+		ipguard_custom_php_write_config();
+	</custom_add_php_command>
+	<custom_php_deinstall_command>
+		ipguard_custom_php_deinstall_command();
+	</custom_php_deinstall_command>
+	<custom_php_resync_config_command>
+		ipguard_custom_php_write_config();
+	</custom_php_resync_config_command>
+	<custom_php_command_before_form>
+		unset($_POST['temp']);
+	</custom_php_command_before_form>
+</packagegui>
