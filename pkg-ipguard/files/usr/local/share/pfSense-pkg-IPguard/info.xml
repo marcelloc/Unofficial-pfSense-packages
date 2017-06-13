@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <pfsensepkgs>
 	<package>
-		<name>IPpguard</name>
+		<name>IPguard</name>
 		<descr><![CDATA[Tool designed to protect LAN IP address space by ARP spoofing. ]]></descr>
 		<pkginfolink/>
 		<version>%%PKGVERSION%%</version>

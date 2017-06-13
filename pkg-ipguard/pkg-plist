@@ -2,8 +2,8 @@ pkg/ipguard.xml
 pkg/ipguard.inc
 pkg/ipguard_sync.xml
 /etc/inc/priv/ipguard.priv.inc
-/www/shortcuts/pkg_ipguard.inc
+www/shortcuts/pkg_ipguard.inc
 %%DATADIR%%/info.xml
 @dir /etc/inc/priv
-@dir /www/shortcuts
+@dir /usr/local/www/shortcuts
 
