@@ -1078,11 +1078,11 @@ EOF;
 	//watchdog script
 	$watchdog_extra = "";
 	if ($e2guardian['watchdog'] == "on") {
-		$parent_cmd = "/usr/local/sbin/squid -f /usr/local/etc/e2guardian/squidparent.conf";
+		$parent_cmd = "/usr/local/etc/rc.d/e2parent.sh";
 		$watchdog_extra .= "\nif [ -f /var/run/squid/e2gsquid.pid ];then\n\t";
        		$watchdog_extra .= "cat /var/run/squid/e2gsquid.pid | xargs ps ||\n\t";
-        	$watchdog_extra .= "{$parent_cmd}\nelse\n\t";
-        	$watchdog_extra .= "{$parent_cmd}\nfi\n";
+        	$watchdog_extra .= "{$parent_cmd} start\nelse\n\t";
+        	$watchdog_extra .= "{$parent_cmd} start\nfi\n";
 	}
 	$watchdog = <<< EOF
 #!/bin/sh
@@ -1268,7 +1268,8 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 	//squid parent start stop script
 	$parent_pid = "/var/run/squid/e2gsquid.pid";
 	$parent_cmd = "/usr/local/sbin/squid -f /usr/local/etc/e2guardian/squidparent.conf";
-	$start  = "\nif [ ! -d /var/squid/lib/ssl_db2 ];then\n\t";
+	$start  = "\nif [ ! -d /var/squid/lib ];then\n\t";
+	$start .= "mkdir -p /var/squid/lib\n\t";
 	$start .= "/usr/local/libexec/squid/ssl_crtd -c -s /var/squid/lib/ssl_db2\nfi\n";
 	$start .= "if [ -f {$parent_pid} ];then\n\t";
 	$start .= "cat {$parent_pid} | xargs ps ||\n\t";
