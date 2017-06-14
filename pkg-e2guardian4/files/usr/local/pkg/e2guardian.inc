@@ -1268,7 +1268,7 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 	//squid parent start stop script
 	$parent_pid = "/var/run/squid/e2gsquid.pid";
 	$parent_cmd = "/usr/local/sbin/squid -f /usr/local/etc/e2guardian/squidparent.conf";
-	$start  = "\nif [ ! -d /var/squid/lib/ssl_db/certs ];then\n\t";
+	$start  = "\nif [ ! -d /var/squid/lib/ssl_db2/certs ];then\n\t";
 	$start .= "mkdir -p /var/squid/lib\n\t";
 	$start .= "/usr/local/libexec/squid/ssl_crtd -c -s /var/squid/lib/ssl_db2\nfi\n";
 	$start .= "if [ -f {$parent_pid} ];then\n\t";
