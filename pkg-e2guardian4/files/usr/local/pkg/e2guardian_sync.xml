@@ -152,6 +152,6 @@
 		e2guardian_validate_input($_POST, $input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
-		sync_package_e2guardian();
+		write_config("E2guardian sync settings.");
 	</custom_php_resync_config_command>
 </packagegui>

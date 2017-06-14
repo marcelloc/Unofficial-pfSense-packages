@@ -95,7 +95,8 @@
 			<text>Help</text>
 			<url>/e2guardian_about.php</url>
 		</tab>
-</tabs>
+	</tabs>
+	<advanced_options>enabled</advanced_options>
 	<fields>
 		<field>
 			<name>Listening Settings</name>
@@ -156,7 +157,7 @@
                                If more connections are made, connections will queue until a worker thread is free.<br>
                                On large site you might want to try 2500 (max value 4000)]]></description>
 		</field>
-		<field>
+		<!--<field>
 			<fielddescr>Max IPs</fielddescr>
 			<fieldname>maxips</fieldname>
 			<type>input</type>
@@ -166,11 +167,40 @@
 				Use this to set a hard limit on the number of users allowed to concurrently<br>
 				browse the web. Set to 0 for no limit, and to disable the IP cache process.<br>
 				On 4.1 this function is NOT YET IMPLEMENTED]]></description>
-		</field>
+		</field>-->
+                <field>
+                        <name>SSL Verification and Filtering</name>
+                        <type>listtopic</type>
+                </field>
+                <field>
+                        <fielddescr>Enable SSL support</fielddescr>
+                        <fieldname>enablessl</fieldname>
+                        <type>checkbox</type>
+                        <description><![CDATA[Check to enable E2guardian SSL interception.]]></description>
+                </field>
+                <field>
+                        <fielddescr>CA</fielddescr>
+                        <fieldname>dca</fieldname>
+                        <description><![CDATA[Select Certificate Authority to use when SSL filtering is enabled on Group options<br>
+                                To create a CA on pfsense, go to <strong>system -> Cert Manager<strong>]]></description>
+                        <type>select_source</type>
+                        <source><![CDATA[$config['ca']]]></source>
+                        <source_name>descr</source_name>
+                        <source_value>refid</source_value>
+                </field>
+
 		<field>
-			<name>Parent proxy Settings</name>
-			<type>listtopic</type>
-		</field>
+                        <fielddescr>Parent mode</fielddescr>
+                        <fieldname>parentmode</fieldname>
+                        <description><![CDATA[Select parent proxy to use.]]></description>
+                        <type>select</type>
+                        <options>
+                                <option><name>Use automatic embeded parent config</name><value>local</value></option>
+                                <option><name>Manual configure Remote proxy or Local Squid package</name><value>remote</value></option>
+                                <default_value>local</default_value>
+                        </options>
+			<advancedfield/>
+                </field>
 		<field>
 			<fielddescr>Proxy IP</fielddescr>
 			<fieldname>proxyip</fieldname>
@@ -178,6 +208,7 @@
 			<size>20</size>
 			<description><![CDATA[Default: <strong>127.0.0.1</strong><br>
 				Sets ip address for proxy server(usually squid).]]></description>
+			<advancedfield/>
 		</field>
 		<field>
 			<fielddescr>Proxy Port</fielddescr>
@@ -186,6 +217,7 @@
 			<size>10</size>
 			<description><![CDATA[Default: <strong>3128</strong><br>
 				Sets port number for proxy server.]]></description>
+			<advancedfield/>
 		</field>
 		<field>
 			<fielddescr>Proxy Time out</fielddescr>
@@ -203,6 +235,14 @@
 				<option><name>90 seconds</name><value>90</value></option>
 				<default_value>20</default_value>
 			</options>
+			<advancedfield/>
+		</field>
+		<field>
+                        <fielddescr>Watchdog</fielddescr>
+                        <fieldname>watchdog</fieldname>
+                        <type>checkbox</type>
+                        <description><![CDATA[Check to enable E2guardian process watchdog and auto restart.]]></description>
+			<advancedfield/>
 		</field>
 	</fields>
 	<custom_php_command_before_form>

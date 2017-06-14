@@ -83,20 +83,6 @@ $( document ).ready(function(){
 </script>
 
 <?
-/*
-      <li><a href="https://192.168.1.2/pkg_edit.php?xml=e2guardian_antivirus_acl.xml&id=0" onClick="get_postfix_file('main');">main.cf</a></li>
-      <li><a href="#" onClick="get_postfix_file('master');" >master.cf</a></li>
-      <li><a href="#" onClick="get_postfix_file('relay');">relay_recipients</a></li>
-      <li><a href="#" onClick="get_postfix_file('header');">heade_check</a></li>
-      <li><a href="#" onClick="get_postfix_file('mime');">mime_check</a></li>
-      <li><a href="#" onClick="get_postfix_file('body');">body_check</a></li>
-      <li><a href="#" onClick="get_postfix_file('cidr');">client CIDR</a></li>
-      <li><a href="#"onClick="get_postfix_file('pcre');">Client PCRE</a></li>
-    </ul>
-  </div>
-</nav>
-<div><br></div>
-*/
 }
 function e2_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
@@ -172,6 +158,8 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if (!is_array($config['installedpackages']['e2guardian'])) {
 		$config['installedpackages']['e2guardian']['config'][0] = array(
 			'interface' => 'lo0',
+			'parentmode' => 'local',
+			'httpworkers' => '256',
 			'daemon_options' => 'softrestart');
 	}
 	$e2guardian = $config['installedpackages']['e2guardian']['config'][0];
@@ -213,8 +201,13 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$nodaemon = (preg_match('/nodaemon/', $e2guardian['daemon_options']) ? "yes" : "off");
 	$httpworkers=($e2guardian['httpworkers'] ? $e2guardian['httpworkers'] : "100");
 	$preforkchildren = ($e2guardian['preforkchildren']? $e2guardian['preforkchildren'] : "10");
-	$proxyip = ($e2guardian['proxyip'] ? $e2guardian['proxyip'] : "127.0.0.1");
-	$proxyport = ($e2guardian['proxyport']?$e2guardian['proxyport'] : "3128");
+	if ($e2guardian['parentmode'] == "remote") {
+		$proxyip = ($e2guardian['proxyip'] ? $e2guardian['proxyip'] : "127.0.0.1");
+		$proxyport = ($e2guardian['proxyport'] ? $e2guardian['proxyport'] : "8888");
+	} else {
+		$proxyip = "127.0.0.1";
+		$proxyport = "8888";
+	}
 	$proxytimeout = ($e2guardian['proxytimeout'] ? $e2guardian['proxytimeout'] : "30");
 
 	// general options
@@ -371,8 +364,8 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 			mkdir ($dir, 0755, true);
 		}
 	}
-	$enablessl=($e2guardian_config["enablessl"] == "on" ? "on" : "off");
-	$ca_cert = lookup_ca($e2guardian_config["dca"]);
+	$enablessl=($e2guardian["enablessl"] == "on" ? "on" : "off");
+	$ca_cert = lookup_ca($e2guardian["dca"]);
 	if ($ca_cert != false) {
 		if (base64_decode($ca_cert['prv'])) {
 			file_put_contents("/etc/ssl/demoCA/private/cakey.pem", base64_decode($ca_cert['prv']));
@@ -1082,127 +1075,68 @@ EOF;
 	$filterports = ($filterports == "" ? "filterports = $filterport" : $filterports);
 	include("/usr/local/pkg/e2guardian.conf.template");
 
-	//check cron_tab
-	$new_cron = array();
-	$cron_found = 0;
-	if (is_array($config['cron']['item'])) {
-		foreach ($config['cron']['item'] as $cron) {
-			if (preg_match("@(" . E2GUARDIAN_DIR . "|/usr/local)/(bin.freshclam|www/e2guardian)@", $cron["command"])) {
-				$cron_found++;
-			} else {
-				$new_cron['item'][] = $cron;
-			}
-		}
+	//watchdog script
+	$watchdog_extra = "";
+	if ($e2guardian['watchdog'] == "on") {
+		$parent_cmd = "/usr/local/sbin/squid -f /usr/local/etc/e2guardian/squidparent.conf";
+		$watchdog_extra .= "\nif [ -f /var/run/squid/e2gsquid.pid ];then\n\t";
+       		$watchdog_extra .= "cat /var/run/squid/e2gsquid.pid | xargs ps ||\n\t";
+        	$watchdog_extra .= "{$parent_cmd}\nelse\n\t";
+        	$watchdog_extra .= "{$parent_cmd}\nfi\n";
 	}
+	$watchdog = <<< EOF
+#!/bin/sh
+for a in 10 20 30 40 50
+do
+if [ -f /var/run/e2guardian.pid ];then
+ cat /var/run/e2guardian.pid | xargs ps
+ if [ $? -ne 0 ]; then
+   /usr/local/etc/rc.d/e2guardian.sh start
+   echo "`date` start" >> /var/log/e2guardian/start.log
+ fi
+else
+   /usr/local/etc/rc.d/e2guardian.sh start
+fi
+{$watchdog_extra}
+sleep 10
+done
+
+EOF;
+	$cron_cmd = "/usr/local/bin/e2g_watchdog.sh";
+	file_put_contents($cron_cmd, $watchdog, LOCK_EX);
+	//check cron_tab
+	if ($e2guardian['watchdog'] == "on") {
+		 e2g_check_cron("/bin/sh $cron_cmd", "create");
+	} else {
+		 e2g_check_cron("/bin/sh $cron_cmd", "remove");
+	}
+
 	$cron_cmd = E2GUARDIAN_DIR . "/bin/freshclam";
+	$cron_field= array('day' => '*' , '02days' => '*/2', 'week' => '*/7');
 	if ($e2guardian_config['cron'] && preg_match("/clamd/", $e2guardian_config['content_scanners'])) {
-		switch ($e2guardian_config['cron']) {
-			case "day":
-				$new_cron['item'][] = array(
-					"minute" => "0",
-					"hour" => "0",
-					"mday" => "*",
-					"month" => "*",
-					"wday" => "*",
-					"who" => "root",
-					"command" => $cron_cmd);
-				$config['cron'] = $new_cron;
-				$cron_found++;
-				break;
-			case "02days":
-				$new_cron['item'][] = array(
-					"minute" => "0",
-					"hour" => "0",
-					"mday" => "*/2",
-					"month" => "*",
-					"wday" => "*",
-					"who" => "root",
-					"command" => $cron_cmd);
-				$config['cron'] = $new_cron;
-				$cron_found++;
-				break;
-			case "week":
-				$new_cron['item'][] = array(
-					"minute" => "0",
-					"hour" => "0",
-					"mday" => "*/7",
-					"month" => "*",
-					"wday" => "*",
-					"who" => "root",
-					"command" => $cron_cmd);
-				$config['cron'] = $new_cron;
-				$cron_found++;
-				break;
-		}
+		e2g_check_cron($cron_cmd, "create", "0", "0", $cron_field[$e2guardian_config['cron']]);
+	} else {
+		e2g_check_cron($cron_cmd, "remove");
 	}
 	$cron_cmd = "/usr/local/bin/php /usr/local/www/e2guardian.php fetch_blacklist";
 	if ($e2guardian_blacklist['cron']) {
-		switch ($e2guardian_blacklist['cron']) {
-			case "day":
-				$new_cron['item'][] = array(
-					"minute" => "0",
-					"hour" => "0",
-					"mday" => "*",
-					"month" => "*",
-					"wday" => "*",
-					"who" => "root",
-					"command" => $cron_cmd);
-				$config['cron'] = $new_cron;
-				$cron_found++;
-				break;
-			case "02days":
-				$new_cron['item'][] = array(
-					"minute" => "0",
-					"hour" => "0",
-					"mday" => "*/2",
-					"month" => "*",
-					"wday" => "*",
-					"who" => "root",
-					"command" => $cron_cmd);
-				$config['cron'] = $new_cron;
-				$cron_found++;
-				break;
-			case "week":
-				$new_cron['item'][] = array(
-					"minute" => "0",
-					"hour" => "0",
-					"mday" => "*/7",
-					"month" => "*",
-					"wday" => "*",
-					"who" => "root",
-					"command" => $cron_cmd);
-				$config['cron'] = $new_cron;
-				$cron_found++;
-				break;
-		}
+		e2g_check_cron($cron_cmd, "create", "0", "0", $cron_field[$e2guardian_blacklist['cron']]);
+	} else {
+		e2g_check_cron($cron_cmd, "remove");
 	}
 	$cron_cmd = "/usr/local/bin/php /usr/local/www/e2guardian_ldap.php";
 	if (is_array($config['installedpackages']['e2guardiangroups']['config'])) {
 		foreach ($config['installedpackages']['e2guardiangroups']['config'] as $e2guardian_groups) {
 			$e2_group_source = ($e2guardian_groups['groupnamesource'] != "" ? $e2guardian_groups['groupnamesource'] : "name");
 			if (preg_match('/(\d+)m/', $e2guardian_groups['freq'], $matches)) {
-				$new_cron['item'][] = array(
-					"minute" => "*/". $matches[1],
-					"hour" => "*",
-					"mday" => "*",
-					"month" => "*",
-					"wday" => "*",
-					"who" => "root",
-					"command" => "{$cron_cmd} $e2_group_source '{$e2guardian_groups[$e2_group_source]}'");
-				$config['cron'] = $new_cron;
-				$cron_found++;
+				e2g_check_cron("{$cron_cmd} $e2_group_source '{$e2guardian_groups[$e2_group_source]}'", "create", "*/{{$matches[1]}}", "0");
+			} else {
+				e2g_check_cron("{$cron_cmd} $e2_group_source '{$e2guardian_groups[$e2_group_source]}'", "remove");
 			}
 			if (preg_match('/(\d+)h/', $e2guardian_groups['freq'], $matches)) {
-				$new_cron['item'][] = array(
-					"minute" => "0",
-					"hour" => "*/". $matches[1],
-					"mday" => "*",
-					"month" => "*",
-					"wday" => "*",
-					"who" => "root",
-					"command" => "{$cron_cmd} $e2_group_source '{$e2guardian_groups[$e2_group_source]}'");
-				$config['cron'] = $new_cron;
-				$cron_found++;
+				e2g_check_cron("{$cron_cmd} $e2_group_source '{$e2guardian_groups[$e2_group_source]}'", "create", "0", "*/{$matches[1]}");
+			} else {
+				e2g_check_cron("{$cron_cmd} $e2_group_source '{$e2guardian_groups[$e2_group_source]}'", "remove");
 			}
 		}
 	}
@@ -1210,12 +1144,6 @@ EOF;
 	conf_mount_rw();
 
 	write_config();
-	//update cron
-	if ($cron_found > 0) {
-		$config['cron'] = $new_cron;
-		write_config();
-		configure_cron();
-	}
 
 	$dirs = array(
 		E2GUARDIAN_DIR . '/etc/e2guardian/lists/bannedrooms/',
@@ -1298,6 +1226,16 @@ EOF;
 	}
 }
 
+function e2g_check_cron($cron_cmd, $action, $min = "*", $hour = "*", $mday = "*", $month = "*", $wday = "*"){
+
+	//Remove current job
+	install_cron_job ($cron_cmd, false);
+	if ($action == "create") {
+		//Install a new job
+		install_cron_job ($cron_cmd . ' > /dev/null', true, $min, $hour, $mday, $month, $wday , "root");
+	}
+}
+
 function e2guardian_check_config() {
 	global $savemsg, $config;
 	
@@ -1327,13 +1265,28 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 			return;
 		}
 	}
+	//squid parent start stop script
+	$parent_pid = "/var/run/squid/e2gsquid.pid";
+	$parent_cmd = "/usr/local/sbin/squid -f /usr/local/etc/e2guardian/squidparent.conf";
+	$start  = "\nif [ ! -d /var/squid/lib/ssl_db2 ];then\n\t";
+	$start .= "/usr/local/libexec/squid/ssl_crtd -c -s /var/squid/lib/ssl_db2\nfi\n";
+	$start .= "if [ -f {$parent_pid} ];then\n\t";
+	$start .= "cat {$parent_pid} | xargs ps ||\n\t";
+	$start .= "{$parent_cmd}\nelse\n\t";
+	$start .= "{$parent_cmd}\nfi\n";
+	$stop  = "if [ -f {$parent_pid} ];then\n\t";
+	$stop .= "kill `cat {$parent_pid}`\nfi";
+	write_rcfile(array("file" => "e2parent.sh", "start" => $start, "stop" => $stop));
+
 	$script = '/usr/local/etc/rc.d/e2guardian.sh';
+	$script_parent = '/usr/local/etc/rc.d/e2parent.sh';
 	unlink_if_exists('/usr/local/etc/rc.d/e2guardian');
 	if (is_array($config['installedpackages']['e2guardian']['config'])) {
 		$e2g_cfg = $config['installedpackages']['e2guardian']['config'][0];
 	} else {
 		log_error('Cannot find E2guardian daemon configuration');
 	}
+	$squid_parent_pid = "/var/run/squid/e2gsquid.pid";
 	if ($e2g_cfg['enable'] == "on") {
 		copy('/usr/local/pkg/e2guardian_rc.template', $script);
 		chmod ($script, 0755);
@@ -1356,16 +1309,18 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 			log_error('Starting E2guardian');
 			mwexec("$script start");
 		}
+		$parent_status = ( $e2g_cfg['parentmode'] == 'remote' ? "stop" : "start");
+		mwexec("$script_parent $parent_status");
 	} else {
 		if (is_process_running('e2guardian')) {
 			log_error('E2guardian is disabled, stopping process...');
 			mwexec("$script stop");
 		}
+		mwexec("$script_parent stop");
 		if (file_exists($script)) {
 			chmod ($script, 444);
 		}
 	}
-
 	if (!file_exists(E2GUARDIAN_DIR . '/etc/e2guardian/lists/phraselists/pornography/weighted_russian_utf8')) {
 		file_put_contents(E2GUARDIAN_DIR . '/etc/e2guardian/lists/phraselists/pornography/weighted_russian_utf8', "", LOCK_EX);
 	}
@@ -1429,6 +1384,7 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 }
 
 function e2guardian_validate_input($post, &$input_errors) {
+	global $config;
 	/* Manual update blacklist */
         if ($post['update_av'] == 'Update Blacklist') {
 		//parei aqui
@@ -1450,6 +1406,18 @@ function e2guardian_validate_input($post, &$input_errors) {
 		$_POST['lreportinglevel'] = $rpa[$post['reportinglevel']];
 	}
 
+	if ($post['parentmode'] == "local" && $post['dca'] == "") {
+		 $input_errors[] = "E2guardian needs a configured CA while using automatic parent proxy mode.";
+	}
+	if ($post['parentmode'] == "remote") {
+		if ($post['proxyip'] == "") {
+			$input_errors[] = "E2guardian proxy ip cannot be empty in manual parent mode.";
+		}
+		 if ($post['proxyport'] == "" || !is_numeric($post['proxyport'])) {
+                        $input_errors[] = "E2guardian proxy port cannot be empty or invalid in manual parent mode.";
+                }
+
+	}
 	foreach ($post as $key => $value) {
 		if (preg_match("/^(name|description)$/", $key) && $value == "") {
 			$input_errors[] = "{$key} could not be empty.";

@@ -27,6 +27,8 @@ pkg/e2guardian_users.xml
 @dir /usr/local/www
 www/e2guardian_about.php
 www/e2guardian.php
+@dir /usr/local/etc/e2guardian
+etc/e2guardian/squidparent.conf
 @dir /usr/local/www/widgets/widgets
 www/widgets/widgets/e2guardian.widget.php
 @dir /usr/local/www/shortcuts
