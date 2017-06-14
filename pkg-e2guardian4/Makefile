@@ -13,6 +13,7 @@ COMMENT=	pfSense Unofficial E2guardian package
 LICENSE=	APACHE20
 
 RUN_DEPENDS=	${LOCALBASE}/sbin/e2guardian:www/e2guardian_41 \
+		/usr/local/sbin/squid:www/squid \
 		/usr/local/share/certs/ca-root-nss.crt:security/ca_root_nss
 
 NO_BUILD=	yes
@@ -95,7 +96,7 @@ do-install:
 		${STAGEDIR}${PREFIX}/www
 	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/www/e2guardian_ldap.php \
 		${STAGEDIR}${PREFIX}/www
-	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/etc/e2guardian/squidparent.conf
+	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/etc/e2guardian/squidparent.conf \
 		${STAGEDIR}${PREFIX}/etc/e2guardian
 	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/www/widgets/widgets/e2guardian.widget.php \
 		${STAGEDIR}${PREFIX}/www/widgets/widgets
