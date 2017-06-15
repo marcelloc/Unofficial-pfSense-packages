@@ -89,6 +89,10 @@
 			<fieldname>name</fieldname>
 		</columnitem>
 		<columnitem>
+                        <fielddescr>Schedule</fielddescr>
+                        <fieldname>aclschedule</fieldname>
+                </columnitem>
+		<columnitem>
 			<fielddescr>Url List Description</fielddescr>
 			<fieldname>description</fieldname>
 		</columnitem>
@@ -112,6 +116,16 @@
 			<type>input</type>
 			<size>80</size>
 		</field>
+		<field>
+                        <fielddescr>Schedule</fielddescr>
+                        <fieldname>aclschedule</fieldname>
+                        <description><![CDATA[Select when this acl will be active.]]></description>
+                        <type>select_source</type>
+                        <source><![CDATA[$config['schedules']['schedule']]]></source>
+                        <source_name>name</source_name>
+                        <source_value>name</source_value>
+                        <show_disable_value>Always active</show_disable_value>
+                </field>
 		<field>
 			<name>Banned</name>
 			<type>listtopic</type>

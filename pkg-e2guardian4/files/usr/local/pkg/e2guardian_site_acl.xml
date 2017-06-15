@@ -89,6 +89,10 @@
 			<fieldname>name</fieldname>
 		</columnitem>
 		<columnitem>
+                        <fielddescr>Schedule</fielddescr>
+                        <fieldname>aclschedule</fieldname>
+                </columnitem>
+		<columnitem>
 			<fielddescr>Site List Description</fielddescr>
 			<fieldname>description</fieldname>
 		</columnitem>
@@ -102,24 +106,27 @@
 		<field>
 			<fielddescr>Name</fielddescr>
 			<fieldname>name</fieldname>
-			<description></description>
+			<description>ACL name</description>
 			<type>input</type>
 			<size>25</size>
 		</field>
 		<field>
 			<fielddescr>description</fielddescr>
 			<fieldname>description</fieldname>
+			<description><![CDATA[Insert a description for this ACL.]]></description>
 			<type>input</type>
                         <size>80</size>
-                        <description><![CDATA[
-			<strong><span class="text-info">Tip: To convert you list on a time based list, add a time set on the top of config field.</span></strong>
-                                <div class="infoblock blockopen">
-				For example, to deny sites on working hours from monday to friday, use:<br>
-				<b>#time: 9 0 17 0 01234</b><br>
-				site.com<br>othersite.net<br>
-				For every day, use  0123456.</div>]]> 
-			</description>
 		</field>
+		<field>
+                        <fielddescr>Schedule</fielddescr>
+                        <fieldname>aclschedule</fieldname>
+                        <description><![CDATA[Select when this acl will be active.]]></description>
+                        <type>select_source</type>
+                        <source><![CDATA[$config['schedules']['schedule']]]></source>
+                        <source_name>name</source_name>
+                        <source_value>name</source_value>
+			<show_disable_value>Always active</show_disable_value>
+                </field>
 		<field>
 			<name>Banned</name>
 			<type>listtopic</type>
