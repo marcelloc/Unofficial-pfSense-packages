@@ -52,7 +52,7 @@ if ($last_scheds !== $e2g_sched_in_use) {
 	clear_subsystem_dirty('e2guardian');
 		
 	//reload e2guardian
-	system("/usr/local/sbin/e2guardian -Q");
+	system("/usr/local/sbin/e2guardian -r");
 } else {
 	print "No changes on schedule\n";
 }
