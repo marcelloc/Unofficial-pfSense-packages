@@ -209,7 +209,7 @@ naughtynesslimit = {$e2guardian_groups['naughtynesslimit']}
 # List of regular expressions for matching search engine URLs.  It is assumed
 # that the search terms themselves will be contained in the
 # of output of each expression.
-searchregexplist = '{$e2_dir}/etc/e2guardian/lists/searchengineregexplist.g_{$e2guardian_groups['name']}'
+searchregexplist = '{$e2_dir}/etc/e2guardian/lists/searchregexplist.g_{$e2guardian_groups['name']}'
 #
 #
 # Override list - overrides both bannedsearchlist and searchterm limit			TODO INCLUDE ON GUI
@@ -220,6 +220,7 @@ searchregexplist = '{$e2_dir}/etc/e2guardian/lists/searchengineregexplist.g_{$e2
 
 # Banned Search Term list(s) for option 1
 #bannedsearchlist = '/usr/local/etc/e2guardian/lists/bannedsearchlist'
+bannedsearchlist = '{$e2_dir}/usr/local/etc/e2guardian/lists/bannedsearchlist.g_{$e2guardian_groups['name']}'
 
 
 # Search term limit
@@ -242,9 +243,9 @@ searchtermlimit = {$e2guardian_groups['searchtermlimit']}
 # of text.
 # Please note that all or none of the below should be uncommented, not a
 # mixture.
-bannedsearchtermlist = '{$e2_dir}/etc/e2guardian/lists/bannedsearchtermlist.g_{$e2guardian_groups['name']}'
-weightedsearchtermlist = '{$e2_dir}/etc/e2guardian/lists/weightedsearchtermlist.g_{$e2guardian_groups['name']}'
-exceptionsearchtermlist = '{$e2_dir}/etc/e2guardian/lists/exceptionsearchtermlist.g_{$e2guardian_groups['name']}'
+## bannedsearchtermlist = '{$e2_dir}/etc/e2guardian/lists/bannedsearchtermlist.g_{$e2guardian_groups['name']}'
+## weightedsearchtermlist = '{$e2_dir}/etc/e2guardian/lists/weightedsearchtermlist.g_{$e2guardian_groups['name']}'
+## exceptionsearchtermlist = '{$e2_dir}/etc/e2guardian/lists/exceptionsearchtermlist.g_{$e2guardian_groups['name']}'
 
 # Category display threshold
 # This option only applies to pages blocked by weighted phrase filtering.

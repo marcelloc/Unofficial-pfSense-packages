@@ -322,8 +322,8 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		"/lists/urlregexplist",
 		"/lists/exceptionfilesitelist",
 		"/lists/exceptionfileurllist",
-		"/lists/searchengineregexplist",
-		"/lists/bannedsearchtermlist",
+		"/lists/searchregexplist",
+		"/lists/bannedsearchlist",
 		"/lists/weightedsearchtermlist",
 		"/lists/exceptionsearchtermlist",
 		"/lists/contentregexplist",
@@ -342,6 +342,12 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		"/lists/pics");
 
 	$e2guardian_dir = E2GUARDIAN_DIR . "/etc/e2guardian";
+
+	if (file_exists("{$e2guardian_dir}/lists/bannedsitelistwithbypass")) {
+		rename("{$e2guardian_dir}/lists/bannedsitelistwithbypass", "{$e2guardian_dir}/lists/bannedsitewithbypasslist");
+		unlink_if_exists("{$e2guardian_dir}/lists/bannedsitewithbypasslist.sample");
+        }
+
 	foreach ($files as $file) {
 		if (!file_exists($e2guardian_dir . $file.'.sample')) {
 			$new_file = "";
@@ -515,8 +521,8 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 			$config['installedpackages']['e2guardiansiteacl']['config'][$count]['banned_sitelist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/bannedsitelist.sample'));
 			$load_samples++;
 		}
-		//bannedsitelist
-		if ($e2guardian_site['banned_sitelist'] == "" && file_exists($e2guardian_dir . '/lists/bannedsitelist.sample')) {
+		//bannedsitelistwithbypass
+		if ($e2guardian_site['banned_sitelist_withbypass'] == "" && file_exists($e2guardian_dir . '/lists/bannedsitewithbypasslist.sample')) {
 			$config['installedpackages']['e2guardiansiteacl']['config'][$count]['banned_sitelist_withbypass'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/bannedsitewithbypasslist.sample'));
 			$load_samples++;
 		}
@@ -660,18 +666,18 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$count = 0;
 	foreach ($config['installedpackages']['e2guardiansearchacl']['config'] as $e2guardian_search) {
 		//searchengineregexplist
-		if ($e2guardian_search['searchengineregexplist'] == "" && file_exists($e2guardian_dir . '/lists/searchengineregexplist.sample')) {
-			$config['installedpackages']['e2guardiansearchacl']['config'][$count]['searchengineregexplist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/searchengineregexplist.sample'));
+		if ($e2guardian_search['searchengineregexplist'] == "" && file_exists($e2guardian_dir . '/lists/searchregexplist.sample')) {
+			$config['installedpackages']['e2guardiansearchacl']['config'][$count]['searchengineregexplist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/searchregexplist.sample'));
 			$load_samples++;
 		}
-		file_put_contents($e2guardian_dir . "/lists/searchengineregexplist." . $e2guardian_search['name'], ($e2guardian_search['regexp_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardiansearchacl']['config'][$count]['searchengineregexplist']) : ""), LOCK_EX);
+		file_put_contents($e2guardian_dir . "/lists/searchregexplist." . $e2guardian_search['name'], ($e2guardian_search['regexp_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardiansearchacl']['config'][$count]['searchengineregexplist']) : ""), LOCK_EX);
 
 		//bannedsearchtermlist
-		if ($e2guardian_search['banned_searchtermlist'] == "" && file_exists($e2guardian_dir . '/lists/bannedsearchtermlist.sample')) {
-			$config['installedpackages']['e2guardiansearchacl']['config'][$count]['banned_searchtermlist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/bannedsearchtermlist.sample'));
+		if ($e2guardian_search['banned_searchtermlist'] == "" && file_exists($e2guardian_dir . '/lists/bannedsearchlist.sample')) {
+			$config['installedpackages']['e2guardiansearchacl']['config'][$count]['banned_searchtermlist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/bannedsearchlist.sample'));
 			$load_samples++;
 		}
-		file_put_contents($e2guardian_dir . "/lists/bannedsearchtermlist." . $e2guardian_search['name'], ($e2guardian_search['banned_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardiansearchacl']['config'][$count]['banned_searchtermlist']) : ""), LOCK_EX);
+		file_put_contents($e2guardian_dir . "/lists/bannedsearchlist." . $e2guardian_search['name'], ($e2guardian_search['banned_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardiansearchacl']['config'][$count]['banned_searchtermlist']) : ""), LOCK_EX);
 
 		//weightedsearchtermlist
 		if ($e2guardian_search['weighted_searchtermlist'] == "" && file_exists($e2guardian_dir . '/lists/weightedsearchtermlist.sample')) {
