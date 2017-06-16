@@ -30,8 +30,9 @@ require_once("filter.inc");
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 if ($pfs_version == "2.3" ) {
 	require_once("xmlrpc.inc");
-	require_once("xmlrpc_client.inc");
 }
+require_once("xmlrpc_client.inc");
+
 $shortcut_section = "e2guardian";
 
 $pf_version = substr(trim(file_get_contents("/etc/version")), 0, 3);
@@ -90,15 +91,15 @@ function e2_text_area_decode($text) {
 }
 
 function e2g_check_sched($iface_sched){
-	global $config;
+	global $config, $e2g_sched_in_use;
 	$a_schedules = &$config['schedules']['schedule'];
-	$e2g_scd = "1";
+	$e2g_scd = true;
 	foreach ($a_schedules as $schedule){
 		if ($schedule['name'] == $iface_sched && $iface_sched <> 'Always active') {
 			$e2g_scd = filter_get_time_based_rule_status($schedule);
 		}
 	}
-	return($e2g_scd);
+	$e2g_sched_in_use[$iface_sched] = $e2g_scd;
 }
 
 function dg_get_real_interface_address($iface) {
@@ -149,7 +150,7 @@ function check_ca_hashes() {
 	}
 }
 function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
-	global $config, $g, $savemsg;
+	global $config, $g, $savemsg, $e2g_sched_in_use;
 
 	// detect boot process
 	if (is_array($_POST)) {
@@ -458,9 +459,13 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	}
 	//loop on array
 	$acl_schedule = array();
+	$e2g_sched_in_use = array();
 	$count = 0;
 	if (is_array($config['installedpackages']['e2guardianphraseacl']['config'])) {
 		foreach ($config['installedpackages']['e2guardianphraseacl']['config'] as $e2guardian_phrase) {
+			//chech schedule
+			e2g_check_sched($e2guardian_phrase['aclschedule']);
+
 			//bannedphraselist
 			$aclschedule[$e2guardian_phrase['name']]['bannedphrase'] = $e2guardian_phrase['aclschedule'];
 			if ($e2guardian_phrase['banned_phraselist'] == "" && file_exists($e2guardian_dir . '/lists/bannedphraselist.sample')) {
@@ -516,6 +521,9 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	//loop on array
 	$count = 0;
 	foreach ($config['installedpackages']['e2guardiansiteacl']['config'] as $e2guardian_site) {
+		//chech schedule
+		e2g_check_sched($e2guardian_site['aclschedule']);
+
 		//exceptionsitelist
 		$aclschedule[$e2guardian_site['name']]['exceptionsite'] = $e2guardian_site['aclschedule'];
 		if ($e2guardian_site['exception_sitelist'] == "" && file_exists($e2guardian_dir . '/lists/exceptionsitelist.sample')) {
@@ -589,6 +597,9 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	//loop on array
 	$count = 0;
 	foreach ($config['installedpackages']['e2guardianurlacl']['config'] as $e2guardian_url) {
+		//chech schedule
+		e2g_check_sched($e2guardian_url['aclschedule']);
+
 		//bannedurllist
 		$aclschedule[$e2guardian_url['name']]['bannedurl'] = $e2guardian_url['aclschedule'];
 		if ($e2guardian_url['banned_urllist'] == "" && file_exists($e2guardian_dir . '/lists/bannedurllist.sample')) {
@@ -696,6 +707,9 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	//loop on array
 	$count = 0;
 	foreach ($config['installedpackages']['e2guardiansearchacl']['config'] as $e2guardian_search) {
+		//chech schedule
+		e2g_check_sched($e2guardian_search['aclschedule']);
+
 		//searchengineregexp
 		$aclschedule[$e2guardian_search['name']]['searchlistregexp'] = $e2guardian_search['aclschedule'];
 		if ($e2guardian_search['searchlistregexp'] == "" && file_exists($e2guardian_dir . '/lists/searchregexplist.sample')) {
@@ -732,6 +746,9 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	//loop on array
 	$count = 0;
 	foreach ($config['installedpackages']['e2guardianfileacl']['config'] as $e2guardian_file) {
+		//chech schedule
+		e2g_check_sched($e2guardian_file['aclschedule']);
+
 		//exceptionextensionlist
 		$aclschedule[$e2guardian_file['name']]['exceptionextension'] = $e2guardian_file['aclschedule'];
 		if ($e2guardian_file['exception_extensionlist'] == "" && file_exists($e2guardian_dir . '/lists/exceptionextensionlist.sample')) {
@@ -777,6 +794,9 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	//loop on array
 	$count = 0;
 	foreach ($config['installedpackages']['e2guardianheaderacl']['config'] as $e2guardian_header) {
+		//chech schedule
+		e2g_check_sched($e2guardian_header['aclschedule']);
+
 		//headerregexplist
 		$aclschedule[$e2guardian_header['name']]['headerregexp'] = $e2guardian_header['aclschedule'];
 		if ($e2guardian_header['header_regexplist'] == "" && file_exists($e2guardian_dir . '/lists/headerregexplist.sample')) {
@@ -807,6 +827,9 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	//loop on array
 	$count = 0;
 	foreach ($config['installedpackages']['e2guardiancontentacl']['config'] as $e2guardian_content) {
+		//chech schedule
+		e2g_check_sched($e2guardian_content['aclschedule']);
+
 		//content_regexplist
 		$aclschedule[$e2guardian_content['name']]['contentregexp'] = $e2guardian_content['aclschedule'];
 		if ($e2guardian_content['content_regexplist'] == "" && file_exists($e2guardian_dir . '/lists/contentregexplist.sample')) {
@@ -875,6 +898,9 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if ($load_samples > 0) {
 		write_config();
 	}
+	
+	//save schedules used on acls and it's current state
+	file_put_contents("/tmp/e2g_scheds.txt",serialize($e2g_sched_in_use),LOCK_EX);
 
 	//Filtergroups
 	if (!is_array($config['installedpackages']['e2guardiangroups']['config'])) {
@@ -964,7 +990,8 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 					//print "$dacl {$list_value} {$aclschedule[$dacl][$list_value]}\n";
 					if (	$aclschedule[$dacl][$list_value] == "" || 
 						$aclschedule[$dacl][$list_value] == "Always active" ||
-						e2g_check_sched($aclschedule[$dacl][$list_value]) == 1) {
+						$e2g_sched_in_use[$aclschedule[$dacl][$list_value]] == 1){
+						//e2g_check_sched($aclschedule[$dacl][$list_value]) == 1) {
 						$dacl = (preg_match("/\w+/", $dacl) ? $dacl : "sample");
 						$file_temp = file_get_contents(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$list_value}list.{$dacl}") . "\n";
 					} else {
@@ -973,10 +1000,14 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 					${$list_value} = array_merge(explode("\n", $file_temp), ${$list_value});
 				}
 				//add a package warning
-				array_unshift(${$list_value}, "#Do not edit this file.", "#It's created by e2guardian package and overwritten every config save.");
+				array_unshift(${$list_value}, " #Do not edit this file.", "#It's created by e2guardian package and overwritten every config save.");
 	
+				//remove comments and blank lines
+				$save_array = array_unique(preg_grep("/^(\w|\"|\'|\/|\.|\<|\(|\*|\^)/",${$list_value}));
+
 				//save group file and unset array
-				file_put_contents(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$list_value}list.g_{$e2guardian_groups['name']}", implode("\n", array_unique(${$list_value})) . "\n", LOCK_EX);
+				//file_put_contents(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$list_value}list.g_{$e2guardian_groups['name']}", implode("\n", array_unique(${$list_value})) . "\n", LOCK_EX);
+				file_put_contents(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$list_value}list.g_{$e2guardian_groups['name']}", implode("\n",$save_array) . "\n", LOCK_EX);
 				unset(${$list_value});
 			}
 		}
@@ -1161,6 +1192,14 @@ EOF;
 		 e2g_check_cron("/bin/sh $cron_cmd", "create");
 	} else {
 		 e2g_check_cron("/bin/sh $cron_cmd", "remove");
+	}
+
+	// Check acl schedules
+	$cron_cmd = "/usr/local/bin/php -q /usr/local/www/e2guardian_scheds.php";
+	if (sizeof($e2g_sched_in_use) > 1) {
+		e2g_check_cron($cron_cmd, "create");
+	} else {
+		e2g_check_cron($cron_cmd, "remove");
 	}
 
 	$cron_cmd = E2GUARDIAN_DIR . "/bin/freshclam";
