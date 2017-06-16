@@ -93,7 +93,7 @@ do-install:
 	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/www/e2guardian.php \
 		${STAGEDIR}${PREFIX}/www
 	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/www/e2guardian_scheds.php \
-		{STAGEDIR}${PREFIX}/www
+		${STAGEDIR}${PREFIX}/www
 	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/www/e2guardian_about.php \
 		${STAGEDIR}${PREFIX}/www
 	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/www/e2guardian_ldap.php \
