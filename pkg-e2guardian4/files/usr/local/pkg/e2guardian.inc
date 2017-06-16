@@ -448,7 +448,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		}
 		$config['installedpackages']['e2guardianphraseacl']['config'][0] = array(
 			'name' => 'Default',
-			'schedule' => 'Always active',
+			'aclschedule' => 'Always active',
 			'description' => 'Default Phrase access list setup',
 			'banned_enabled' => "on",
 			'weighted_enabled' => "on",
@@ -495,7 +495,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if (!is_array($config['installedpackages']['e2guardiansiteacl']['config'])) {
 		$config['installedpackages']['e2guardiansiteacl']['config'][0] = array(
 			'name' => 'Default',
-			'schedule' => 'Always active',
+			'aclschedule' => 'Always active',
 			'description' => 'Default Site access list setup',
 			'exceptionsite_enabled' => "on",
 			'bannedsite_enabled' => "on",
@@ -579,7 +579,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if (!is_array($config['installedpackages']['e2guardianurlacl']['config'])) {
 		$config['installedpackages']['e2guardianurlacl']['config'][0] = array(
 			'name' => 'Default',
-			'schedule' => 'Always active',
+			'aclschedule' => 'Always active',
 			'description' => 'Default Url access list setup',
 			'bannedurl_enabled' => "on",
 			'exceptionurl_enabled' => "on",
@@ -670,7 +670,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if (!is_array($config['installedpackages']['e2guardianpicsacl']['config'])) {
 		$config['installedpackages']['e2guardianpicsacl']['config'][0] = array(
 			'name' => 'Default',
-			'schedule' => 'Always active',
+			'aclschedule' => 'Always active',
 			'description' => 'Default file access list setup');
 	}
 	//loop on array
@@ -690,7 +690,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if (!is_array($config['installedpackages']['e2guardiansearchacl']['config'])) {
 		$config['installedpackages']['e2guardiansearchacl']['config'][0] = array(
 			'name' => 'Default',
-			'schedule' => 'Always active',
+			'aclschedule' => 'Always active',
 			'description' => 'Default search engine list setup');
 	}
 	//loop on array
@@ -724,7 +724,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if (!is_array($config['installedpackages']['e2guardianfileacl']['config'])) {
 		$config['installedpackages']['e2guardianfileacl']['config'][0] = array(
 			'name' => 'Default',
-			'schedule' => 'Always active',
+			'aclschedule' => 'Always active',
 			'description' => 'Default file access list setup',
 			'exception_enabled' => "on",
 			'banned_enabled' => "on");
@@ -771,7 +771,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if (!is_array($config['installedpackages']['e2guardianheaderacl']['config'])) {
 		$config['installedpackages']['e2guardianheaderacl']['config'][0] = array(
 			'name' => 'Default',
-			'schedule' => 'Always active',
+			'aclschedule' => 'Always active',
 			'description' => 'Default header access list setup');
 	}
 	//loop on array
@@ -801,7 +801,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if (!is_array($config['installedpackages']['e2guardiancontentacl']['config'])) {
 		$config['installedpackages']['e2guardiancontentacl']['config'][0] = array(
 			'name' => 'Default',
-			'schedule' => 'Always active',
+			'aclschedule' => 'Always active',
 			'description' => 'Default content setup');
 	}
 	//loop on array
