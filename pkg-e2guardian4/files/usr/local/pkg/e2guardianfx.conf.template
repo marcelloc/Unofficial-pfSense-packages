@@ -209,18 +209,19 @@ naughtynesslimit = {$e2guardian_groups['naughtynesslimit']}
 # List of regular expressions for matching search engine URLs.  It is assumed
 # that the search terms themselves will be contained in the
 # of output of each expression.
-searchregexplist = '{$e2_dir}/etc/e2guardian/lists/searchregexplist.g_{$e2guardian_groups['name']}'
+searchregexplist = '{$e2_dir}/etc/e2guardian/lists/searchlistregexplist.g_{$e2guardian_groups['name']}'
 #
 #
-# Override list - overrides both bannedsearchlist and searchterm limit			TODO INCLUDE ON GUI
+# Override list - overrides both bannedsearchlist and searchterm limit
 # Similar to exception list but only on the search term.  The actual
 # returned content of the page may still be content checked.
 #bannedsearchoveridelist = '/usr/local/etc/e2guardian/lists/bannedsearchoveridelist'
+bannedsearchoveridelist = '{$e2_dir}/etc/e2guardian/lists/searchlistoveridelist.g_{$e2guardian_groups['name']}'
 
 
 # Banned Search Term list(s) for option 1
 #bannedsearchlist = '/usr/local/etc/e2guardian/lists/bannedsearchlist'
-bannedsearchlist = '{$e2_dir}/usr/local/etc/e2guardian/lists/bannedsearchlist.g_{$e2guardian_groups['name']}'
+bannedsearchlist = '{$e2_dir}/etc/e2guardian/lists/searchlistoveridelist.g_{$e2guardian_groups['name']}'
 
 
 # Search term limit
