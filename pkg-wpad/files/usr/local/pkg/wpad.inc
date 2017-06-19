@@ -129,6 +129,9 @@ function sync_package_wpad() {
 				if ($file['sgerror'] != "on" && file_exists("/usr/local/www/sgerror.php")) {
 					copy("/usr/local/www/sgerror.php" , "/usr/local/www/wpad{$index}/sgerror.php");
 				}
+				if ($file['e2gerror'] != "on" && file_exists("/usr/local/www/e2gerror.php")) {
+                                        copy("/usr/local/www/e2gerror.php" , "/usr/local/www/wpad{$index}/e2gerror.php");
+                                }
 				system("/usr/local/etc/rc.d/nginx_wpad{$index}.sh start");
 			} else {
 				wpad_clean($index);
