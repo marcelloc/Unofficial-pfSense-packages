@@ -147,10 +147,11 @@ function e2g_create_squid_dst($name, $list_value, $save_array, $new_file_name){
 			}
 		}
 	}
-	file_put_contents("$new_file_name", $new_file, LOCK_EX);
+	file_put_contents($new_file_name, $new_file, LOCK_EX);
 	// using system tools to do not use a lot of php memory
 	foreach($includes as $include) {
-		system("cat $include  >>  $new_file_name");
+		//do not include entire domains until we find a way to remove other domains from blacklist
+		system("cat $include | grep -v '^\.' >>  $new_file_name");
 	}
 }
 
