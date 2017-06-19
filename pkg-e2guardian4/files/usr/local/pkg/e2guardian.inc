@@ -285,11 +285,11 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	// report and log
 	$reportlevel = ($e2guardian_log['report_level'] ? $e2guardian_log['report_level'] : "3");
 	if ($reportlevel == 1 || $reportlevel == 2) {
-		if (preg_match("@(\w+://[a-zA-Z0-9.:/\-]+)@", $e2guardian_log['reportingcgi'], $cgimatches)) {
-			$accessdeniedaddress = "accessdeniedaddress = '" . $cgimatches[1] . "'";
+		if (is_URL($e2guardian_log['reportingcgi'])) {
+			$accessdeniedaddress = "accessdeniedaddress = '" . $e2guardian_log['reportingcgi'] . "'";
 		} else {
-			log_error("e2guardian - " . $e2guardian_log['reportingcgi'] . " is not a valid access denied cgi url");
-			file_notice("e2guardian",$error,"E2guardian - " .  $e2guardian_log['reportingcgi'] . gettext(" is not a valid access denied cgi url"), "");
+			log_error("e2guardian - {$e2guardian_log['reportingcgi']} is not a valid access denied url");
+			file_notice("e2guardian",$error,"E2guardian - ". $e2guardian_log['reportingcgi'] . " " . gettext("is not a valid access denied url"), "");
 		}
 	}
 	$accessdenied = ($e2guardian_log['reportingcgi'] ? $e2guardian_log['report_level'] : "3");
@@ -942,11 +942,15 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 			case "1":
 			case "2":
 				$groupreportinglevel = "reportinglevel = " . $e2guardian_groups['reportinglevel'];
-				if (preg_match("@(\w+://[a-zA-Z0-9.:/\-]+)@", $e2guardian_groups['reportingcgi'], $cgimatches)) {
-					$groupaccessdeniedaddress = "accessdeniedaddress = '" . $cgimatches[1] . "'";
+				if (is_URL($e2guardian_groups['reportingcgi'])) {
+					$groupaccessdeniedaddress = "accessdeniedaddress = '" . $e2guardian_groups['reportingcgi'] . "'";
 				} else {
-					log_error('E2guardian - Group ' . $e2guardian_groups['name'] . ' does not have a valid access denied cgi url.');
-					file_notice("E2guardian - Group ",$error,"E2guardian - " . $e2guardian_groups['name'] . gettext(" does not have a valid access denied cgi url."), "");
+					if (is_URL ($e2guardian_log['reportingcgi'])) {
+						$groupaccessdeniedaddress = "accessdeniedaddress = '" . $e2guardian_log['reportingcgi'] . "'";
+					} else {
+						log_error('E2guardian - Group ' . $e2guardian_groups['name'] . ' does not have a valid access denied cgi url.');
+						file_notice("E2guardian - Group ",$error,"E2guardian - " . $e2guardian_groups['name'] . gettext(" does not have a valid access denied cgi url."), "");
+					}
 				}
 				break;
 			case "-1":
@@ -1495,6 +1499,12 @@ function e2guardian_validate_input($post, &$input_errors) {
 				'2' => 'Report fully',
 				'3' => 'Use HTML template');
 		$_POST['lreportinglevel'] = $rpa[$post['reportinglevel']];
+	}
+
+	if ($post['reportingcgi'] != "") {
+		if (! is_URL($post['reportingcgi'])) {
+			$input_errors[] = "Reporting cgi/dynamic url is invalid.";
+		}
 	}
 
 	if ($post['parentmode'] == "local" && $post['dca'] == "") {

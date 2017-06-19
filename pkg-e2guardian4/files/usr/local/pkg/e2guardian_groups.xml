@@ -253,11 +253,14 @@
 			</options>
 		</field>
 		<field>
-			<fielddescr>Access Denied cgi</fielddescr>
+			<fielddescr>Access Denied dymanic/cgi page</fielddescr>
 			<fieldname>reportingcgi</fieldname>
-			<description><![CDATA[While using Report Level (report fully) or (Report why but not what denied phrase), specify here the url link to your access denied cgi script
-				ex:http://YOURSERVER.YOURDOMAIN/cgi-bin/e2guardian.pl<br>
-				Leave empty to use default value set on reporting tab.]]></description>
+			<description><![CDATA[While using Report Level (report fully) or (Report why but not what denied phrase)<br>
+				Leave blank to use URL assigned on default report options<br>
+				<b>ex:</b> http://YOUR.PFSENSE.IP/e2gerror.php (using wpad package)<br>
+				http://YOURSERVER.YOUR.DOMAIN/cgi-bin/e2guardian.pl<br><br>
+				<b>Do not forget to add YOURSERVER.YOUR.DOMAIN or YOUR.PFSENSE.IP on site exception list to avoid redirect loop.</b>]]>
+			</description>
 			<type>input</type>
 			<size>70</size>
 		</field>
