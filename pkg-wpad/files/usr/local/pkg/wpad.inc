@@ -29,8 +29,8 @@ require_once("interfaces.inc");
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 if ($pfs_version == "2.3" ) {
 	require_once("xmlrpc.inc");
-	require_once("xmlrpc_client.inc");
 }
+require_once("xmlrpc_client.inc");
 
 function wpad_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
@@ -72,23 +72,31 @@ function wpad_check($wpad_index,$nginx){
 	$wpad_listenport = ( $nginx['listenport'] != "" ? $nginx['listenport'] : "80" );
 	$wpad_cf = "/usr/local/etc/nginx/nginx_wpad{$wpad_index}.conf";
 	$wpad_listen_ip = wpad_get_real_interface_address($nginx['interface']);
+	if(preg_match('/<?php/',base64_decode($nginx['filedata']))) {
+		$php_ext = "(php|pac|dat|da)";
+	} else {
+		$php_ext = "php";
+	}
 	include("/usr/local/pkg/wpad_nginx.template");
 	file_put_contents($wpad_cf,$conf_template,LOCK_EX);
+
 	if (file_exists("/usr/local/etc/nginx/mime.types")) {
 		$mimes = file("/usr/local/etc/nginx/mime.types");
 		$mf = "";
-		foreach ($mimes as $mime) {
-			if (preg_match('/}/', $mime)) {
-				$mf .= "\n\tapplication/x-ns-proxy-autoconfig     pac;\n";
-			        $mf .= "\tapplication/x-ns-proxy-autoconfig     dat;\n";
-       				$mf .= "\tapplication/x-ns-proxy-autoconfig     da;\n}\n";
-			} else {
-				$mf .= $mime;
+		if(! preg_match('/<?php/',base64_decode($nginx['filedata']))) {
+			$mime_prefix = "    application/x-ns-proxy-autoconfig    ";
+			foreach ($mimes as $mime) {
+				if (preg_match('/}/', $mime)) {
+					$mf .= "\n{$mime_prefix} pac;\n";
+				        $mf .= "{$mime_prefix} dat;\n";
+       					$mf .= "{$mime_prefix} da;\n}\n";
+				} else {
+					$mf .= $mime;
+				}
 			}
-
 		}
 	}
-	file_put_contents("/usr/local/etc/nginx/mime_wpad.types",$mf,LOCK_EX);
+	file_put_contents("/usr/local/etc/nginx/mime_wpad{$wpad_index}.types",$mf,LOCK_EX);
 
 	//nginx start stop script
 	$start  = "if [ -f /var/run/nginx_wpad{$wpad_index}.pid ];then\n\t";

@@ -10,7 +10,7 @@ $conf_template=<<<EOF
 	    worker_connections  1024;
 	}
 	http {
-	        include       /usr/local/etc/nginx/mime_wpad.types;
+	        include       /usr/local/etc/nginx/mime_wpad{$wpad_index}.types;
 	        default_type  application/octet-stream;
 	        sendfile        on;
 		access_log      syslog:server=unix:/var/run/log,facility=local5 combined;
@@ -27,7 +27,7 @@ $conf_template=<<<EOF
                         	index index.php sgerror.php index.html index.htm;
                 	}
 
-                	location ~ \.php$ {
+                	location ~ \.{$php_ext}$ {
                         	try_files \$uri =404; #  This line closes a potential security hole
                         	# ensuring users can't execute uploaded files
                         	# see: http://forum.nginx.org/read.php?2,88845,page=3
