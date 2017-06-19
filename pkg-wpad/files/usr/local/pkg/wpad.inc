@@ -83,16 +83,15 @@ function wpad_check($wpad_index,$nginx){
 	if (file_exists("/usr/local/etc/nginx/mime.types")) {
 		$mimes = file("/usr/local/etc/nginx/mime.types");
 		$mf = "";
-		if(! preg_match('/<?php/',base64_decode($nginx['filedata']))) {
-			$mime_prefix = "    application/x-ns-proxy-autoconfig    ";
-			foreach ($mimes as $mime) {
-				if (preg_match('/}/', $mime)) {
-					$mf .= "\n{$mime_prefix} pac;\n";
-				        $mf .= "{$mime_prefix} dat;\n";
-       					$mf .= "{$mime_prefix} da;\n}\n";
-				} else {
-					$mf .= $mime;
-				}
+		$mime_prefix = "    application/x-ns-proxy-autoconfig    ";
+		foreach ($mimes as $mime) {
+			if (!preg_match('/<?php/', base64_decode($nginx['filedata'])) &&
+			    preg_match('/}/', $mime)) {
+				$mf .= "\n{$mime_prefix} pac;\n";
+			        $mf .= "{$mime_prefix} dat;\n";
+				$mf .= "{$mime_prefix} da;\n}\n";
+			} else {
+				$mf .= $mime;
 			}
 		}
 	}
