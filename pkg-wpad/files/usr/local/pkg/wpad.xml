@@ -116,7 +116,17 @@
                         <fielddescr>sgerror.php</fielddescr>
                         <fieldname>sgerror</fieldname>
                         <type>checkbox</type>
-                        <description><![CDATA[By default, this package will create a copy of sgerror.php file on this nginx instance. Check this box to do not include error file.]]></description>
+                        <description>
+			<![CDATA[By default, this package will create a copy of sgerror.php file on this nginx instance. Check this box to do not include error file.]]>
+			</description>
+                </field>
+		 <field>
+                        <fielddescr>e2gerror.php</fielddescr>
+                        <fieldname>e2gerror</fieldname>
+                        <type>checkbox</type>
+                        <description>
+			<![CDATA[By default, this package will create a copy of e2gerror.php file on this nginx instance. Check this box to do not include error file.]]>
+			</description>
                 </field>
 		<field>
 			<fielddescr>Script Contents</fielddescr>

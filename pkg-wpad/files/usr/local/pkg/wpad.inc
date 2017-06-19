@@ -29,8 +29,8 @@ require_once("interfaces.inc");
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 if ($pfs_version == "2.3" ) {
 	require_once("xmlrpc.inc");
+	require_once("xmlrpc_client.inc");
 }
-require_once("xmlrpc_client.inc");
 
 function wpad_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
@@ -40,7 +40,7 @@ function wpad_clean($wpad_index) {
 	$rc_file = "/usr/local/etc/rc.d/nginx_wpad{$wpad_index}.sh";
 	exec("{$rc_file} stop",$x);
 	unlink_if_exists($rc_file);
-	$files = array("wpad.dat","wpad.da","proxy.pac","sgerror.php");
+	$files = array("wpad.dat", "wpad.da", "proxy.pac", "sgerror.php", "e2gerror.php");
 	foreach ($files as $file) {
 		unlink_if_exists("/usr/local/www/wpad{$wpad_index}/{$file}");
 	}	
@@ -74,15 +74,14 @@ function wpad_check($wpad_index,$nginx){
 	$wpad_listen_ip = wpad_get_real_interface_address($nginx['interface']);
 	include("/usr/local/pkg/wpad_nginx.template");
 	file_put_contents($wpad_cf,$conf_template,LOCK_EX);
-	$mime_prefix = "    application/x-ns-proxy-autoconfig    ";
 	if (file_exists("/usr/local/etc/nginx/mime.types")) {
 		$mimes = file("/usr/local/etc/nginx/mime.types");
 		$mf = "";
 		foreach ($mimes as $mime) {
 			if (preg_match('/}/', $mime)) {
-				$mf .= "\n{$mime_prefix} pac;\n";
-			        $mf .= "{$mime_prefix} dat;\n";
-       				$mf .= "{$mime_prefix} da;\n}\n";
+				$mf .= "\n\tapplication/x-ns-proxy-autoconfig     pac;\n";
+			        $mf .= "\tapplication/x-ns-proxy-autoconfig     dat;\n";
+       				$mf .= "\tapplication/x-ns-proxy-autoconfig     da;\n}\n";
 			} else {
 				$mf .= $mime;
 			}
@@ -155,6 +154,11 @@ function wpad_validate_input($post, &$input_errors) {
 		}
 		if ($post['listenport'] == 80 && ! isset($config['system']['webgui']['disablehttpredirect'])) {
 			$input_errors[] = "Port 80 cannot be used until Webgui redirect is disabled under system -> advanced";
+		}
+		if ($post['listenport'] == 80 && $config['system']['webgui']['protocol'] == "http") {
+			if ( $config['system']['webgui']['port'] == "" || $config['system']['webgui']['port'] == "80" ) {
+                        	$input_errors[] = "Port 80 cannot be used while pfSense is in HTTP mode and using the same port 80.";
+			}
 		}
 	}
 	if ($post['description'] && !preg_match("@^[a-zA-Z0-9 _/.-]+$@", $post['description'])) {
