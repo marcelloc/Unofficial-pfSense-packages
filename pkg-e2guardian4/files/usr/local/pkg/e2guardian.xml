@@ -192,7 +192,9 @@
 		<field>
                         <fielddescr>Parent mode</fielddescr>
                         <fieldname>parentmode</fieldname>
-                        <description><![CDATA[Select parent proxy to use.]]></description>
+                        <description><![CDATA[Select parent proxy to use.<br>
+				Automatic mode will configure a squid daemon to be used as parent for e2guardian and also include ssl acls and parent config on squid package when installed and enabled.]]>
+			</description>
                         <type>select</type>
                         <options>
                                 <option><name>Use automatic embeded parent config</name><value>local</value></option>
