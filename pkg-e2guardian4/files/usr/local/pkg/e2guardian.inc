@@ -119,7 +119,8 @@ function e2g_check_squid_pkg($parent_mode,$acls){
 		}
 	}
 	//create integration file
-	$integration  = "cache_peer 127.0.0.1 parent 8080 0 ssl no-query proxy-only login=*:password no-delay\n";
+	$integration  = "cache_peer 127.0.0.1 parent 8080 0 no-query proxy-only login=*:password no-delay\n";
+	$integration .=	"request_header_access X-Forwarded-For allow localhost\n";
 	foreach ($acl_include_files as $acl_iname => $acl_ifile) {
 		$integration .= "acl $acl_iname dstdomain -n \"$acl_ifile\"\n";
 	}
@@ -307,7 +308,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$contentscannertimeout = ($e2guardian_config['contentscannertimeout'] ? $e2guardian_config['contentscannertimeout'] : "60");
 	$contentscanexceptions = ($e2guardian_config['contentscanexceptions'] ? "on" : "off");
 	$recheckreplacedurls = (preg_match('/recheckreplacedurls/', $e2guardian_config['misc_options']) ? "on" : "off");
-	$forwardedfor = (preg_match('/forwardedfor/', $e2guardian_config['misc_options']) ? "on" : "off");
+	$forwardedfor = (preg_match('/(^|\W)forwardedfor/', $e2guardian_config['misc_options']) ? "on" : "off");
 	$recheckreplacedurls = (preg_match('/icapscan/', $e2guardian_config['misc_options']) ? "on" : "off");
 	$usexforwardedfor = (preg_match('/usexforwardedfor/', $e2guardian_config['misc_options']) ? "on" : "off");
 	$authplugin = (preg_match('/usr/', $e2guardian_config['auth_plugin']) ? "authplugin = '" . $e2guardian_config['auth_plugin'] . "'" : "");
@@ -327,7 +328,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		if (preg_match("/\w+/",$xforwardip_list)) {
  			$xforwardip_array= explode(",",$xforwardip_list);
 			foreach ($xforwardip_array as $xforwardip) {
-				$xforwardedforfilterip .= "xforwardedforfilterip={$xforwardip}\n";
+				$xforwardedforfilterip .= "xforwardedforfilterip = {$xforwardip}\n";
 			}
 		} 
 	}
@@ -1441,9 +1442,15 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 			return;
 		}
 	}
+	//as main squid daemon looks for any squid copy running, lets create an alias for us
+	$our_squid = "/usr/local/sbin/e2guid";
+	if (!file_exists($our_squid)) {
+		system("/usr/local/etc/rc.d/e2parent.sh stop");
+		symlink("/usr/local/sbin/squid", $our_squid);
+	}
 	//squid parent start stop script
 	$parent_pid = "/var/run/squid/e2gsquid.pid";
-	$parent_cmd = "/usr/local/sbin/squid -f /usr/local/etc/e2guardian/squidparent.conf";
+	$parent_cmd = "$our_squid -f /usr/local/etc/e2guardian/squidparent.conf";
 	$start  = "\nif [ ! -d /var/squid/lib/ssl_db2/certs ];then\n\t";
 	$start .= "mkdir -p /var/squid/lib\n\t";
 	$start .= "/usr/local/libexec/squid/ssl_crtd -c -s /var/squid/lib/ssl_db2\nfi\n";
