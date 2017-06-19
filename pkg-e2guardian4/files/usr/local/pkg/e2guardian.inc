@@ -141,13 +141,16 @@ function e2g_create_squid_dst($name, $list_value, $save_array, $new_file_name){
 		if(preg_match("/^\.Include.(\S+)\>/",$line,$m)) {
 			$includes[] = $m[1];
 		} else {
-			$new_file .= "{$line}\n";
+			//do not include entire domains until we find a way to remove other domains from blacklist
+			if (preg_match("/^[a-zA-Z0-9]/",$line)) {
+				$new_file .= "{$line}\n";
+			}
 		}
 	}
 	file_put_contents("$new_file_name", $new_file, LOCK_EX);
 	// using system tools to do not use a lot of php memory
 	foreach($includes as $include) {
-		system('cat $include  >>  $new_file_name');
+		system("cat $include  >>  $new_file_name");
 	}
 }
 
@@ -1496,8 +1499,9 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 	//check e2guardian squid integration
 	if (is_array($config['installedpackages']['squid'])) {
 		$squid_cfg = $config['installedpackages']['squid']['config'][0];
-		if ($squid_cfg['enable_squid'] == "on" && preg_match("@include /usr/local/etc/e2guardian/@")) {
-	        	mwexec("/usr/local/sbin/squid -k reconfigure || /usr/local/etc/rc.d/squid.sh start");
+		if ($squid_cfg['enable_squid'] == "on" && preg_match("@include /usr/local/etc/e2guardian/@",$squid_cfg['custom_options'])) {
+			require_once("/usr/local/pkg/squid.inc");
+			squid_resync();
 		}
 	}
 
