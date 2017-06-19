@@ -113,7 +113,7 @@ function e2g_check_squid_pkg($parent_mode,$acls){
 	$squid_cfg = $config['installedpackages']['squid']['config'][0];
 	if ($squid_cfg['enable_squid'] == "on" && $parent_mode == "local") {
 		$include_file = "/usr/local/etc/e2guardian/squid_front.conf";
-		if (!preg_match("/include $include_file;",squid_cfg['custom_options'])) {
+		if (! preg_match("@{$include_file}@",$squid_cfg['custom_options'])) {
 			$config['installedpackages']['squid']['config'][0]['custom_options'] .= "include {$include_file};";
 			$write_config++;
 		}
@@ -127,7 +127,6 @@ function e2g_check_squid_pkg($parent_mode,$acls){
 	if ( $write_config > 0 ) {
 		write_config("e2guradian - Including squid package integration.");
 	}
-
 }
 
 function e2g_create_squid_src($file, $count) {
