@@ -155,7 +155,9 @@
                         <description><![CDATA[Default: <strong>100</strong><br>
                                This figure is the maximum number of concurrent connections.<br>
                                If more connections are made, connections will queue until a worker thread is free.<br>
-                               On large site you might want to try 2500 (max value 4000)]]></description>
+                               On large site you might want to try 2500 (max value 20000)<br>
+				<b>If you plan to use more then 4000 workers, set kern.threads.max_threads_per_proc value (http workers + 100) <br>
+				under system -> advanced -> System Tunable</b>]]></description>
 		</field>
 		<!--<field>
 			<fielddescr>Max IPs</fielddescr>
