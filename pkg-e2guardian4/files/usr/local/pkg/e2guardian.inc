@@ -1475,6 +1475,7 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 	if ($e2g_cfg['enable'] == "on") {
 		copy('/usr/local/pkg/e2guardian_rc.template', $script);
 		chmod ($script, 0755);
+		$max_threads = "sysctl kern.threads.max_threads_per_proc=20480";
 		if (is_process_running('e2guardian')) {
 			switch ($e2g_cfg['applyaction']){
 				case "rc.d":
@@ -1483,11 +1484,11 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 					break;
 				case "-r":
 					log_error("Sending HUP to e2g processes");
-					exec("/usr/local/sbin/e2guardian -r");
+					exec("$max_threads;/usr/local/sbin/e2guardian -r");
 					break;
 				default:
 					log_error("Restarting e2g by sending -Q action to e2g binaries");
-					exec("/usr/local/sbin/e2guardian -Q");
+					exec("$max_threads;/usr/local/sbin/e2guardian -Q");
 					break;
 			}
 		} else {

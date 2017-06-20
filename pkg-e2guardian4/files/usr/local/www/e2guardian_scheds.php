@@ -50,9 +50,9 @@ if ($last_scheds !== $e2g_sched_in_use) {
 	//update acl files
 	sync_package_e2guardian("yes");
 	clear_subsystem_dirty('e2guardian');
-		
+	$max_threads = "sysctl kern.threads.max_threads_per_proc=20480";		
 	//reload e2guardian
-	system("/usr/local/sbin/e2guardian -r");
+	system("$max_threads;/usr/local/sbin/e2guardian -r");
 } else {
 	print "No changes on schedule\n";
 }
