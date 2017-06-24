@@ -941,8 +941,12 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	file_put_contents($e2guardian_dir . "/lists/contentscanners/exceptionvirusextensionlist", ($e2guardian_antivirus['extension_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardianantivirusacl']['config'][0]['extension_list']):""), LOCK_EX);
 
 	//log report
-	if ($e2guardian_log['report_file'] == "" && file_exists("/usr/local/share/e2guardian/languages/" . $reportlanguage . "/template.html")) {
-		$report_file = file_get_contents("/usr/local/share/e2guardian/languages/" . $reportlanguage . "/template.html");
+	$rf = "/usr/local/share/e2guardian/languages/{$reportlanguage}/template.html";
+	if(file_exists($rf) && !file_exists("$rf.sample")) {
+		copy($rf, "$rf.sample");
+	}
+	if ($e2guardian_log['report_file'] == "" && file_exists("$rf.sample")) {
+		$report_file = file_get_contents("$rf.sample");
 		$report_file = preg_replace('/<.*(html|head)>/', '', $report_file);
 		$config['installedpackages']['e2guardianlog']['config'][0]['report_file'] = base64_encode($report_file);
 		$e2guardian_log['report_file'] = base64_encode($report_file);
@@ -1189,8 +1193,8 @@ EOF;
 	file_put_contents("/usr/local/pkg/e2guardian_ips.xml", $ips_xml_header . $ips_xml . $user_xml_footer, LOCK_EX);
 
 	//Create report template
-	if (is_dir("/usr/local/share/e2guardian/languages/" . $reportlanguage)) {
-		file_put_contents("/usr/local/share/e2guardian/languages/" . $reportlanguage . "/template.html", e2_text_area_decode($e2guardian_log['report_file']), LOCK_EX);
+	if (is_dir("/usr/local/share/e2guardian/languages/{$reportlanguage}")) {
+		file_put_contents("/usr/local/share/e2guardian/languages/{$reportlanguage}/template.html", e2_text_area_decode($e2guardian_log['report_file']), LOCK_EX);
 	}
 	//check blacklist download files
 	if ($install_process == true) {
@@ -1599,6 +1603,13 @@ function e2guardian_validate_input($post, &$input_errors) {
 				'2' => 'Report fully',
 				'3' => 'Use HTML template');
 		$_POST['lreportinglevel'] = $rpa[$post['reportinglevel']];
+	}
+	if ($_POST['report_file'] == "") {
+		$rf = "/usr/local/share/e2guardian/languages/{$_POST['reportlanguage']}/template.html.sample";
+		if( file_exists($rf)) {
+			$report_file = file_get_contents($rf);
+			$_POST['report_file'] = preg_replace('/<.*(html|head)>/', '', $report_file);
+		}
 	}
 
 	if ($post['reportingcgi'] != "") {
