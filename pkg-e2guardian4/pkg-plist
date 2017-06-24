@@ -27,6 +27,9 @@ pkg/e2guardian_users.xml
 @dir /usr/local/www
 www/e2guardian_scheds.php
 www/e2guardian_about.php
+www/e2guardian_monitor_data.php
+www/e2guardian_monitor.php
+www/e2guardian_log_parser.php
 www/e2guardian.php
 www/e2gerror.php
 @dir /usr/local/etc/e2guardian
