@@ -52,14 +52,20 @@ $tab_array = array();
 
 display_top_tabs($tab_array);
 
+if (is_array($config['installedpackages']['e2guardianlog'])) {
+        $e2glog = $config['installedpackages']['e2guardianlog']['config'][0];
+} else {
+        $e2glog = array();
+}
+
 ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Filtering"); ?></h2></div>
 	<div class="panel-body">
-		<div class="table table-responsive">
+		<div class="table">
 			<form id="paramsForm" name="paramsForm" method="post" action="">
-			<table class="table table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed">
 				<tbody>
 				<tr>
 					<td width="22%" valign="top" class="vncellreq">Max lines:</td>
@@ -79,6 +85,21 @@ display_top_tabs($tab_array);
 						</span>
 					</td>
 				</tr>
+				<?php if($e2glog['logfileformat'] == 1) {?>
+				<tr>
+				<td width="22%" valign="top" class="vncellreq">Erro to show:</td>
+                                        <td width="78%" class="vtable">
+                                                <select name="error" id="error">
+                                                        <option value="reason" selected="selected">Reason</option>
+                                                        <option value="detailed">Detailed info</option>
+                                                </select>
+                                                <br/>
+                                                <span class="vexpl">
+                                                        <?=gettext("Select denied info to show while using logs in E2g format.")?>
+                                                </span>
+                                        </td>
+				</tr>
+				<?php }?>
 				<tr>
 					<td width="22%" valign="top" class="vncellreq">String filter:</td>
 					<td width="78%" class="vtable">
@@ -96,14 +117,16 @@ display_top_tabs($tab_array);
 			</form>
 		</div>
 	</div>
-
+	</div>
+	</div>
+	<div class="panel panel-default" style='margin:0 auto;width:97%'> 
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("E2guardian Access Table"); ?></h2></div>
 	<div class="panel-body">
-		<div class="table-responsive">
-			<table class="table-bordered table"> <!-- table-hover table-condensed"-->
+		<div class="">
+			<table class="table table-responsive table-striped table-hover table-condensed"
 				<tbody>
 				<tr><td>
-					<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<table class="table" xclaxss="tabcont" width="100%" border="0" cellspacing="2" cellpadding="0">
 						<thead id="e2gViewhead"><tr>
 							<td colspan="6" class="listtopic" align="center"><?=gettext("E2guardian - Access Logs"); ?></td>
 						</tr></thead>
@@ -116,11 +139,13 @@ display_top_tabs($tab_array);
 			</table>
 		</div>
 	</div>
-
+	</div>
+	<BR>
+	<div class="panel panel-default" style='margin:0 auto;width:30%'>
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("E2guardian watchdog log Table"); ?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table-responsive table" width="30%">
+			<table class="table-responsive table">
 				<tbody>
 				<tr><td>
 					<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -148,6 +173,7 @@ function showLog(content, url, program) {
 		data: {
 			maxlines: $('#maxlines').val(),
 			strfilter: $('#strfilter').val(),
+			error: $('#error').val(),
 			program: program,
 			content: content
 			},

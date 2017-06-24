@@ -43,21 +43,21 @@ function e2gm($field){
 /* Requests */
 if ($_POST) {
 	global $filter, $program, $e2glog;
-	//var_dump($config['installedpackages']['e2guardianlog']);
-	// Actions
 	$filter = preg_replace('/(@|!|>|<)/', "", htmlspecialchars($_POST['strfilter']));
 	$program = strtolower($_POST['program']);
+	$listr = "class='listr' style='font-family: Consolas, Lucida Console, monospace;'";
 	switch ($program) {
 		case 'accesshead':
 			// Show table headers
 			switch($e2glog['logfileformat']) {
 				case 1:
-					show_tds(array("Date", "IP", "Method", "Url", "User", "Group", "Reason"));
+					show_tds(array("","Date", "IP", "Method", "Url", "User", "Group", "Reason"));
 					break;
 				case 3:
-                               		show_tds(array("Date", "IP", "Status", "Address", "User", "Destination"));
+                               		show_tds(array("","Date", "IP", "Status", "Address", "User", "Destination"));
 					break;
 			}
+			break;
 		case 'access':
 			// Define log file
 			$log = '/var/log/e2guardian/access.log';
@@ -65,12 +65,6 @@ if ($_POST) {
 			$logarr = fetch_log($log);
 			switch($e2glog['logfileformat']) {
 				case 1:
-					//2017.6.24 3:30:40 172.17.26.4 127.0.0.1 https://logger.rm.uol.com.br/v1/?prd=98&disp=true&gps=true&grp=Origem:TM-code-injector;tm_repo_id:wrnitl&msr=Execucoes%20Iniciadas:1&CACHE_BUSTER=1498285785240 - GET 0 0 - 1 503 - - Default - - - - -
-					//2017.6.21 23:52:00 lab 172.17.26.9 https://rdm.reamp.com.br:443 - CONNECT 1061 0 - 1 200 - - Default - - - - -
-					//2017.6.24 1:33:32 lab 172.17.26.4 https://pixel-a.sitescout.com:443 *DENIED* MISSING TRANSLATION KEY CONNECT 0 0 SSL SITE 1 200 - - Default - - - - -
-					//2017.6.24 4:13:56 172.17.26.4 127.0.0.1 https://hp.imguol.com.br/c/home/e5/2017/06/23/a-modelo-baiana-carol-caputo-e-apontada-como-novo-affair-de-neymar-1498249568434_80x80.jpg *DENIED* Express&atilde;o Regular proibida em URL: (girls|babes|bikini|model)+.*(\.jpg|\.wmv|\.mpg|\.mpeg|\.gif|\.mov) GET 0 0 Banned Regular Expression URLs 1 403 - - Default - - - - -
-					//2017.6.24 4:14:34 172.17.26.4 127.0.0.1 https://www.youtube.com/results?search_query=xxx *DENIED* Encontrada combina&ccedil;&atilde;o de frases proibida: 250 : 2582 ((-health, penis)+(-news, report)+( porn, xxx)+( xxx,  porn)+( xxx,  sex )+(erotic,  porn)+(erotic,  xxx)+(naughty,  xxx )+(film, sex)+( film,  porno )+ girl +- health + penis + porn+ porno+ putaria+ sex + sexo + vagina+ xxx +-abandon+adult content+anal play+-cat +-documentary+-environment+erotic+erotica+-faq+-health+hot xxx+-main+naughty+new xxx+-pesquisa+porno+sex scene+sex video+sexy+uncensored+vagina+xxx girl+xxx movie+xxx porn+xxx sex+xxx video) GET 176290 2582 Pornography, Pornography (Portuguese), Pornografia, Pornography (Norwegian), Pornography (Spanish) 1 403 text/html - Default - - - - -
-
 					foreach ($logarr as $logent) {
 						//split log
 						if (preg_match("/(\S+\s+\S+) (\S+) (\S+) (\S+) (.*) (GET|OPTIONS|POST|CONNECT) \d+ \d+ (.*) \d \d\d\d \S+ \S+ (\S+)/", $logent, $logline)) {
@@ -80,17 +74,25 @@ if ($_POST) {
         	                                        $logline[4] = preg_replace("@\<\>@","",$logline[4]);
                 	                                $url = html_autowrap($url);
 							
-							$logline[5] = htmlentities($logline[5]);
                                                         $logline[5] = html_autowrap($logline[5]);
 
 							echo "<tr valign='top'>\n";
+							if (preg_match("/\WDENIED\W/",$logline[0])) {
+								echo "<td><i class='fa fa-times text-danger'></i></td>\n";
+							} else {
+								echo "<td><i class='fa fa-check text-success'></i></td>\n";
+							}
                                        		        echo "<td class='listlr' nowrap='nowrap'>" . e2gm($logline[1]) . "</td>\n";
-                                       	       		echo "<td class='listr'>" . e2gm($logline[3]) . "</td>\n";
-                                                	echo "<td class='listr'>" . (preg_match("/DENIED/",$logline[5]) ? e2gm("DENIED") : e2gm($logline[6])) . "</td>\n";
-                                               		echo "<td class='listr' title='{$logline[4]}' width='*'>" . e2gm(preg_replace("/(\?|;).*/","",$url)) . "</td>\n";
-                                                	echo "<td class='listr'>" . e2gm($logline[2]) . "</td>\n";
-                                                	echo "<td class='listr'>" . e2gm($logline[8]) . "</td>\n";
-                                                	echo "<td class='listr'>" . e2gm($logline[7]) . "</td>\n";
+                                       	       		echo "<td $listr>" . e2gm($logline[3]) . "</td>\n";
+                                                	echo "<td $listr>" . e2gm($logline[6]) . "</td>\n";
+                                               		echo "<td $listr title='{$logline[4]}' width='*'>" . e2gm(preg_replace("/(\?|;).*/","",$url)) . "</td>\n";
+                                                	echo "<td $listr>" . e2gm($logline[2]) . "</td>\n";
+                                                	echo "<td $listr>" . e2gm($logline[8]) . "</td>\n";
+							if ($_REQUEST['error'] == 'reason') {
+                                                		echo "<td $listr>" . e2gm($logline[7]) . "</td>\n";
+							} else {
+								echo "<td $listr>" . e2gm($logline[5]) . "</td>\n";
+							}
                                                 	echo "</tr>\n";
 						}
 					}
@@ -109,19 +111,18 @@ if ($_POST) {
 						// Remove /(slash) in destination row
 						$logline_dest = preg_split("/\//", $logline[9]);
 
-						// Apply filter and color
-						// Need validate special chars
-						if ($filter != "") {
-							$logline = preg_replace("@($filter)@i","<span><font color='red'>$1</font></span>", $logline);
-						}
-
 						echo "<tr valign='top'>\n";
+						if (preg_match("/TCP_DENIED/",$logline[4])) {
+                                                                echo "<td><i class='fa fa-times text-danger'></i></td>\n";
+                                                        } else {
+                                                                echo "<td><i class='fa fa-check text-success'></i></td>\n";
+                                                        }
 						echo "<td class='listlr' nowrap='nowrap'>" . e2gm("{$logline[0]} {$logline[1]}") . "</td>\n";
-						echo "<td class='listr'>" . e2gm($logline[3]) . "</td>\n";
-						echo "<td class='listr'>" . e2gm($logline[4]) . "</td>\n";
-						echo "<td class='listr' width='*'>" . e2gm($logline[7]) . "</td>\n";
-						echo "<td class='listr'>" . e2gm($logline[8]) . "</td>\n";
-						echo "<td class='listr'>" . e2gm($logline_dest[1]) . "</td>\n";
+						echo "<td $listr>" . e2gm($logline[3]) . "</td>\n";
+						echo "<td $listr'>" . e2gm($logline[4]) . "</td>\n";
+						echo "<td $listr width='*'>" . e2gm($logline[7]) . "</td>\n";
+						echo "<td $listr>" . e2gm($logline[8]) . "</td>\n";
+						echo "<td $listr>" . e2gm($logline_dest[1]) . "</td>\n";
 						echo "</tr>\n";
 					}
 					break;
@@ -130,11 +131,11 @@ if ($_POST) {
 					break;
 			}
 			break;
-		case 'starthead';
+		case 'starthead':
 			// Show table headers
 			show_tds(array("Date-Time", "Message"));
 			break;
-		case 'start';
+		case 'start':
 			// Define log file
 			$log = '/var/log/e2guardian/start.log';
 			// Fetch lines
@@ -149,8 +150,8 @@ if ($_POST) {
 					$logline[1] = html_autowrap($logline[1]);
 
 					echo "<tr>\n";
-					echo "<td class=\"listlr\" nowrap=\"nowrap\">{$logline[1]}</td>\n";
-					echo "<td class=\"listr\" nowrap=\"nowrap\">{$logline[2]}</td>\n";
+					echo "<td $listr nowrap=\"nowrap\">{$logline[1]}</td>\n";
+					echo "<td $listr nowrap=\"nowrap\">{$logline[2]}</td>\n";
 					echo "</tr>\n";
 				}
 			}
@@ -193,15 +194,15 @@ function fetch_log($log) {
 	} else {
 		$parser = "";
 	}
-
+	//arrumar aqui
 	// Get logs based in filter expression
-	if ($filter != "") {
-		exec("/usr/bin/tail -n 2000 {$log} | /usr/bin/grep {$grep_arg} " . escapeshellarg($filter). " | /usr/bin/tail -r -n {$lines} {$parser} ", $logarr);
+	if ($filter != "" && $program == "access") {
+		exec("/usr/bin/tail -n 2000 {$log} | /usr/bin/grep {$grep_arg} " . escapeshellarg($filter). " | /usr/bin/tail -r -n {$lines} {$parser} ", ${$logarr.$program});
 	} else {
-		exec("/usr/bin/tail -r -n {$lines} {$log} {$parser}", $logarr);
+		exec("/usr/bin/tail -r -n {$lines} {$log} {$parser}", ${$logarr.$program});
 	}
 	// Return logs
-	return $logarr;
+	return ${$logarr.$program};
 };
 
 function show_tds($tds) {
