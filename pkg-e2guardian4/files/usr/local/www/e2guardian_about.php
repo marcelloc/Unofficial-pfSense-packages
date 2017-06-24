@@ -40,6 +40,7 @@ $tab_array[] = array(gettext("LDAP"), false, "/pkg.php?xml=e2guardian_ldap.xml&i
 $tab_array[] = array(gettext("Groups"), false, "/pkg.php?xml=e2guardian_groups.xml&id=0");
 $tab_array[] = array(gettext("Users"), false, "/pkg_edit.php?xml=e2guardian_users.xml&id=0");
 $tab_array[] = array(gettext("IPs"), false, "/pkg_edit.php?xml=e2guardian_ips.xml&id=0");
+$tab_array[] = array(gettext("Real Time"), false, "/e2guardian_monitor.php");
 $tab_array[] = array(gettext("Report and Log"), false, "/pkg_edit.php?xml=e2guardian_log.xml&id=0");
 $tab_array[] = array(gettext("Sync"), false, "/pkg_edit.php?xml=e2guardian_sync.xml&id=0");
 $tab_array[] = array(gettext("Help"), true, "/e2guardian_about.php");

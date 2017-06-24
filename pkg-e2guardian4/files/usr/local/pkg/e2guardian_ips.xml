@@ -101,7 +101,7 @@
 		</field>
 		
 		<field>
-			<name>Default e2guardian filtergroup (0)</name>
+			<name>Default e2guardian filtergroup (1)</name>
 			<type>listtopic</type>
 		</field>
 		<field>
@@ -113,7 +113,7 @@
 			<cols>80</cols><rows>12</rows>
 			<encoding>base64</encoding>
 		</field>		<field>
-			<name>Admins Group (0)</name>
+			<name>Admins Group (2)</name>
 			<type>listtopic</type>
 		</field>
 		<field>

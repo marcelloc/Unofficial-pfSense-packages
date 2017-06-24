@@ -207,7 +207,7 @@
 			<source_name>descr</source_name>
 			<source_value>file</source_value>
 			<multiple/>
-			<size>5</size>
+			<size>19</size>
 		</field>
 		<field>
 			<fielddescr>Config</fielddescr>

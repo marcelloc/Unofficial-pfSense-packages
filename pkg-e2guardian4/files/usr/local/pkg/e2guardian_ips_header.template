@@ -71,6 +71,10 @@
 			<url>/pkg_edit.php?xml=e2guardian_ips.xml</url>
 			<active/>
 		</tab>
+               <tab>
+                        <text>Real Time</text>
+                        <url>/e2guardian_monitor.php</url>
+                </tab>
 		<tab>
 			<text>Report and log</text>
 			<url>/pkg_edit.php?xml=e2guardian_log.xml&amp;id=0</url>
