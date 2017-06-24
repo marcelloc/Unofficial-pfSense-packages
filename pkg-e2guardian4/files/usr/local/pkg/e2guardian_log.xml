@@ -227,9 +227,10 @@
 				<option><name>CSV-style format</name><value>2</value></option>
 				<option><name>Squid Log File Format</name><value>3</value></option>
 				<option><name>Tab delimited</name><value>4</value></option>
+			<!--	Removed on 4.1
 				<option><name>Protex format full</name><value>5</value></option>
 				<option><name>Protex format standart</name><value>6</value></option>
-				<option><name>Squid Log File Format Secure extension</name><value>7</value></option>
+				<option><name>Squid Log File Format Secure extension</name><value>7</value></option>-->
 			</options>
 		</field>
 	</fields>
