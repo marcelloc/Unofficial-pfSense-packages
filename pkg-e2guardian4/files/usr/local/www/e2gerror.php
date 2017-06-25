@@ -4,6 +4,9 @@
 
 // you can translate via gettext or directly on these vars
 
+//Leave blank to disable denied log file.
+define('LOG_DENIED', 'none');
+$now = date("Y-m-d H:i:s");
 $access_denied = gettext("Access Denied");
 $oops1 = gettext("Oops!");
 $oops2 = gettext("You have tried visiting a website which has been deemed inappropriate");
@@ -20,6 +23,7 @@ $reason = $in['REASON'];
 $user = $in['USER'];
 $ip = $in['IP'];
 $cats = $in['CATEGORIES'];
+$group = ( $in['FILTERGROUP'] ? $in['FILTERGROUP'] : "-" );
 
 # originating hostname - can be undefined
 
@@ -40,13 +44,13 @@ $fbypasshash = $in['GBYPASS']; # filter bypass hash - can be undefined
 $ibypasshash = $in['GIBYPASS']; # infection bypass hash - can be undefined
 $hashflag = $in['HASH']; # hash flag - can be undefined; 1 = generate GBYPASS; 2 = generate GIBYPASS
 
-if ( strlen($in['GBYPASS']) > 0) {
-$bypass = $in['GBYPASS'];
+$bypass = $deniedurl;
+$prefix = (preg_match("/\?/",$deniedurl) ? "&" : "?");
+if ( array_key_exists('GBYPASS',$in)) {
+	$bypass .= $prefix . "GBYPASS=" . $in['GBYPASS'];
+} else if ( array_key_exists('GIBYPASS',$in)) {
+	$bypass .= $prefix . "GIBYPASS=" . $in['GIBYPASS'];
 }
-if ( strlen($in['GIBYPASS']) > 0) {
-$bypass = $in['GIBYPASS'];
-}
-
 $user_info = "-";
 if (strlen($user) > 0) {
 	$user_info = $user;
@@ -224,7 +228,7 @@ return; Rounded("div#nifty","#377CB1","#9BD1FA");}
       <h4>{$details}:</h4>
       <I>User: {$user_info}<br>Host:{$host}</I>
       <BR><BR><BR>
-      <!--Bypass link below ->
+      <!--Bypass link below -->
       <a href="{$bypass}" class="bypasstext">{$ack}</a>
    </P>
    <P>
@@ -240,5 +244,8 @@ EOF;
 
 print $html;
 
+if (LOG_DENIED != "none") {
+	file_put_contents(LOG_DENIED,"$now;;$user_info;;$ip;;$deniedurl;;$cats;;$reason;;$group\n",FILE_APPEND);
+}
 ?>
 

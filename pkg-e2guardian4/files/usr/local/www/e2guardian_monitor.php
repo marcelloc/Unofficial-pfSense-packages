@@ -85,7 +85,7 @@ if (is_array($config['installedpackages']['e2guardianlog'])) {
 						</span>
 					</td>
 				</tr>
-				<?php if($e2glog['logfileformat'] == 1) {?>
+				<?php if($e2glog['logfileformat'] == 1 || $e2glog['logdeniedcgi'] == "on") {?>
 				<tr>
 				<td width="22%" valign="top" class="vncellreq">Erro to show:</td>
                                         <td width="78%" class="vtable">
@@ -141,8 +141,32 @@ if (is_array($config['installedpackages']['e2guardianlog'])) {
 	</div>
 	</div>
 	<BR>
+	<?php if($e2glog['logfileformat'] == 3 && $e2glog['logdeniedcgi'] == "on") {?>	
+        <div class="panel panel-default" style='margin:0 auto;width:97%'>
+        <div class="panel-heading"><h2 class="panel-title"><?=gettext("Detailed denied log"); ?></h2></div>
+        <div class="panel-body">
+                <div class="">
+                        <table class="table table-responsive table-striped table-hover table-condensed"
+                                <tbody>
+                                <tr><td>
+                                        <table class="table" xclaxss="tabcont" width="100%" border="0" cellspacing="2" cellpadding="0">
+                                                <thead id="e2gerrorhead"><tr>
+                                                        <td colspan="6" class="listtopic" align="center"><?=gettext("E2guardian - Access Logs"); ?></td>
+                                                </tr></thead>
+                                                <tbody id="e2gerror">
+                                                <tr><td></td></tr>
+                                                </tbody>
+                                        </table>
+                                </td></tr>
+                                </tbody>
+                        </table>
+                </div>
+        </div>
+        </div>
+        <BR>
+	<?php } ?>
 	<div class="panel panel-default" style='margin:0 auto;width:30%'>
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("E2guardian watchdog log Table"); ?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Watchdog start log"); ?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table-responsive table">
@@ -187,6 +211,8 @@ function showLog(content, url, program) {
 function updateAllLogs() {
 	showLog('e2gViewhead', 'e2guardian_monitor_data.php', 'accesshead');
 	showLog('e2gView', 'e2guardian_monitor_data.php', 'access');
+	showLog('e2gerrorhead', 'e2guardian_monitor_data.php', 'e2gerrorhead');
+        showLog('e2gerror', 'e2guardian_monitor_data.php', 'e2gerror');
 	showLog('e2gWatchdoghead', 'e2guardian_monitor_data.php', 'starthead');
 	showLog('e2gWatchdog', 'e2guardian_monitor_data.php', 'start');
 	setTimeout(updateAllLogs, 5000);

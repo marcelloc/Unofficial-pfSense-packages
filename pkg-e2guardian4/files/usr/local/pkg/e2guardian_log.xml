@@ -119,6 +119,14 @@
 			<size>70</size>
 		</field>
 		<field>
+                        <fielddescr>Log detailed denied</fielddescr>
+                        <fieldname>logdeniedcgi</fieldname>
+                        <type>checkbox</type>
+                        <description><![CDATA[Create a second log file with detailed errors.(requires e2gerror.php as dynamic page/cgi on this box). 
+				This allows you to use e2guardian log in squid mode to use reporting tools like sarg, squidanalyze, lightsquid and 
+				keep trace of detailed erros on a separeted log file.]]></description>
+                </field>
+		<field>
 			<fielddescr>Report Language</fielddescr>
 			<fieldname>report_language</fieldname>
 			<description><![CDATA[Language to use in HTML reports]]></description>

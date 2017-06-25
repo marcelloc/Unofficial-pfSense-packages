@@ -102,6 +102,19 @@ function e2g_check_sched($iface_sched){
 	$e2g_sched_in_use[$iface_sched] = $e2g_scd;
 }
 
+function e2g_check_logdeniedcgi($logdeniedcgi) {
+	$e2g_file = "/usr/local/www/e2gerror.php";
+	if ($logdeniedcgi == 'on') {
+		$e2g_log = "/var/log/e2guardian/denied.log";
+	} else {
+		 $e2g_log = "none";
+	}
+	exec("/usr/bin/sed -i 'bak' \"s@LOG_DENIED', '.*'@LOG_DENIED', '$e2g_log'@\" $e2g_file",$out);
+	foreach (glob("/usr/local/www/wpad*/e2gerror.php") as $e2g_wpad) {
+		copy ($e2g_file, $e2g_wpad);
+	}
+}
+
 function e2g_check_squid_pkg($export_acl,$acls){
 	global $config, $acl_include_files;
 	if (!is_array($config['installedpackages']['squid'])) {
@@ -352,6 +365,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if ($reportlevel == 1 || $reportlevel == 2) {
 		if (is_URL($e2guardian_log['reportingcgi'])) {
 			$accessdeniedaddress = "accessdeniedaddress = '" . $e2guardian_log['reportingcgi'] . "'";
+			e2g_check_logdeniedcgi($e2guardian_log['logdeniedcgi']);
 		} else {
 			log_error("e2guardian - {$e2guardian_log['reportingcgi']} is not a valid access denied url");
 			file_notice("e2guardian",$error,"E2guardian - ". $e2guardian_log['reportingcgi'] . " " . gettext("is not a valid access denied url"), "");
@@ -1013,9 +1027,11 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 				$groupreportinglevel = "reportinglevel = " . $e2guardian_groups['reportinglevel'];
 				if (is_URL($e2guardian_groups['reportingcgi'])) {
 					$groupaccessdeniedaddress = "accessdeniedaddress = '" . $e2guardian_groups['reportingcgi'] . "'";
+					e2g_check_logdeniedcgi($e2guardian_log['logdeniedcgi']);
 				} else {
 					if (is_URL ($e2guardian_log['reportingcgi'])) {
 						$groupaccessdeniedaddress = "accessdeniedaddress = '" . $e2guardian_log['reportingcgi'] . "'";
+						e2g_check_logdeniedcgi($e2guardian_log['logdeniedcgi']);
 					} else {
 						log_error('E2guardian - Group ' . $e2guardian_groups['name'] . ' does not have a valid access denied cgi url.');
 						file_notice("E2guardian - Group ",$error,"E2guardian - " . $e2guardian_groups['name'] . gettext(" does not have a valid access denied cgi url."), "");

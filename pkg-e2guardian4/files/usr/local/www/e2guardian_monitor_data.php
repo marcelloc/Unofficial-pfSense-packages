@@ -51,12 +51,15 @@ if ($_POST) {
 			// Show table headers
 			switch($e2glog['logfileformat']) {
 				case 1:
-					show_tds(array("","Date", "IP", "Method", "Url", "User", "Group", "Reason"));
+					show_tds(array("","Date", "IP", "Url", "Response", "User", "Group", "Reason"));
 					break;
 				case 3:
-                               		show_tds(array("","Date", "IP", "Status", "Address", "User", "Destination"));
+                               		show_tds(array("","Date", "User", "IP", "Status", "Address"));
 					break;
 			}
+			break;
+		case 'e2gerrorhead':
+			show_tds(array("","Date", "User", "IP", "Url", "Reason", "Group"));
 			break;
 		case 'access':
 			// Define log file
@@ -67,7 +70,7 @@ if ($_POST) {
 				case 1:
 					foreach ($logarr as $logent) {
 						//split log
-						if (preg_match("/(\S+\s+\S+) (\S+) (\S+) (\S+) (.*) (GET|OPTIONS|POST|CONNECT) \d+ \d+ (.*) \d \d\d\d \S+ \S+ (\S+)/", $logent, $logline)) {
+						if (preg_match("/(\S+\s+\S+) (\S+) (\S+) (\S+) (.*) (GET|OPTIONS|POST|CONNECT) \d+ \d+ (.*) \d (\d\d\d) \S+ \S+ (\S+)/", $logent, $logline)) {
 
 	                                                // Word wrap the URL
         	                                        $url = htmlentities($logline[4]);
@@ -77,17 +80,17 @@ if ($_POST) {
                                                         $logline[5] = html_autowrap($logline[5]);
 
 							echo "<tr valign='top'>\n";
-							if (preg_match("/\WDENIED\W/",$logline[0])) {
+							if (preg_match("/40\d/",$logline[8])) {
 								echo "<td><i class='fa fa-times text-danger'></i></td>\n";
 							} else {
 								echo "<td><i class='fa fa-check text-success'></i></td>\n";
 							}
                                        		        echo "<td class='listlr' nowrap='nowrap'>" . e2gm($logline[1]) . "</td>\n";
                                        	       		echo "<td $listr>" . e2gm($logline[3]) . "</td>\n";
-                                                	echo "<td $listr>" . e2gm($logline[6]) . "</td>\n";
                                                		echo "<td $listr title='{$logline[4]}' width='*'>" . e2gm(preg_replace("/(\?|;).*/","",$url)) . "</td>\n";
-                                                	echo "<td $listr>" . e2gm($logline[2]) . "</td>\n";
                                                 	echo "<td $listr>" . e2gm($logline[8]) . "</td>\n";
+                                                	echo "<td $listr>" . e2gm($logline[2]) . "</td>\n";
+                                                	echo "<td $listr>" . e2gm($logline[9]) . "</td>\n";
 							if ($_REQUEST['error'] == 'reason') {
                                                 		echo "<td $listr>" . e2gm($logline[7]) . "</td>\n";
 							} else {
@@ -105,11 +108,8 @@ if ($_POST) {
 						$logline = preg_split("/\s+/", $logent);
 
 						// Word wrap the URL
-						$logline[7] = htmlentities($logline[7]);
+						//$logline[7] = htmlentities($logline[7]);
 						$logline[7] = html_autowrap($logline[7]);
-
-						// Remove /(slash) in destination row
-						$logline_dest = preg_split("/\//", $logline[9]);
 
 						echo "<tr valign='top'>\n";
 						if (preg_match("/TCP_DENIED/",$logline[4])) {
@@ -118,11 +118,10 @@ if ($_POST) {
                                                                 echo "<td><i class='fa fa-check text-success'></i></td>\n";
                                                         }
 						echo "<td class='listlr' nowrap='nowrap'>" . e2gm("{$logline[0]} {$logline[1]}") . "</td>\n";
+						echo "<td $listr>" . e2gm($logline[8]) . "</td>\n";
 						echo "<td $listr>" . e2gm($logline[3]) . "</td>\n";
 						echo "<td $listr'>" . e2gm($logline[4]) . "</td>\n";
-						echo "<td $listr width='*'>" . e2gm($logline[7]) . "</td>\n";
-						echo "<td $listr>" . e2gm($logline[8]) . "</td>\n";
-						echo "<td $listr>" . e2gm($logline_dest[1]) . "</td>\n";
+						echo "<td $listr title='{$logline[7]}'width='*'>" . e2gm(preg_replace("/(\?|;).*/","",$logline[7])) . "</td>\n";
 						echo "</tr>\n";
 					}
 					break;
@@ -130,6 +129,34 @@ if ($_POST) {
 					print "e2guardian log format selected is not implemented yet";
 					break;
 			}
+			break;
+		case 'e2gerror':
+			// Define log file
+                        $log = '/var/log/e2guardian/denied.log';
+                        // Fetch lines
+                        $logarr = fetch_log($log);
+			foreach ($logarr as $logent) {
+				//split log
+				$logline = preg_split("/;;/", $logent);
+				// Word wrap the URL
+				$url = htmlentities($logline[3]);
+                                $logline[3] = preg_replace("@\<\>@","",$logline[3]);
+                                $url = html_autowrap($url);
+                                $logline[5] = html_autowrap($logline[5]);
+                                echo "<tr valign='top'>\n";
+                                echo "<td><i class='fa fa-times text-danger'></i></td>\n";
+                                echo "<td class='listlr' nowrap='nowrap'>" . e2gm($logline[0]) . "</td>\n";
+                                echo "<td $listr>" . e2gm($logline[1]) . "</td>\n";
+                                echo "<td $listr>" . e2gm($logline[2]) . "</td>\n";
+                                echo "<td $listr title='{$logline[3]}' width='*'>" . e2gm(preg_replace("/(\?|;).*/","",$url)) . "</td>\n";
+                                if ($_REQUEST['error'] == 'reason') {
+   	                             echo "<td $listr>" . e2gm($logline[4]) . "</td>\n";
+                                } else {
+          	                     echo "<td $listr>" . e2gm($logline[5]) . "</td>\n";
+                                }
+				echo "<td $listr>" . e2gm($logline[6]) . "</td>\n";
+                                echo "</tr>\n";
+                        }
 			break;
 		case 'starthead':
 			// Show table headers
