@@ -90,8 +90,8 @@ if (is_array($config['installedpackages']['e2guardianlog'])) {
 				<td width="22%" valign="top" class="vncellreq">Erro to show:</td>
                                         <td width="78%" class="vtable">
                                                 <select name="error" id="error">
-                                                        <option value="reason" selected="selected">Reason</option>
-                                                        <option value="detailed">Detailed info</option>
+                                                        <option value="reason">Reason</option>
+                                                        <option value="detailed" selected="selected">Detailed info</option>
                                                 </select>
                                                 <br/>
                                                 <span class="vexpl">
