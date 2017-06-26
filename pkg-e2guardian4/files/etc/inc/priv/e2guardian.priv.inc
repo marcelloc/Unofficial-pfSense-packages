@@ -30,6 +30,9 @@ $priv_list['page-services-e2guardian']['match'] = array();
 $priv_list['page-services-e2guardian']['match'][] = "pkg.php?xml=e2guardian*";
 $priv_list['page-services-e2guradian']['match'][] = "pkg_edit.php?xml=e2guardian*";
 $priv_list['page-services-e2guradian']['match'][] = "e2guardian_about.php";
+$priv_list['page-services-e2guradian']['match'][] = "e2guardian_monitor.php";
+$priv_list['page-services-e2guradian']['match'][] = "e2guardian_monitor_data.php";
+$priv_list['page-services-e2guradian']['match'][] = "e2guardian_log_parser.php";
 $priv_list['page-services-e2guradian']['match'][] = "e2guardian.widget.php";
 
 ?>
