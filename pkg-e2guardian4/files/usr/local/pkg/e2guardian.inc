@@ -1215,9 +1215,7 @@ EOF;
 	//check blacklist download files
 	if ($install_process == true) {
 		require_once("/usr/local/www/e2guardian.php");
-		if (file_exists("/usr/local/pkg/blacklist.tgz")) {
-			extract_black_list();
-		} else {
+		if (!file_exists("/usr/local/pkg/blacklist.tgz")) {
 			fetch_blacklist(false, true);
 		}
 		update_output_window("Blacklist check done, continuing package config sync.");
@@ -1418,7 +1416,7 @@ EOF;
 		}
 	}
 	//mark config changes
-	if (!$_POST["force_update"] && !$_POST["force_download"] && !$_POST["liston"]) {
+	if (!$_POST["force_update"] && !$_POST["force_download"] && !$_POST["liston"] && $install_process != true) {
 		mark_subsystem_dirty('e2guardian');
 	}
 }
