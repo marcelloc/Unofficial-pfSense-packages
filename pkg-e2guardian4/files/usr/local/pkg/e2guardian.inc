@@ -1215,7 +1215,11 @@ EOF;
 	//check blacklist download files
 	if ($install_process == true) {
 		require_once("/usr/local/www/e2guardian.php");
-		fetch_blacklist(false, true);
+		if (file_exists("/usr/local/pkg/blacklist.tgz")) {
+			extract_black_list();
+		} else {
+			fetch_blacklist(false, true);
+		}
 		update_output_window("Blacklist check done, continuing package config sync.");
 	} else {
 		file_put_contents("/root/e2guardian_custom.script", base64_decode($e2guardian_blacklist['custom_script']), LOCK_EX);
@@ -1229,10 +1233,10 @@ EOF;
 			}
 		}
 	
-		//Import default blacklists
-		if ($_POST["force_update"]) {
+		//Update blacklist categories on Acls
+		if ($_POST["force_update"] || $_POST["liston"]) {
 			require_once("/usr/local/www/e2guardian.php");
-			extract_black_list("true");
+			extract_black_list();
 		}
 	}
 	//get clamav user
@@ -1414,7 +1418,7 @@ EOF;
 		}
 	}
 	//mark config changes
-	if (!$_POST["force_update"] && !$_POST["force_download"]) {
+	if (!$_POST["force_update"] && !$_POST["force_download"] && !$_POST["liston"]) {
 		mark_subsystem_dirty('e2guardian');
 	}
 }
