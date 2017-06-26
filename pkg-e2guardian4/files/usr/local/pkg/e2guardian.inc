@@ -1485,6 +1485,7 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 	}
 	$squid_parent_pid = "/var/run/squid/e2gsquid.pid";
 	if ($e2g_cfg['enable'] == "on") {
+		chmod("/usr/local/sbin/e2guardian",0755);
 		copy('/usr/local/pkg/e2guardian_rc.template', $script);
 		chmod ($script, 0755);
 		$max_threads = "sysctl kern.threads.max_threads_per_proc=20480";
@@ -1707,7 +1708,7 @@ function e2guardian_php_deinstall_command() {
 		}
 	}
 	//prevent e2guardian binary from starting from watchdog during package uninstall
-	chmod ("/usr/local/sbin/e2guardian", 0444);
+	chmod("/usr/local/sbin/e2guardian",0444);
 
 	echo "Removing conf files...\n";
 	$rdirs = array("*sample", "*conf", "lists", "ssl","authplugins/*sample", "contentscanners/*sample", "downloadmanagers/*sample");
