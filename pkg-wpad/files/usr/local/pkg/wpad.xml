@@ -131,7 +131,7 @@
 		<field>
 			<fielddescr>Script Contents</fielddescr>
 			<fieldname>filedata</fieldname>
-			<description><![CDATA[Wpad script file.<br>Leave empty to load a sample script]]></description>
+			<description><![CDATA[Wpad script file.<br>Leave empty to load a sample script<br>The script can be a static or php]]></description>
 			<type>textarea</type>
 			<encoding>base64</encoding>
 			<cols>80</cols>
