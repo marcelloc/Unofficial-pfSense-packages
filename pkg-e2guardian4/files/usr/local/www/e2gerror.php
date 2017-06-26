@@ -28,9 +28,9 @@ $group = ( $in['FILTERGROUP'] ? $in['FILTERGROUP'] : "-" );
 # originating hostname - can be undefined
 
 if (strlen($in['HOST']) > 0) {
-	$host = $in['HOST'];
+	$host = $in['HOST'] . "({$in['IP']})";
 } else {
-	$host = $_SERVER['REMOTE_ADDR'] ."&nbsp;(" . $_SERVER['REMOTE_HOST'] . ")";
+	$host = gethostbyaddr($in['IP']) . "({$in['IP']})";
 }
 
 # virus/filter bypass hashes
