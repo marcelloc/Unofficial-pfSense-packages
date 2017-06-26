@@ -62,15 +62,18 @@ function wpad_get_real_interface_address($iface) {
 }
 
 
-function wpad_check($wpad_index,$nginx){
+function wpad_check($wpad_index,$nginx) {
 	
-	if (!is_dir("/usr/local/www/wpad{$wpad_index}")) {
-                        mkdir ("/usr/local/www/wpad{$wpad_index}", 0755, true);
-                }
+	$wdir = "/usr/local/www/wpad{$wpad_index}";
+	$ndir = "/usr/local/etc/nginx"; 
+	if (!is_dir($wdir)) {
+ 		mkdir ($wdir, 0755, true);
+	}
+	copy("/usr/local/pkg/wpad_index.template", "{$wdir}/index.php");
 	//nginx conf file
 	$wpad_workers = ( $nginx['workers'] != "" ? $nginx['workers'] : "10" );
 	$wpad_listenport = ( $nginx['listenport'] != "" ? $nginx['listenport'] : "80" );
-	$wpad_cf = "/usr/local/etc/nginx/nginx_wpad{$wpad_index}.conf";
+	$wpad_cf = "{$ndir}/nginx_wpad{$wpad_index}.conf";
 	$wpad_listen_ip = wpad_get_real_interface_address($nginx['interface']);
 	if(preg_match('/<?php/',base64_decode($nginx['filedata']))) {
 		$php_ext = "(php|pac|dat|da)";
@@ -80,8 +83,8 @@ function wpad_check($wpad_index,$nginx){
 	include("/usr/local/pkg/wpad_nginx.template");
 	file_put_contents($wpad_cf,$conf_template,LOCK_EX);
 
-	if (file_exists("/usr/local/etc/nginx/mime.types")) {
-		$mimes = file("/usr/local/etc/nginx/mime.types");
+	if (file_exists("{$ndir}/mime.types")) {
+		$mimes = file("{$ndir}/mime.types");
 		$mf = "";
 		$mime_prefix = "    application/x-ns-proxy-autoconfig    ";
 		foreach ($mimes as $mime) {
@@ -95,7 +98,7 @@ function wpad_check($wpad_index,$nginx){
 			}
 		}
 	}
-	file_put_contents("/usr/local/etc/nginx/mime_wpad{$wpad_index}.types",$mf,LOCK_EX);
+	file_put_contents("{$ndir}/mime_wpad{$wpad_index}.types",$mf,LOCK_EX);
 
 	//nginx start stop script
 	$start  = "if [ -f /var/run/nginx_wpad{$wpad_index}.pid ];then\n\t";
