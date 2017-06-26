@@ -3,7 +3,7 @@
 /* ========================================================================== */
 /*
 	e2guardian.php
-	Copyright (C) 2015 Marcello Coutinho
+	Copyright (C) 2015-2017 Marcello Coutinho
 	part of pfSense (http://www.pfSense.com)
 	All rights reserved.
 */
@@ -69,20 +69,7 @@ function fetch_blacklist($log_notice = true, $install_process = false) {
 			}
 		}
 		if ($return == 0) {
-			chdir (E2GUARDIAN_DIR . "/etc/e2guardian/lists");
-			if (is_dir ("blacklists.old")) {
-				exec ('rm -rf '.E2GUARDIAN_DIR . '/etc/e2guardian/lists/blacklists.old');
-			}
-			rename("blacklists", "blacklists.old");
-			exec('/usr/bin/tar -xvzf /usr/local/pkg/blacklist.tgz 2>&1', $output, $return);
-			if (preg_match("/x\W+(\w+)/", $output[1], $matches)) {
-				if ($matches[1] != "blacklists") {
-					rename("./" . $matches[1], "blacklists");
-				}
-				read_lists($log_notice);
-			} else {
-				file_notice("E2guardian",$error,"E2guardian - " .  gettext("Could not determine Blacklist extract dir. Categories not updated"),"");
-			}
+			extract_black_list($log_notice);
 		} else {
 			file_notice("E2guardian",$error,"E2guardian" . gettext("Could not fetch blacklists from url"), "");
 		}
@@ -94,6 +81,29 @@ function fetch_blacklist($log_notice = true, $install_process = false) {
 		}
 	}
 }
+function extract_black_list($log_notice=true) {
+	if (!file_exists("/usr/local/pkg/blacklist.tgz")) {
+		file_notice("E2guardian",$error,"E2guardian" . gettext("Downloaded blacklists not found"), "");
+		return;
+	}
+	chdir (E2GUARDIAN_DIR . "/etc/e2guardian/lists");
+	if (is_dir ("blacklists.old")) {
+        	exec ('rm -rf blacklists.old');
+	}
+	if (is_dir ("blacklists")) {
+		rename("blacklists", "blacklists.old");
+	}
+	exec('/usr/bin/tar -xvzf /usr/local/pkg/blacklist.tgz 2>&1', $output, $return);
+	if (preg_match("/x\W+(\w+)/", $output[1], $matches)) {
+		if ($matches[1] != "blacklists") {
+			rename("./" . $matches[1], "blacklists");
+		}
+		read_lists($log_notice);
+	} else {
+		file_notice("E2guardian",$error,"E2guardian - " .  gettext("Could not determine Blacklist extract dir. Categories not updated"),"");
+	}
+}
+
 function read_lists($log_notice=true, $uw="") {
 	global $config, $g;
 	$group_type = array();
@@ -179,7 +189,7 @@ function read_lists($log_notice=true, $uw="") {
 }
 
 if ($argv[1] == "update_lists") {
-	read_lists();
+	extract_black_list();
 }
 
 if ($argv[1] == "fetch_blacklist") {

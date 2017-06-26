@@ -590,7 +590,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	//Blacklist 
 	if (!is_array($config['installedpackages']['e2guardianblacklist']['config'])) {
 		$config['installedpackages']['e2guardianblacklist']['config'][0] = array(
-			'liston' => 'banned',
+			'liston' => 'both',
 			'cron' => '02days',
 			'url' => "http://www.shallalist.de/Downloads/shallalist.tar.gz",
  			'enable_custom_script' => "",
@@ -1229,15 +1229,10 @@ EOF;
 			}
 		}
 	
-		//update xml categories from downloaded file
-		if ($_POST["force_update"]) {
-			$config['installedpackages']['e2guardianblacklist']['config'][0]['cron'] = "never";
-			mwexec_bg("/usr/local/bin/php /usr/local/www/e2guardian.php update_lists");
-		}
-
 		//Import default blacklists
-		if (!is_array($config['installedpackages']['e2guardianblacklistsurls']['config'])) {
-			mwexec_bg("/usr/local/bin/php /usr/local/www/e2guardian.php update_lists");
+		if ($_POST["force_update"]) {
+			require_once("/usr/local/www/e2guardian.php");
+			extract_black_list("true");
 		}
 	}
 	//get clamav user
