@@ -226,7 +226,7 @@ return; Rounded("div#nifty","#377CB1","#9BD1FA");}
 	   <span class="errortext">{$cats}</span>
       <BR><BR><BR>
       <h4>{$details}:</h4>
-      <I>User: {$user_info}<br>Host:{$host}</I>
+      <I>User: {$user_info}<br>Host:{$host}<br>Group:{$group}</I>
       <BR><BR><BR>
       <!--Bypass link below -->
       <a href="{$bypass}" class="bypasstext">{$ack}</a>
