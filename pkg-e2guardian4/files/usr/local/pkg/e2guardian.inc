@@ -1534,10 +1534,11 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 	//check ca certs hashes
 	check_ca_hashes();
 
-	//check e2guardian squid integration PAREI AQUI
+	//check e2guardian squid integration
 	if (is_array($config['installedpackages']['squid'])) {
 		$squid_cfg = $config['installedpackages']['squid']['config'][0];
 		if ($squid_cfg['enable_squid'] == "on" && preg_match("@include /usr/local/etc/e2guardian/@",$squid_cfg['custom_options'])) {
+			log_error("[E2guardian] Reloading squid from package integration.");
 			require_once("/usr/local/pkg/squid.inc");
 			squid_resync();
 		}
@@ -1677,17 +1678,39 @@ function e2guardian_php_install_command() {
 
 function e2guardian_php_deinstall_command() {
 	global $config, $g;
-	if (is_process_running('e2guardian')) {
-		log_error("stopping e2guardian..");
-		mwexec("/usr/local/etc/rc.d/e2guardian.sh stop");
-		sleep(1);
+	
+	conf_mount_rw();
+
+	// remove package crons
+	$crons = array("/bin/sh /usr/local/bin/e2g_watchdog.sh",
+			"/usr/local/bin/php -q /usr/local/www/e2guardian_scheds.php",
+			E2GUARDIAN_DIR . "/bin/freshclam",
+			"/usr/local/bin/php /usr/local/www/e2guardian.php fetch_blacklist",
+			"/usr/local/bin/php /usr/local/www/e2guardian_ldap.php");
+	foreach ($crons as $cron_cmd) {
+		e2g_check_cron($cron_cmd, "remove");
+	}
+	
+	//remove autamtic parent squid script
+	$ecmds = array("e2guardian squid parent" => "/usr/local/etc/rc.d/e2parent.sh",
+		       "e2guradian" => "/usr/local/etc/rc.d/e2guardian.sh");
+	foreach ($ecmds as $einfo => $ecmd) {
+		if (file_exists($ecmd)) {
+			log_error("stopping $einfo..");
+			mwexec("$ecmd stop");
+			unlink($ecmd);
+		}
+	}
+	//prevent e2guardian binary from starting from watchdog during package uninstall
+	chmod ("/usr/local/sbin/e2guardian", 0444);
+
+	//remove conf files
+	$rdirs = array("*sample", "*conf", "lists", "ssl","authplugins/*sample", "contentscanners/*sample", "downloadmanagers/*sample");
+	foreach ($rdirs as $rm) {
+		system("/bin/rm -rf /usr/local/etc/e2guardian/$rm");
 	}
 
-	if (file_exists("/usr/local/etc/rc.d/e2guardian.sh")) {
-		conf_mount_rw();
-		chmod ("/usr/local/etc/rc.d/e2guardian.sh", 0444);
-		conf_mount_ro();
-	}
+	conf_mount_ro();
 }
 
 function e2guardian_do_xmlrpc_sync($sync_to_ip, $username, $password, $sync_type, $synctimeout) {
