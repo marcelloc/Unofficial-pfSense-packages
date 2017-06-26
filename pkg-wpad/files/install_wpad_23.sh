@@ -19,7 +19,7 @@
 # * See the License for the specific language governing permissions and
 # * limitations under the License.
 
-version="0.3.0.1" 
+version="0.3.0.2" 
 echo `uname -m` system
 if [ "$(cat /etc/version | cut -c 1-3)" == "2.3" ]; then
   if [ "$(uname -m)" == "amd64" ]; then
