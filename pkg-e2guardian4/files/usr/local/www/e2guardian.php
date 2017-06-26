@@ -86,7 +86,7 @@ function extract_black_list($log_notice=true) {
 		file_notice("E2guardian",$error,"E2guardian" . gettext("Downloaded blacklists not found"), "");
 		return;
 	}
-	chdir (E2GUARDIAN_DIR . "/etc/e2guardian/lists");
+	chdir ("/usr/local/etc/e2guardian/lists");
 	if (is_dir ("blacklists.old")) {
         	exec ('rm -rf blacklists.old');
 	}
@@ -107,7 +107,7 @@ function extract_black_list($log_notice=true) {
 function read_lists($log_notice=true, $uw="") {
 	global $config, $g;
 	$group_type = array();
-	$dir = E2GUARDIAN_DIR . "/etc/e2guardian/lists";
+	$dir = "/usr/local/etc/e2guardian/lists";
 	// Read e2guardian lists dirs
 	$groups = array("phraselists", "blacklists", "whitelists");
 	// Assigns know list files
