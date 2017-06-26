@@ -1213,29 +1213,21 @@ EOF;
 		file_put_contents("/usr/local/share/e2guardian/languages/{$reportlanguage}/template.html", e2_text_area_decode($e2guardian_log['report_file']), LOCK_EX);
 	}
 	//check blacklist download files
-	if ($install_process == true) {
-		require_once("/usr/local/www/e2guardian.php");
-		if (!file_exists("/usr/local/pkg/blacklist.tgz")) {
-			fetch_blacklist(false, true);
+	file_put_contents("/root/e2guardian_custom.script", base64_decode($e2guardian_blacklist['custom_script']), LOCK_EX);
+	if ($_POST["force_download"]) {
+		log_error("Blacklist update process started");
+		file_notice("E2guardian",$error,"E2guardian - " . gettext("Blacklist update process started"), "");
+		if ($e2guardian_blacklist['enable_custom_script']) {
+			mwexec_bg("/root/e2guardian_custom.script");
+		} else {
+			mwexec_bg("/usr/local/bin/php /usr/local/www/e2guardian.php fetch_blacklist");
 		}
-		update_output_window("Blacklist check done, continuing package config sync.");
-	} else {
-		file_put_contents("/root/e2guardian_custom.script", base64_decode($e2guardian_blacklist['custom_script']), LOCK_EX);
-		if ($_POST["force_download"]) {
-			log_error("Blacklist update process started");
-			file_notice("E2guardian",$error,"E2guardian - " . gettext("Blacklist update process started"), "");
-			if ($e2guardian_blacklist['enable_custom_script']) {
-				mwexec_bg("/root/e2guardian_custom.script");
-			} else {
-				mwexec_bg("/usr/local/bin/php /usr/local/www/e2guardian.php fetch_blacklist");
-			}
-		}
+	}
 	
-		//Update blacklist categories on Acls
-		if ($_POST["force_update"] || $_POST["liston"]) {
-			require_once("/usr/local/www/e2guardian.php");
-			extract_black_list();
-		}
+	//Update blacklist categories on Acls
+	if ($_POST["force_update"] || $_POST["liston"]) {
+		require_once("/usr/local/www/e2guardian.php");
+		extract_black_list();
 	}
 	//get clamav user
 	$cconf = E2GUARDIAN_DIR . "/etc/clamd.conf";
@@ -1416,8 +1408,11 @@ EOF;
 		}
 	}
 	//mark config changes
-	if (!$_POST["force_update"] && !$_POST["force_download"] && !$_POST["liston"] && $install_process != true) {
+	if (!$_POST["force_update"] && !$_POST["force_download"] && !$_POST["liston"]) {
 		mark_subsystem_dirty('e2guardian');
+	}
+	if ($install_process == true) {
+		clear_subsystem_dirty('e2guardian');
 	}
 }
 
@@ -1671,6 +1666,14 @@ function e2guardian_php_install_command() {
 		system("/bin/sh /root/e2guardian.bsd.sh");
 	}
 	sync_package_e2guardian("no", true);
+	echo "Checking Blacklist...\n";
+	if (!file_exists("/usr/local/pkg/blacklist.tgz")) {
+		require_once("/usr/local/www/e2guardian.php");
+        	fetch_blacklist(false, true);
+                echo "Blacklist check done, continuing package config sync.\n";
+	}
+	clear_subsystem_dirty('e2guardian');
+
 }
 
 function e2guardian_php_deinstall_command() {
@@ -1678,7 +1681,12 @@ function e2guardian_php_deinstall_command() {
 	
 	conf_mount_rw();
 
-	// remove package crons
+	echo "Remove modified xml files...\n";
+	$e2gxmls = array("users", "ips");
+	foreach ($e2gxmls as $e2gxml) {
+		unlink_if_exists("/usr/local/pkg/e2guardian_{$e2gxml}.xml");
+	}
+	echo "Removing package crons...\n";
 	$crons = array("/bin/sh /usr/local/bin/e2g_watchdog.sh",
 			"/usr/local/bin/php -q /usr/local/www/e2guardian_scheds.php",
 			E2GUARDIAN_DIR . "/bin/freshclam",
@@ -1688,7 +1696,7 @@ function e2guardian_php_deinstall_command() {
 		e2g_check_cron($cron_cmd, "remove");
 	}
 	
-	//remove autamtic parent squid script
+	echo "Disabling automtic parent squid script...\n";
 	$ecmds = array("e2guardian squid parent" => "/usr/local/etc/rc.d/e2parent.sh",
 		       "e2guradian" => "/usr/local/etc/rc.d/e2guardian.sh");
 	foreach ($ecmds as $einfo => $ecmd) {
@@ -1701,12 +1709,12 @@ function e2guardian_php_deinstall_command() {
 	//prevent e2guardian binary from starting from watchdog during package uninstall
 	chmod ("/usr/local/sbin/e2guardian", 0444);
 
-	//remove conf files
+	echo "Removing conf files...\n";
 	$rdirs = array("*sample", "*conf", "lists", "ssl","authplugins/*sample", "contentscanners/*sample", "downloadmanagers/*sample");
 	foreach ($rdirs as $rm) {
 		system("/bin/rm -rf /usr/local/etc/e2guardian/$rm");
 	}
-
+	clear_subsystem_dirty('e2guardian');
 	conf_mount_ro();
 }
 
