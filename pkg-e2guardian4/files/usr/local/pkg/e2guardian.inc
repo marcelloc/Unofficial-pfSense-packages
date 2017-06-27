@@ -482,7 +482,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$dirs = array("/var/log/e2guardian/stats", "/etc/ssl/demoCA", "/etc/ssl/demoCA/private", "/etc/ssl/demoCA/crl", "/etc/ssl/demoCA/certs", $e2guardian_dir . "/ssl/generatedcerts", $e2guardian_dir . "/ssl/generatedlinks");
 	foreach ($dirs as $dir) {
 		if (!is_dir($dir)) {
-			mkdir ($dir, 0755, true);
+			mkdir ($dir, 0644, true);
 		}
 	}
 	$enablessl=($e2guardian["enablessl"] == "on" ? "on" : "off");
@@ -1698,7 +1698,6 @@ function e2guardian_php_install_command() {
                 echo "Blacklist check done, continuing package config sync.\n";
 	}
 	clear_subsystem_dirty('e2guardian');
-
 }
 
 function e2guardian_php_deinstall_command() {
@@ -1735,10 +1734,11 @@ function e2guardian_php_deinstall_command() {
 	chmod("/usr/local/sbin/e2guardian",0444);
 
 	echo "Removing conf files...\n";
-	$rdirs = array("*sample", "*conf", "lists", "ssl","authplugins/*sample", "contentscanners/*sample", "downloadmanagers/*sample");
-	foreach ($rdirs as $rm) {
-		system("/bin/rm -rf /usr/local/etc/e2guardian/$rm");
+	$rconfs = array('*sample', '*conf', 'lists/*.*', 'authplugins/*sample', 'contentscanners/*sample', 'downloadmanagers/*sample');
+	foreach ($rconfs as $rm) {
+		system("/bin/rm -f /usr/local/etc/e2guardian/$rm");
 	}
+	
 	clear_subsystem_dirty('e2guardian');
 	conf_mount_ro();
 }
