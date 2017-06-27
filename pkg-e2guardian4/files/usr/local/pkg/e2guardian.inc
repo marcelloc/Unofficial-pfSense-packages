@@ -118,7 +118,7 @@ function e2g_check_logdeniedcgi($logdeniedcgi) {
 function e2g_watchdog_script($wpid, $wcmd, $winfo){
 	$wlog = "/var/log/e2guardian/start.log";
 	$wscript = <<<EOF
-# watchdog script for e2g {$winfo}
+# watchdog script for {$winfo}
 	if [ -f {$wpid} ];then
 		cat {$wpid} | xargs ps
 		if [ $? -ne 0 ]; then
@@ -1282,10 +1282,12 @@ EOF;
 	$cron_cmd = "/usr/local/bin/e2g_watchdog.sh";
 	if ($e2guardian['watchdog'] == "on") {
 		e2g_check_cron("/bin/sh $cron_cmd", "create");
-		//e2g parent
-		$parent_pid = "/var/run/squid/e2gsquid.pid";
-		$parent_cmd = "/usr/local/etc/rc.d/e2parent.sh start";
-		$watchdog_parent = e2g_watchdog_script($parent_pid, $parent_cmd, "parent");
+		if ($e2guardian['parentmode'] == 'local') {
+			//e2g parent
+			$parent_pid = "/var/run/squid/e2gsquid.pid";
+			$parent_cmd = "/usr/local/etc/rc.d/e2parent.sh start";
+			$watchdog_parent = e2g_watchdog_script($parent_pid, $parent_cmd, "parent");
+		}
 
 		//e2g watchdog
 		$we2g_pid = "/var/run/e2guardian.pid";
