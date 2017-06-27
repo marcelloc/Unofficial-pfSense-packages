@@ -165,14 +165,14 @@ if (is_array($config['installedpackages']['e2guardianlog'])) {
         </div>
         <BR>
 	<?php } ?>
-	<div class="panel panel-default" style='margin:0 auto;width:30%'>
+	<div class="panel panel-default" style='margin:0 auto;width:450px'>
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Watchdog start log"); ?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table-responsive table">
+			<table class="table table-responsive table-striped table-hover table-condensed">
 				<tbody>
 				<tr><td>
-					<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<table class="table" width="100%" border="0" cellspacing="0" cellpadding="0">
 						<thead id="e2gWatchdoghead"><tr>
 							<td colspan="2" class="listtopic" align="center"><?=gettext("E2guardian - Watchdog Logs"); ?></td>
 						</tr></thead>

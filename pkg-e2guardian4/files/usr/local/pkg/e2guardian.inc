@@ -115,6 +115,26 @@ function e2g_check_logdeniedcgi($logdeniedcgi) {
 	}
 }
 
+function e2g_watchdog_script($wpid, $wcmd, $winfo){
+	$wlog = "/var/log/e2guardian/start.log";
+	$wscript = <<<EOF
+# watchdog script for e2g {$winfo}
+	if [ -f {$wpid} ];then
+		cat {$wpid} | xargs ps
+		if [ $? -ne 0 ]; then
+			{$wcmd}
+			echo "`date +'%a %b %d %T %Y'` {$winfo} start" >> {$wlog}
+		fi
+	else
+		{$wcmd}
+		echo "`date +'%a %b %d %T %Y'` {$winfo} start" >> {$wlog}
+	fi
+
+EOF;
+
+	return($wscript);
+}
+
 function e2g_check_squid_pkg($export_acl,$acls){
 	global $config, $acl_include_files;
 	if (!is_array($config['installedpackages']['squid'])) {
@@ -250,7 +270,10 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if (!is_array($config['installedpackages']['e2guardian'])) {
 		$config['installedpackages']['e2guardian']['config'][0] = array(
 			'interface' => 'lo0',
+			'filterports' => '8080',
 			'parentmode' => 'local',
+			'watchdog'   => 'on',
+			'applyaction' => '-Q',
 			'httpworkers' => '256',
 			'daemon_options' => 'softrestart');
 	}
@@ -259,6 +282,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		$config['installedpackages']['e2guardianconfig']['config'][0] = array(
 			'auth_plugin' => '',
 			'scan_options' => 'scancleancache,createlistcachefiles,deletedownloadedtempfiles',
+			'filtermode' => '1',
 			'weightedphrasemode' => '2',
 			'preservecase' => '0',
 			'phrasefiltermode' => '2',
@@ -1255,39 +1279,37 @@ EOF;
 	include("/usr/local/pkg/e2guardian.conf.template");
 
 	//watchdog script
-	$watchdog_extra = "";
-	if ($e2guardian['watchdog'] == "on") {
-		$parent_cmd = "/usr/local/etc/rc.d/e2parent.sh";
-		$watchdog_extra .= "\nif [ -f /var/run/squid/e2gsquid.pid ];then\n\t";
-       		$watchdog_extra .= "cat /var/run/squid/e2gsquid.pid | xargs ps ||\n\t";
-        	$watchdog_extra .= "{$parent_cmd} start\nelse\n\t";
-        	$watchdog_extra .= "{$parent_cmd} start\nfi\n";
-	}
-	$watchdog = <<< EOF
-#!/bin/sh
-for a in 10 20 30 40 50
-do
-if [ -f /var/run/e2guardian.pid ];then
- cat /var/run/e2guardian.pid | xargs ps
- if [ $? -ne 0 ]; then
-   /usr/local/etc/rc.d/e2guardian.sh start
-   echo "`date` start" >> /var/log/e2guardian/start.log
- fi
-else
-   /usr/local/etc/rc.d/e2guardian.sh start
-fi
-{$watchdog_extra}
-sleep 10
-done
-
-EOF;
 	$cron_cmd = "/usr/local/bin/e2g_watchdog.sh";
-	file_put_contents($cron_cmd, $watchdog, LOCK_EX);
-	//check cron_tab
 	if ($e2guardian['watchdog'] == "on") {
-		 e2g_check_cron("/bin/sh $cron_cmd", "create");
+		e2g_check_cron("/bin/sh $cron_cmd", "create");
+		//e2g parent
+		$parent_pid = "/var/run/squid/e2gsquid.pid";
+		$parent_cmd = "/usr/local/etc/rc.d/e2parent.sh start";
+		$watchdog_parent = e2g_watchdog_script($parent_pid, $parent_cmd, "parent");
+
+		//e2g watchdog
+		$we2g_pid = "/var/run/e2guardian.pid";
+		$we2g_cmd = "/usr/local/etc/rc.d/e2guardian.sh start";
+		$watchdog_e2g = e2g_watchdog_script($we2g_pid,$we2g_cmd,"e2guardian");
+
+		//e2g main squid process
+		if (is_array($config['installedpackages']['squid'])) {
+			$squid_cfg = $config['installedpackages']['squid']['config'][0];
+			if ($squid_cfg['enable_squid'] == "on") {
+				$msqd_pid = "/var/run/squid/squid.pid";
+				$msqd_cmd = "/usr/local/sbin/squid -f /usr/local/etc/squid/squid.conf";
+				$watchdog_squid = e2g_watchdog_script($msqd_pid, $msqd_cmd, "squid");
+			}
+		}
+
+		$watchdog  =  "#!/bin/sh\n";
+		$watchdog .= "for a in 00 10 20 30 40 50\ndo\n";
+		$watchdog .= "\t{$watchdog_e2g}\n\t{$watchdog_parent}\n\t{$watchdog_squid}\n";
+		$watchdog .= "\tsleep 10\ndone\n";
+		file_put_contents($cron_cmd, $watchdog, LOCK_EX);
 	} else {
-		 e2g_check_cron("/bin/sh $cron_cmd", "remove");
+		file_put_contents($cron_cmd, "", LOCK_EX);
+		e2g_check_cron("/bin/sh $cron_cmd", "remove");
 	}
 
 	// Check acl schedules

@@ -169,7 +169,7 @@ if ($_POST) {
 			break;
 		case 'starthead':
 			// Show table headers
-			show_tds(array("Date-Time", "Message"));
+			show_tds(array("Date-Time", "Daemon", "Action"));
 			break;
 		case 'start':
 			// Define log file
@@ -179,15 +179,16 @@ if ($_POST) {
 			foreach ($logarr as $logent) {
 				// Split line by delimiter
 				//Thu Jun 22 00:49:13 BRT 2017 start
-				if (preg_match("@(.*) (start)@", $logent, $logline)) {
+				if (preg_match("@(.*) (\w+) (start)@", $logent, $logline)) {
 
 					// Word wrap the message
 					$logline[1] = htmlentities($logline[1]);
 					$logline[1] = html_autowrap($logline[1]);
 
 					echo "<tr>\n";
-					echo "<td $listr nowrap=\"nowrap\">{$logline[1]}</td>\n";
+					echo "<td $listr nowrap=\"nowrap\"><i class='fa fa-calendar'></i>&nbsp;{$logline[1]}</td>\n";
 					echo "<td $listr nowrap=\"nowrap\">{$logline[2]}</td>\n";
+					echo "<td><i class='fa fa-play-circle'></i></td>\n";
 					echo "</tr>\n";
 				}
 			}
