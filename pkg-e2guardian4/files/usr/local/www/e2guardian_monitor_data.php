@@ -21,7 +21,7 @@
  * limitations under the License.
  */
 
-require_once("guiconfig.inc");
+require_once("functions.inc");
 
 global $config;
 if (is_array($config['installedpackages']['e2guardianlog'])) {
