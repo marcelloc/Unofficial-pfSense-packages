@@ -479,7 +479,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$load_samples = 0;
 
 	#ssl men-in-the-middle feature
-	$dirs = array("/var/log/e2guardian/stats", "/etc/ssl/demoCA", "/etc/ssl/demoCA/private", "/etc/ssl/demoCA/crl", "/etc/ssl/demoCA/certs", $e2guardian_dir . "/ssl/generatedcerts", $e2guardian_dir . "/ssl/generatedlinks");
+	$dirs = array("/var/log/e2guardian", "/var/log/e2guardian/stats", "/etc/ssl/demoCA", "/etc/ssl/demoCA/private", "/etc/ssl/demoCA/crl", "/etc/ssl/demoCA/certs", $e2guardian_dir . "/ssl/generatedcerts", $e2guardian_dir . "/ssl/generatedlinks");
 	foreach ($dirs as $dir) {
 		if (!is_dir($dir)) {
 			mkdir ($dir, 0755, true);
