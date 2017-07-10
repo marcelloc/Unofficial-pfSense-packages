@@ -1625,6 +1625,10 @@ function e2guardian_validate_input($post, &$input_errors) {
                 return;
         }
 
+	if ( in_array('logclienthostnames', $post['scan_options']) && 
+	    !in_array('reverseclientiplookups', $post['scan_options'])) {
+		$input_errors[] = "Scan option 'Log client hostnames' needs 'Reverse client ip lookups' to be selected as well.";
+	}
 	if (sizeof ($post['group_options']) > 0) {
 		$_POST['lgroupoptions'] = implode (" ",$post['group_options']);
 	}
