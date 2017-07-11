@@ -1,5 +1,5 @@
---- /usr/local/lib/MailScanner/MailScanner/SweepContent.orig.pm	2017-04-17 01:50:30.156409000 +0000
-+++ /usr/local/lib/MailScanner/MailScanner/SweepContent.pm	2017-04-17 01:52:24.158842000 +0000
+--- /usr/local/share/MailScanner/perl/MailScanner/SweepContent.orig.pm	2017-04-17 01:50:30.156409000 +0000
++++ /usr/local/share/MailScanner/perl/MailScanner/SweepContent.pm	2017-04-17 01:52:24.158842000 +0000
 @@ -140,6 +140,11 @@
      # Check all the files for the attachment-size limit
      $counter += CheckAttachmentSizes($message, $id);

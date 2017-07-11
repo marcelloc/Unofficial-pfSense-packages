@@ -1,5 +1,5 @@
---- /usr/local/lib/MailScanner/MailScanner/Message.orig.pm	2017-04-17 01:30:27.988325000 +0000
-+++ /usr/local/lib/MailScanner/MailScanner/Message.pm	2017-04-17 01:48:50.320621000 +0000
+--- /usr/local/share/MailScanner/perl/MailScanner/Message.orig.pm	2017-04-17 01:30:27.988325000 +0000
++++ /usr/local/share/MailScanner/perl/MailScanner/Message.pm	2017-04-17 01:48:50.320621000 +0000
 @@ -2660,7 +2660,8 @@
    my($size, $level, $ziperror, $tarerror, $silentviruses, $noisyviruses);
    my($allziperrors, $alltarerrors, $textlevel, $failisokay);

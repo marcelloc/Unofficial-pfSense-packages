@@ -1,5 +1,5 @@
---- /usr/local/lib/MailScanner/MailScanner/ConfigDefs.orig.pl	2017-04-17 01:30:06.687969000 +0000
-+++ /usr/local/lib/MailScanner/MailScanner/ConfigDefs.pl	2017-04-17 01:37:31.896642000 +0000
+--- /usr/local/share/MailScanner/perl/MailScanner/ConfigDefs.orig.pl	2017-04-17 01:30:06.687969000 +0000
++++ /usr/local/share/MailScanner/perl/MailScanner/ConfigDefs.pl	2017-04-17 01:37:31.896642000 +0000
 @@ -350,6 +350,8 @@
  MCPSpamAssassinTimeout		10
  TNEFTimeout			120
