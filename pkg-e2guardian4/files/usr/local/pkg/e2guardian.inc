@@ -1630,9 +1630,30 @@ function e2guardian_validate_input($post, &$input_errors) {
 		$input_errors[] = "Scan option 'Log client hostnames' needs 'Reverse client ip lookups' to be selected as well.";
 	}
 	if (sizeof ($post['group_options']) > 0) {
-		$_POST['lgroupoptions'] = implode (" ",$post['group_options']);
+		$_POST['lgroupoptions'] = implode (" ", $post['group_options']);
 	}
-
+	if ($post['banned_sitelist'] != "") {
+		$includes = explode ("\n",$post['banned_sitelist']);
+		foreach ($includes as $cline) {
+			if (preg_match("/^.Include\<(\S+)\>/", $cline, $clm)){
+				if (!file_exists($clm[1])) {
+					$input_errors[] = "$clm[1] listed on banned config text area does not exists on file system";
+					$input_errors[] = "Comment or remove this line before save config again.";
+				}
+			}
+		}
+	}
+	if ($post['banned_urllist'] != "") {
+		$includes = explode ("\n",$post['banned_urllist']);
+		foreach ($includes as $cline) {
+			if (preg_match("/^.Include\<(\S+)\>/", $cline, $clm)){
+				if (!file_exists($clm[1])) {
+					$input_errors[] = "$clm[1] listed on banned config text area does not exists on file system";
+					$input_errors[] = "Comment or remove this line before save config again.";
+				}
+			}
+		}
+	}
 	if ($post['reportinglevel'] != "") {
 		 $rpa = array ( 'global' => 'Use Global log option',
  				'-1' => 'Stealth mode',
