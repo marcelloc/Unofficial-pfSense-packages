@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-E2guardian4
-PORTVERSION=	0.4.2.5
+PORTVERSION=	0.4.2.6
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
