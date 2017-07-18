@@ -134,6 +134,8 @@ function read_lists($log_notice=true, $uw="") {
 								$subcategory = scandir("$dir/$group/$list/$subdir/");
 								foreach ($subcategory as $file) {
 									if (!preg_match ("/^\./", $file)) {
+										//add category to file https://github.com/e2guardian/e2guardian/issues/244
+										system("echo '#listcategory: \"{$list}_{$subdir}\"' >> $dir/$group/$list/$subdir/$file");
 										//assign list to array
 										$type = split("_", $file);
 										if (preg_match("/(\w+)/", $type[0], $matches)) {
@@ -146,6 +148,8 @@ function read_lists($log_notice=true, $uw="") {
 									}
 								}
 							} else {
+								//add category to file https://github.com/e2guardian/e2guardian/issues/244
+								system("echo '#listcategory: \"{$list}\"' >> $dir/$group/$list/$file");
 								//assign list to array
 								$type = split("_", $file);
 								if (preg_match("/(\w+)/", $type[0], $matches)) {
