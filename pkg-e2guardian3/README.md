@@ -12,7 +12,7 @@ Feedbacks and contributions are always welcome.
 
 cd /root
 
-fetch https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-e2guardian/files/install_e2guardian_23.sh
+fetch https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-e2guardian3/files/install_e2guardian_23.sh
 
 sh ./install_e2guardian_23.sh
 
