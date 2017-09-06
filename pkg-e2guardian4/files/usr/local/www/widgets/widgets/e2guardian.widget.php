@@ -26,22 +26,22 @@ require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 require_once("service-utils.inc");
 
-function open_table($thead=""){
+function e2g_open_table($thead=""){
 	echo "<table border=1 class='table table-striped table-hover table-condensed'>\n";
 	echo "<thead><tr>".$thead."</tr></thread>";
         echo "<tbody>\n";
 }
 
-function open_table_header(){
+function e2g_open_table_header(){
 	global $dbc;
 	//$h="<th style='text-align:center;'>Date</th>"; //print"<tr>";
         foreach ($dbc as $c){
         	$h .= "<th style='text-align:center;'>".ucfirst($c)."</th>";
 	}
-	open_table($h);
+	e2g_open_table($h);
 }
 
-function close_table(){
+function e2g_close_table(){
 	echo"</tr>\n</tbody>";
 	echo"</table>";
 }
@@ -72,9 +72,9 @@ $size = $config['installedpackages']['e2guardian']['config'][0]['widget_count'];
 
 $dbc = array('time','busy','httpwQ','logQ','conx','conx/s','reqs','reqs/s','maxfd','LCcnt');
 $curr_time = time();
-open_table_header();
+e2g_open_table_header();
 e2guardian_show_dstats();
-close_table();
+e2g_close_table();
 echo"  </tr>";
 echo"</table></div>";
 
