@@ -12,20 +12,14 @@ Feedbacks and contributions are always welcome.
 
 enable unofficial repo 
 
-[b]2.3 AMD64[/b]
-[code]
+2.3 AMD64
 fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.conf
-[/code]
 
-[b]2.3 I386[/b]
-[code]
+2.3 I386
 fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficiali386.conf
-[/code]
 
-[b]2.4[/b]
-[code]
+2.4
 fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.24.conf
-[/code]
 
 or
 
