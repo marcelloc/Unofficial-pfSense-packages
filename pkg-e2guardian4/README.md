@@ -10,6 +10,19 @@ Feedbacks and contributions are always welcome.
 
 # Install instructions
 
+enable unofficial repo 
+
+2.3 AMD64
+fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.conf
+
+2.3 I386
+fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficiali386.conf
+
+2.4
+fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.24.conf
+
+or
+
 cd /root
 
 fetch https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-e2guardian4/files/install_e2guardian_23.sh
