@@ -46,7 +46,6 @@ function fetch_blacklist($log_notice = true, $install_process = false) {
 	} else {
 		$uw = "Found a clean install, reading default access lists...";
 	}
-	conf_mount_rw();
 	if ($install_process == true) {
 		update_output_window($uw);
 	}
@@ -166,7 +165,6 @@ function read_lists($log_notice=true, $uw="") {
 			}
 		}
 	}
-	conf_mount_rw();
 	$files = array("site", "url");
 	foreach ($files as $edit_xml) {
 		$edit_file=file_get_contents("/usr/local/pkg/e2guardian_".$edit_xml."_acl.xml");
