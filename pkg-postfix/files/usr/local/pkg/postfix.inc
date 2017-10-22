@@ -888,8 +888,6 @@ SPF;
 		$policyd_spf .= "Whitelist = {$antispam['postfix_spf_white']}\n";
 	}
 
-	conf_mount_rw();
-
 	log_error("Writing out configuration");
 	file_put_contents(POSTFIX_LOCALBASE."/etc/postfix-policyd-spf-python/policyd-spf.conf", $policyd_spf,LOCK_EX);
 	file_put_contents(POSTFIX_LOCALBASE . "/etc/postfix/main.cf", $postfix_main, LOCK_EX);
@@ -992,7 +990,6 @@ EOF;
 		// check postwhite list	
         }
 	clear_subsystem_dirty('postfix');
-	conf_mount_ro();
 }
 
 function postfix_validate_input($post, &$input_errors) {
@@ -1043,10 +1040,8 @@ function postfix_php_deinstall_command() {
 	}
 	write_config();
 	sync_package_postfix();
-	conf_mount_rw();
 	unlink_if_exists("/usr/local/etc/rc.d/postfix.sh");
 	unlink_if_exists("/etc/aliases");
-	conf_mount_ro();
 }
 
 /* Uses XMLRPC to synchronize the changes to a remote node */
