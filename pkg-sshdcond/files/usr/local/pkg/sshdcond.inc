@@ -73,8 +73,6 @@ function sshdcond_custom_php_write_config() {
 		return;
 	}
 
-	conf_mount_rw();
-
 	$sshd_extra = "";
 	if (is_array($config['installedpackages']['sshdcond']['config'])) {
 
@@ -106,9 +104,8 @@ function sshdcond_custom_php_write_config() {
 	/* Save /etc/ssh/sshd_extra. */
 	file_put_contents("/etc/ssh/sshd_extra", $sshd_extra, LOCK_EX);
 
-	/* Restart sshd and re-mount read-only. */
+	/* Restart sshd */
 	restart_sshd();
-	conf_mount_ro();
 
 	/* Sync config with other pfSense servers. */
 	sshdcond_sync_on_changes();
