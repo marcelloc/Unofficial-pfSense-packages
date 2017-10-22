@@ -48,8 +48,6 @@ function sync_package_filer() {
 	global $config, $g;
 	$update_conf = 0;
 
-	conf_mount_rw();
-
 	/* Loop on configured files. */
 	if ($config['installedpackages']['filer']['config'] != "") {
 		$count = 0;
@@ -88,8 +86,6 @@ function sync_package_filer() {
 			write_config();
 		}
 	}
-
-	conf_mount_ro();
 
 	filer_sync_on_changes();
 }
