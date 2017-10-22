@@ -224,7 +224,6 @@ function check_ca_hashes() {
 	}
 	closedir($handle);
 	if ($cert_count < 10) {
-		conf_mount_rw();
 		//create ca-root hashes from ca-root-nss package
 		log_error("Creating root certificate bundle hashes from the Mozilla Project");
 		$cas = file('/usr/local/share/certs/ca-root-nss.crt');
@@ -1351,8 +1350,6 @@ EOF;
 			}
 		}
 	}
-	//write files
-	conf_mount_rw();
 
 	write_config();
 
@@ -1561,9 +1558,6 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 		}
 	}
 
-	//mount read only
-	conf_mount_ro();
-
 	//avoid sync during boot process
 	if (!isset($boot_process) || $via_rpc == "yes") {
 		/* Uses XMLRPC to synchronize the changes to a remote node */
@@ -1728,8 +1722,6 @@ function e2guardian_php_install_command() {
 function e2guardian_php_deinstall_command() {
 	global $config, $g;
 	
-	conf_mount_rw();
-
 	echo "Remove modified xml files...\n";
 	$e2gxmls = array("users", "ips");
 	foreach ($e2gxmls as $e2gxml) {
@@ -1765,7 +1757,6 @@ function e2guardian_php_deinstall_command() {
 	}
 	
 	clear_subsystem_dirty('e2guardian');
-	conf_mount_ro();
 }
 
 function e2guardian_do_xmlrpc_sync($sync_to_ip, $username, $password, $sync_type, $synctimeout) {
