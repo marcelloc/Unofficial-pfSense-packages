@@ -2,6 +2,7 @@
 
 PORTNAME=	pfSense-pkg-Filer
 PORTVERSION=	0.6.2
+PORTREVISION=	1
 CATEGORIES=	sysutils
 MASTER_SITES=	# empty
 DISTFILES=	# empty
