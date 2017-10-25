@@ -428,7 +428,6 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 
 	include("mailscanner.conf.template");
 	#write files
-	conf_mount_rw();
 	$msc_dirs=array("incoming", "incoming/Locks", "quarantine");
 	foreach ($msc_dirs as $msc_dir){
 		if (!is_dir("/var/spool/MailScanner/{$msc_dir}")){
@@ -686,7 +685,6 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 	}
 
 	mark_subsystem_dirty('mailscanner');
-	conf_mount_ro();
 
 	#does not sync during boot process
 	if (isset($boot_process))
@@ -846,9 +844,7 @@ function mailscanner_php_deinstall_command() {
 	if (count($pgreg_out) > 0){
 		mwexec(MAILSCANNER_LOCALBASE. "/etc/rc.d/mailscanner stop");
 		sleep(1);
-		conf_mount_rw();
 		unlink_if_exists(MAILSCANNER_LOCALBASE. "/etc/rc.d/mailscanner");
-		conf_mount_ro();
 		}
 }
 
