@@ -439,7 +439,6 @@ function grep_log(){
 
 function write_db($stm, $table) {
 	global $postfix_dir, $config, $g;
-	conf_mount_rw();
 	$do_sync = array();
 	if (POSTFIX_DEBUG > 0) {
 		print "writing to database...";
@@ -480,7 +479,6 @@ function write_db($stm, $table) {
 			file_put_contents('/var/db/postfix/' . $ip . '.sql', ${$ip}, LOCK_EX);
 		}
 	}
-	conf_mount_ro();
 	/* Write local file */
 }
 
