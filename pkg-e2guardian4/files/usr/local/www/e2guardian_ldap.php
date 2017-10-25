@@ -93,9 +93,6 @@ function get_ldap_members($group, $user, $password) {
 // Read Pfsense config
 global $config, $g;
 
-#mount filesystem writable
-conf_mount_rw();
-
 $id = 0;
 $apply_config = 0;
 if (is_array($config['installedpackages']['e2guardiangroups']['config'])) {
@@ -173,8 +170,5 @@ if ($apply_config > 0) {
 } else {
 	print "User list from LDAP is already the same as current group, no changes made\n";
 }
-
-#mount filesystem read-only
-conf_mount_ro();
 
 ?>
