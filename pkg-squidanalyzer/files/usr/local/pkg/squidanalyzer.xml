@@ -67,7 +67,7 @@
 	<field>
       		<fielddescr>Squid log</fielddescr>
       		<fieldname>squidlog</fieldname>
-      		<description>Set the path to the Squid/squidguard/e2guardian log file(s) separeted by space.</description>
+      		<description>Set the path to the Squid/squidguard/e2guardian log file(s) separeted by comma.</description>
       		<type>input</type>
       		<size>60</size>
       		<default_value>/var/squid/logs/access.log</default_value>
