@@ -51,7 +51,7 @@ function validate_form_sa($post, &$input_errors) {
 		if ( $post['squidlog'] == "" ) {
 			$input_errors[] = gettext('The field') . " Squid Log " . gettext('cannot be empty');
 		} else {
-			$files = explode(" ",$post['squidlog']);
+			$files = explode(",",$post['squidlog']);
 			foreach ($files as $file) {
 				if (! file_exists($file)) {
 					$input_errors[] = "$file " . gettext ('does not exists');
