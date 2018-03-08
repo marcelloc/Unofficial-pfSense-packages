@@ -91,7 +91,7 @@ function e2g_check_squid_pkg($export_acl,$acls){
 			$write_config++;
 		}
 		//create integration file
-		//$integration  = "cache_peer 172.17.62.106 parent 8080 0 no-query login=*:password\n";
+		//$integration  = "cache_peer 169.17.62.106 parent 8080 0 no-query login=*:password\n";
 		//$integration .=	"request_header_access X-Forwarded-For allow localhost\n";
 		foreach ($acl_include_files as $acl_iname => $acl_ifile) {
 			$integration .= "acl $acl_iname dstdomain -n \"$acl_ifile\"\n";
@@ -210,7 +210,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		$config['installedpackages']['e2guardian']['config'][0] = array(
 			'interface' => 'lo0',
 			'filterports' => '8080',
-			'parentmode' => 'local',
+			'parentmode' => 'remote',
 			'applyaction' => '-Q',
 			'httpworkers' => '256',
 			'daemon_options' => 'softrestart');
@@ -257,8 +257,8 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$httpworkers=($e2guardian['httpworkers'] ? $e2guardian['httpworkers'] : "100");
 	$preforkchildren = ($e2guardian['preforkchildren']? $e2guardian['preforkchildren'] : "10");
 	if ($e2guardian['parentmode'] == "remote") {
-		$proxyip = ($e2guardian['proxyip'] ? $e2guardian['proxyip'] : "127.0.0.1");
-		$proxyport = ($e2guardian['proxyport'] ? $e2guardian['proxyport'] : "8888");
+		$proxyip = $e2guardian['proxyip'];
+		$proxyport = $e2guardian['proxyport'];
 	} else {
 		$proxyip = "127.0.0.1";
 		$proxyport = "8888";

@@ -204,7 +204,7 @@
                         <options>
                                 <option><name>Use automatic embeded parent config</name><value>local</value></option>
                                 <option><name>Manual configure Remote proxy or Local Squid package</name><value>remote</value></option>
-                                <default_value>local</default_value>
+                                <default_value>remote</default_value>
                         </options>
 			<advancedfield/>
                 </field>
