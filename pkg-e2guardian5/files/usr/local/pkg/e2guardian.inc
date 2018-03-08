@@ -91,7 +91,7 @@ function e2g_check_squid_pkg($export_acl,$acls){
 			$write_config++;
 		}
 		//create integration file
-		//$integration  = "cache_peer 169.17.62.106 parent 8080 0 no-query login=*:password\n";
+		//$integration  = "cache_peer 172.17.62.106 parent 8080 0 no-query login=*:password\n";
 		//$integration .=	"request_header_access X-Forwarded-For allow localhost\n";
 		foreach ($acl_include_files as $acl_iname => $acl_ifile) {
 			$integration .= "acl $acl_iname dstdomain -n \"$acl_ifile\"\n";
@@ -210,7 +210,7 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		$config['installedpackages']['e2guardian']['config'][0] = array(
 			'interface' => 'lo0',
 			'filterports' => '8080',
-			'parentmode' => 'remote',
+			'parentmode' => 'direct',
 			'applyaction' => '-Q',
 			'httpworkers' => '256',
 			'daemon_options' => 'softrestart');
@@ -256,12 +256,19 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$nodaemon = (preg_match('/nodaemon/', $e2guardian['daemon_options']) ? "yes" : "off");
 	$httpworkers=($e2guardian['httpworkers'] ? $e2guardian['httpworkers'] : "100");
 	$preforkchildren = ($e2guardian['preforkchildren']? $e2guardian['preforkchildren'] : "10");
-	if ($e2guardian['parentmode'] == "remote") {
-		$proxyip = $e2guardian['proxyip'];
-		$proxyport = $e2guardian['proxyport'];
-	} else {
-		$proxyip = "127.0.0.1";
-		$proxyport = "8888";
+	switch ($e2guardian['parentmode']) { 
+		case "remote":
+			$proxyip = ($e2guardian['proxyip'] ? $e2guardian['proxyip'] : "127.0.0.1");
+			$proxyport = ($e2guardian['proxyport'] ? $e2guardian['proxyport'] : "8888");
+			break;
+		case "direct":
+			$proxyip = "";
+        	        $proxyport = "";
+			break;
+		case "local":
+			$proxyip = "127.0.0.1";
+			$proxyport = "8888";
+			break;
 	}
 	$proxytimeout = ($e2guardian['proxytimeout'] ? $e2guardian['proxytimeout'] : "30");
 
@@ -627,6 +634,13 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 		file_put_contents($e2guardian_dir . "/lists/logsitelist." . $e2guardian_site['name'], ($e2guardian_site['urlsite_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardiansiteacl']['config'][$count]['log_sitelist']) : ""), LOCK_EX);
 		$count++;
 	}
+
+	$files_5 = array($e2guardian_dir . '/downloadmanagers/default.conf');
+        foreach ($files_5 as $f_5) {
+                if (! file_exists($f_5) && file_exists("{$f_5}.sample")) {
+                        copy ("{$f_5}.sample",$f_5);
+                }
+        }
 
 	//URL ACL
 	//create a default setup if not exists
@@ -1547,7 +1561,7 @@ function e2guardian_validate_input($post, &$input_errors) {
                 return;
         }
 
-	if ( in_array('logclienthostnames', $post['scan_options']) && 
+	if ( is_array($post['scan_options']) && in_array('logclienthostnames', $post['scan_options']) && 
 	    !in_array('reverseclientiplookups', $post['scan_options'])) {
 		$input_errors[] = "Scan option 'Log client hostnames' needs 'Reverse client ip lookups' to be selected as well.";
 	}
@@ -1602,8 +1616,13 @@ function e2guardian_validate_input($post, &$input_errors) {
 	if ($post['parentmode'] == "local" && $post['dca'] == "") {
 		 $input_errors[] = "E2guardian needs a configured CA while using automatic parent proxy mode.";
 	}
-	if ($post['parentmode'] == "remote" && $post['proxyip'] != "") {
-	        $input_errors[] = "E2guardian proxy port cannot be empty or invalid in manual parent mode.";
+	if ($post['parentmode'] == "remote") {
+		if ($post['proxyip'] == "") {
+			$input_errors[] = "E2guardian proxy ip cannot be empty in manual parent mode.";
+		}
+		 if ($post['proxyport'] == "" || !is_numeric($post['proxyport'])) {
+                        $input_errors[] = "E2guardian proxy port cannot be empty or invalid in manual parent mode.";
+                }
 	}
 
 	foreach ($post as $key => $value) {
