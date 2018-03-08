@@ -1,4 +1,4 @@
-i<?php
+<?php
 /*
  * e2guardian.conf.template
  *
@@ -36,7 +36,7 @@ $dg=<<<EOF
 # and easier to customise the access denied page.
 # The language file is used no matter what setting however.
 #
-languagedir = '/usr/local/share/e2guardian/languages'
+languagedir = '{$e2_dir}/share/e2guardian/languages'
 
 # language to use from languagedir.
 language = 'ukenglish'
@@ -226,7 +226,6 @@ pcontimeout = 55
 #
 # See http://www.kb.cert.org/vuls/id/435052
 # on (default) | off
-#!! Not compiled !! originalip = off
 
 # Banned image replacement
 # Images that are banned due to domain/url/etc reasons including those
@@ -482,11 +481,6 @@ downloadmanager = '{$e2guardian_dir}/downloadmanagers/default.conf'
 # Some of the scanner(s) require 3rd party software and libraries eg clamav.
 # See the individual plugin conf file for more options (if any).
 #
-#!! Not compiled !! contentscanner = '/usr/local/etc/e2guardian/contentscanners/clamdscan.conf'
-#!! Not compiled !! contentscanner = '/usr/local/etc/e2guardian/contentscanners/avastdscan.conf'
-#!! Not compiled !! contentscanner = '/usr/local/etc/e2guardian/contentscanners/kavdscan.conf'
-#!! Not compiled !! contentscanner = '/usr/local/etc/e2guardian/contentscanners/icapscan.conf'
-#!! Not compiled !! contentscanner = '/usr/local/etc/e2guardian/contentscanners/commandlinescan.conf'
 {$contentscanners}
 # Content scanner timeout
 # Some of the content scanners support using a timeout value to stop
@@ -506,12 +500,6 @@ contentscannertimeout = {$contentscannertimeout}
 #
 # If you do not use multiple filter groups, you need not specify this option.
 #
-#authplugin = '/usr/local/etc/e2guardian/authplugins/proxy-basic.conf'
-#authplugin = '/usr/local/etc/e2guardian/authplugins/proxy-digest.conf'
-#!! Not compiled !! authplugin = '/usr/local/etc/e2guardian/authplugins/proxy-ntlm.conf'
-#authplugin = '/usr/local/etc/e2guardian/authplugins/ident.conf'
-#authplugin = '/usr/local/etc/e2guardian/authplugins/ip.conf'
-#authplugin = '/usr/local/etc/e2guardian/proxy-header.conf'
 {$authplugin}
 # Map auth to ports
 # If enabled map auth plugins to ips/ports - number of authplugins must then be same as
@@ -611,7 +599,6 @@ daemongroup = '{$daemongroup}'
 # Mail program
 # Path (sendmail-compatible) email program, with options.
 # Not used if usesmtp is disabled (filtergroup specific).
-##!! Not compiled !!mailer = '/usr/sbin/sendmail -t'   # NOT YET IMPLIMENTED
 
 # Enable SSL support  
 # This must be present to enable MITM and/or Cert checking
