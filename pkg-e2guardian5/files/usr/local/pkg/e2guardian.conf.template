@@ -252,7 +252,7 @@ usecustombannedflash = {$usecustombannedflash}
 # group.  To assign users to groups use the filtergroupslist option.  All users default
 # to filter group 1.  You must have some sort of authentication to be able to map users
 # to a group.
-<Right>filtergroups = {$filtergroups}
+filtergroups = {$filtergroups}
 filtergroupslist = '{$e2guardian_dir}/lists/filtergroupslist'
 
 # default filtergroup for standard (explicit) mode

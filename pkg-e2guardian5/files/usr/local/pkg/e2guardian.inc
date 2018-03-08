@@ -1602,14 +1602,8 @@ function e2guardian_validate_input($post, &$input_errors) {
 	if ($post['parentmode'] == "local" && $post['dca'] == "") {
 		 $input_errors[] = "E2guardian needs a configured CA while using automatic parent proxy mode.";
 	}
-	if ($post['parentmode'] == "remote") {
-		if ($post['proxyip'] == "") {
-			$input_errors[] = "E2guardian proxy ip cannot be empty in manual parent mode.";
-		}
-		 if ($post['proxyport'] == "" || !is_numeric($post['proxyport'])) {
-                        $input_errors[] = "E2guardian proxy port cannot be empty or invalid in manual parent mode.";
-                }
-
+	if ($post['parentmode'] == "remote" && $post['proxyip'] != "") {
+	        $input_errors[] = "E2guardian proxy port cannot be empty or invalid in manual parent mode.";
 	}
 
 	foreach ($post as $key => $value) {
