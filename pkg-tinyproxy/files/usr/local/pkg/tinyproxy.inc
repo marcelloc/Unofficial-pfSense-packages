@@ -74,9 +74,10 @@ function sync_package_tinyproxy(){
 		$tpc['maxperchild'] = (is_numeric($e2g_config['maxperchild']) ? $e2g_config['maxperchild'] : 0);
 		//check acl
 		$tpc['allow'] = "Allow 127.0.0.1\n";
-		$lines = explode ("\s",tinyproxy_text_area_decode($tcp['maxperchild']));
+		$aclines = $e2g_config['acl'];
+		$lines = explode ("\n",tinyproxy_text_area_decode($aclines));
 		foreach ($lines as $allow) {
-			$tcp['allow'] .= "Allow $allow\n";
+			$tpc['allow'] .= "Allow $allow\n";
 		}
 
 		//load template
