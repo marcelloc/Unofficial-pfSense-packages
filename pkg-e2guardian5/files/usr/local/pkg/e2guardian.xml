@@ -162,17 +162,77 @@
                                On large site you might want to try 2500 (max value 20000)<br>
 				]]></description>
 		</field>
-		<!--<field>
-			<fielddescr>Max IPs</fielddescr>
-			<fieldname>maxips</fieldname>
+<field>
+			<name>Transparent Proxy Settings</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>Transparent HTTP Proxy</fielddescr>
+			<fieldname>transparent_proxy</fieldname>
+			<description>Enable transparent mode to forward all requests for destination port 80 to the proxy server.</description>
+			<sethelp>
+				<![CDATA[
+				<div class="infoblock blockopen">
+ 				Transparent proxy mode works without any additional configuration being necessary on clients.<br/>
+				<strong><span class="text-danger">Important:</span></strong> Transparent mode will filter SSL (port 443) if you enable 'HTTPS/SSL Interception' below.<br/>
+				<strong><span class="text-info">Hint: </span></strong>In order to proxy both HTTP and HTTPS protocols <strong>without intercepting SSL connections</strong>, configure WPAD/PAC options on your DNS/DHCP servers.
+				</div>
+				]]>
+			</sethelp>
+			<type>checkbox</type>
+			<enablefields>transparent_active_interface,private_subnet_proxy_off,defined_ip_proxy_off,defined_ip_proxy_off_dest</enablefields>
+		</field>
+		<field>
+			<fielddescr>Transparent Proxy Interface(s)</fielddescr>
+			<fieldname>transparent_active_interface</fieldname>
+			<description>
+				<![CDATA[
+				The interface(s) the proxy server will transparently intercept requests on.
+				<span class="text-info">Use CTRL + click to select multiple interfaces.</span>
+				]]>
+			</description>
+			<type>interfaces_selection</type>
+			<default_value>lan</default_value>
+			<hideinterfaceregex>loopback</hideinterfaceregex>
+			<multiple/>
+		</field>
+		<field>
+			<fielddescr>Bypass Proxy for Private Address Destination</fielddescr>
+			<fieldname>private_subnet_proxy_off</fieldname>
+			<description>Do not forward traffic to Private Address Space (RFC 1918) destinations.</description>
+			<sethelp>
+				<![CDATA[
+				Destinations in Private Address Space (<a href="https://tools.ietf.org/html/rfc1918" target="_blank">RFC 1918</a>) are passed directly through the firewall, not through the proxy server.
+				]]>
+			</sethelp>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Bypass Proxy for These Source IPs</fielddescr>
+			<fieldname>defined_ip_proxy_off</fieldname>
+			<description>
+				<![CDATA[
+				Do not forward traffic from these <strong>source</strong> IPs, CIDR nets, hostnames, or aliases through the proxy server but let it pass directly through the firewall.<br/>
+				<strong><span class="text-info">Applies only to transparent mode.</span></strong>
+				<span class="text-info">Separate entries by semi-colons (;)</span>
+				]]>
+			</description>
 			<type>input</type>
-			<size>10</size>
-			<description><![CDATA[Default: <strong>0</strong><br>
-				Sets the maximum number of client IP addresses allowed to connect at once.<br>
-				Use this to set a hard limit on the number of users allowed to concurrently<br>
-				browse the web. Set to 0 for no limit, and to disable the IP cache process.<br>
-				On 4.1 this function is NOT YET IMPLEMENTED]]></description>
-		</field>-->
+			<size>70</size>
+		</field>
+		<field>
+			<fielddescr>Bypass Proxy for These Destination IPs</fielddescr>
+			<fieldname>defined_ip_proxy_off_dest</fieldname>
+			<description>
+				<![CDATA[
+				Do not proxy traffic going to these <strong>destination</strong> IPs, CIDR nets, hostnames, or aliases, but let it pass directly through the firewall.<br/>
+				<strong><span class="text-info">Applies only to transparent mode.</span></strong>
+				<span class="text-info">Separate entries by semi-colons (;)</span>
+				]]>
+			</description>
+			<type>input</type>
+			<size>70</size>
+		</field>
                 <field>
                         <name>SSL Verification and Filtering</name>
                         <type>listtopic</type>
@@ -193,7 +253,19 @@
                         <source_name>descr</source_name>
                         <source_value>refid</source_value>
                 </field>
-
+		<field>
+			<fielddescr>SSL Proxy Port</fielddescr>
+			<fieldname>ssl_proxy_port</fieldname>
+			<description>
+				<![CDATA[
+				This is the port the proxy server will listen on to intercept SSL while using transparent proxy.
+				<span class="text-info">Default: 8444</span>
+				]]>
+			</description>
+			<type>input</type>
+			<size>5</size>
+			<default_value>8444</default_value>
+		</field>
 		<field>
                         <fielddescr>Parent mode</fielddescr>
                         <fieldname>parentmode</fieldname>
@@ -207,13 +279,6 @@
                                 <option><name>Manual configure Remote proxy or Local Squid package</name><value>remote</value></option>
                                 <default_value>direct</default_value>
                         </options>
-			<advancedfield/>
-                </field>
-		<field>
-                        <fielddescr>Integrate SSL acls</fielddescr>
-                        <fieldname>squidsslacl</fieldname>
-                        <type>checkbox</type>
-                        <description><![CDATA[Check to include E2guardian site acls on squid config.]]></description>
 			<advancedfield/>
                 </field>
 		<field>
