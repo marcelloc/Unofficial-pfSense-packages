@@ -1638,6 +1638,35 @@ function e2guardian_validate_input($post, &$input_errors) {
                 }
 	}
 
+	if (($config['system']['webgui']['port'] == "") && ($config['system']['webgui']['protocol'] == "http")) {
+                $webgui_port = 80;
+        }
+        if (($config['system']['webgui']['port'] == "") && ($config['system']['webgui']['protocol'] == "https")) {
+                $webgui_port = 443;
+        }
+        if (($post['transparent_proxy'] != 'on') && ($port == $webgui_port)) {
+                $input_errors[] = "You can not run E2guardian on the same port as the pfSense WebGUI";
+        }
+        unset($port, $webgui_port);
+	if ($post['transparent_proxy'] == 'on') {
+                if (empty($post['transparent_active_interface'])) {
+                        $input_errors[] = "You must select at least one interface under 'Transparent Proxy Interface(s)' when 'Transparent HTTP Proxy' is enabled.";
+		} else {
+                        // allow HTTPS/SSL Interception only on interfaces where Squid is actually running to keep configuration sane
+                        $a_ifaces = $post['interface'] ?: array();
+                        $s_ifaces = $post['ssl_active_interface'];
+                        foreach ($s_ifaces as $s_iface) {
+                                if (!in_array($s_iface, $a_ifaces)) {
+                                        $err_iface = convert_friendly_interface_to_friendly_descr($s_iface);
+                                        $input_errors[] = "'SSL Intercept Interface(s)' may only contain interfaces also selected in 'Proxy Interface(s)' above. '{$err_iface}' is not valid.";
+                                        unset($err_iface);
+                                }
+                        }
+                        unset($a_ifaces, $s_ifaces, $s_iface);
+                }
+        }
+
+
 	foreach ($post as $key => $value) {
 		if (preg_match("/^(name|description)$/", $key) && $value == "") {
 			$input_errors[] = "{$key} could not be empty.";
