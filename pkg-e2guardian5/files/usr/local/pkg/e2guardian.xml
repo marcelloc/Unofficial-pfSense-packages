@@ -252,6 +252,13 @@
 			</options>
 			<advancedfield/>
 		</field>
+		<field>
+                        <fielddescr>Watchdog</fielddescr>
+                        <fieldname>watchdog</fieldname>
+                        <type>checkbox</type>
+                        <description><![CDATA[Check to enable E2guardian process watchdog and auto restart.]]></description>
+			<advancedfield/>
+		</field>
 	</fields>
 	<custom_php_command_before_form>
 		e2guardian_check_config();
