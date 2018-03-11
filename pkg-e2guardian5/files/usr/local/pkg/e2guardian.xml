@@ -129,6 +129,18 @@
 			<description><![CDATA[Default: <strong>8080</strong><br>The port(s) that DansGuardian listens to.]]></description>
 		</field>
 		<field>
+			<fielddescr>Allow Users on Interface</fielddescr>
+			<fieldname>allow_interface</fieldname>
+			<description>If checked, the users connected to the interface(s) selected in the 'Proxy interface(s)' field will be allowed to use the proxy.</description>
+			<sethelp>
+				<![CDATA[
+				There will be no need to add the interface's subnet to the list of allowed subnets.
+				]]>
+			</sethelp>
+			<type>checkbox</type>
+			<default_value>on</default_value>
+		</field>
+		<field>
 			<fielddescr>Daemon Options</fielddescr>
 			<fieldname>daemon_options</fieldname>
 			<description><![CDATA[Daemon Options. Default values are in ( )]]></description>
@@ -259,12 +271,12 @@
 			<description>
 				<![CDATA[
 				This is the port the proxy server will listen on to intercept SSL while using transparent proxy.
-				<span class="text-info">Default: 8444</span>
+				<span class="text-info">Default: 8081</span>
 				]]>
 			</description>
 			<type>input</type>
 			<size>5</size>
-			<default_value>8444</default_value>
+			<default_value>8081</default_value>
 		</field>
 		<field>
                         <fielddescr>Parent mode</fielddescr>
@@ -295,7 +307,7 @@
 			<fieldname>proxyport</fieldname>
 			<type>input</type>
 			<size>10</size>
-			<description><![CDATA[Default: <strong>3128</strong><br>
+			<description><![CDATA[Default: <strong>8080</strong><br>
 				Sets port number for proxy server.]]></description>
 			<advancedfield/>
 		</field>
@@ -345,5 +357,6 @@
 	<custom_php_command_after_form>
 		e2guardian_check_dirty();
 	</custom_php_command_after_form>
+	<filter_rules_needed>e2g_generate_rules</filter_rules_needed>
 </packagegui>
 

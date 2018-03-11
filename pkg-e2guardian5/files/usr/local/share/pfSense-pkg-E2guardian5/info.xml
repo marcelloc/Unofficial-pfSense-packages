@@ -6,5 +6,6 @@
 		<pkginfolink/>
 		<version>%%PKGVERSION%%</version>
 		<configurationfile>e2guardian.xml</configurationfile>
+		<filter_rule_function>e2g_generate_rules</filter_rule_function>
 	</package>
 </pfsensepkgs>
