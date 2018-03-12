@@ -10,9 +10,8 @@ Feedbacks and contributions are always welcome.
 
 # Install instructions
 
-enable unofficial repo 
+enable unofficial repo under pfSense 2.4
 
-2.4
 fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.24.conf
 
 E2guardian requires a cache/upstream server , so if you do not want to use squid together with e2guardian, point e2guardian proxy configuration to 127.0.0.1 port 8888 to use tinyproxy lightweight cache server instead.
