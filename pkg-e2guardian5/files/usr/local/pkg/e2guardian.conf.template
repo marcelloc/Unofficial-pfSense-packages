@@ -179,7 +179,7 @@ dstatinterval = 300  # = 5 minutes
 
 #port for transparent https
 #if defined enables tranparent https
-transparenthttpsport = 8443  # TODO: Add to gui
+transparenthttpsport = {$ssl_proxy_port}
 
 #port for ICAP
 #if defined enables icap mode 
