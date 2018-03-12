@@ -1229,7 +1229,10 @@ break;
 						$aclschedule[$dacl][$list_value] == "Always active" ||
 						$e2g_sched_in_use[$aclschedule[$dacl][$list_value]]){
 						$dacl = (preg_match("/\w+/", $dacl) ? $dacl : "sample");
-						$file_temp = file_get_contents(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$list_value}list.{$dacl}") . "\n";
+						$ft = E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$list_value}list.{$dacl}";
+						if (file_exists($ft)) {
+							$file_temp = file_get_contents($ft) . "\n";
+						}
 					} else {
 						$file_temp = "# acl {$dacl} {$list_value} is configured but current time is out of {$aclschedule[$dacl][$list_value]} schedule";
 					}
@@ -1387,12 +1390,13 @@ EOF;
 
 	//log rotation script
     	log_error("Checking log rotation");
-	$cron_cmd = "/usr/local/bin/php -q /usr/local/www/e2guardian_logrotate.php";
+	$lrt_file = "/usr/local/www/e2guardian_logrotate.php";
+	$cron_cmd = "/usr/local/bin/php -q ${lrt_file}";
 	if ($logrotate == "on") {
         log_error("Log rotate on");
 		e2g_check_cron($cron_cmd, "create", "0", "0");
 	} else {
-		file_put_contents($cron_cmd, "", LOCK_EX);
+		file_put_contents($lrt_file, "", LOCK_EX);
 		e2g_check_cron($cron_cmd, "remove");
 	}
 	
@@ -1826,11 +1830,11 @@ function e2guardian_validate_input($post, &$input_errors) {
 		} else {
                         // allow HTTPS/SSL Interception only on interfaces where Squid is actually running to keep configuration sane
                         $a_ifaces = $post['interface'] ?: array();
-                        $s_ifaces = $post['ssl_active_interface'];
+                        $s_ifaces = $post['transparent_active_interface'];
                         foreach ($s_ifaces as $s_iface) {
                                 if (!in_array($s_iface, $a_ifaces)) {
                                         $err_iface = convert_friendly_interface_to_friendly_descr($s_iface);
-                                        $input_errors[] = "'SSL Intercept Interface(s)' may only contain interfaces also selected in 'Proxy Interface(s)' above. '{$err_iface}' is not valid.";
+                                        $input_errors[] = "'Transparent proxy Interface(s)' may only contain interfaces also selected in 'Proxy Interface(s)' above. '{$err_iface}' is not valid.";
                                         unset($err_iface);
                                 }
                         }
