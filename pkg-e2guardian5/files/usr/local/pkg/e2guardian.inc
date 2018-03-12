@@ -28,9 +28,7 @@ require_once("services.inc");
 require_once("util.inc");
 require_once("filter.inc");
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
-if ($pfs_version == "2.3" ) {
-	require_once("xmlrpc.inc");
-}
+
 require_once("xmlrpc_client.inc");
 
 $shortcut_section = "e2guardian";
@@ -40,10 +38,7 @@ $pf_version = substr(trim(file_get_contents("/etc/version")), 0, 3);
 define('E2GUARDIAN_DIR', '/usr/local');
 
 
-$uname = posix_uname();
-if ($uname['machine'] == 'amd64') {
-	ini_set('memory_limit', '250M');
-}
+ini_set('memory_limit', '250M');
 
 function e2_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
@@ -295,7 +290,6 @@ function e2g_generate_rules($type) {
 		default:
 			break;
 	}
-	file_put_contents("/tmp/rules.txt",serialize($rules),LOCK_EX);
 	return $rules;
 }
 
@@ -1159,47 +1153,56 @@ break;
 			$e2guardian_groups[$group] = (preg_match("/$group/", $e2guardian_groups['group_options']) ? "on" : "off");
 		}
 		// temp v5 static lists
-		$tlist = array ("lists/nocheckcertsiteiplist",
-                       	"lists/bannedsiteiplistwithbypass",
-                        "lists/contentscanners/exceptionvirussiteiplist",
-                        "lists/exceptionfilesiteiplist",
-                        "lists/refererexceptionsiteiplist",
-                        "lists/embededreferersiteiplist",
-                        "lists/refererexceptionsiteiplist",
-                        "lists/exceptionsiteiplist",
-                        "lists/greysslsiteiplist",
-                        "lists/greysiteiplist",
-                        "lists/bannedsslsiteiplist",
-                        "lists/bannedsiteiplist",
-                        "lists/nocheckcertsitelist",
-                        "lists/bannedsitelistwithbypass",
-                        "lists/contentscanners/exceptionvirussitelist",
-                        "lists/refererexceptionsitelist",
-                        "lists/embededreferersitelist",
-                        "lists/refererexceptionsitelist",
-                        "lists/greysslsitelist",
-                        "lists/bannedsslsitelist",
-                        "lists/bannedurllistwithbypass",
-                        "lists/contentscanners/exceptionvirusurllist",
-                        "lists/refererexceptionurllist",
-                        "lists/embededrefererurllist",
-                        "lists/refererexceptionurllist",
-                        "lists/bannedsearchoveridelist",
-                        "lists/bannedsearchlist",
-                        "lists/localbannedsearchlist",
-                        "lists/contentscanners/exceptionvirusmimetypelist",
-                        "lists/bannedmimeitypelist",
-                        "lists/exceptionregexpheaderlist",
-                        "lists/exceptionregexpheaderlist",
-                        "lists/bannedregexpuseragentlist",
-                        "lists/bannedregexpuseragentlist",
-                        "lists/searchregexplist",
-			"lists/contentscanners/exceptionvirusextensionlist",
-                        "lists/urlredirectregexplist");
+		$tlist_dirs = array('contentscanners');
+		foreach ($tlist_dirs as $tlist_dir) {
+			if ( ! is_dir(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$tlist_dir}")) {
+				mkdir(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$tlist_dir}",0755);
+			}
+		}
+		$tlist = array ("nocheckcertsiteiplist",
+                       	"bannedsiteiplistwithbypass",
+                        "contentscanners/exceptionvirussiteiplist",
+                        "exceptionfilesiteiplist",
+                        "refererexceptionsiteiplist",
+                        "embededreferersiteiplist",
+                        "refererexceptionsiteiplist",
+                        "exceptionsiteiplist",
+                        "greysslsiteiplist",
+                        "greysiteiplist",
+                        "bannedsslsiteiplist",
+                        "bannedsiteiplist",
+                        "nocheckcertsitelist",
+                        "bannedsitelistwithbypass",
+                        "contentscanners/exceptionvirussitelist",
+                        "refererexceptionsitelist",
+                        "embededreferersitelist",
+                        "refererexceptionsitelist",
+                        "greysslsitelist",
+                        "bannedsslsitelist",
+                        "bannedurllistwithbypass",
+                        "contentscanners/exceptionvirusurllist",
+                        "refererexceptionurllist",
+                        "embededrefererurllist",
+                        "refererexceptionurllist",
+                        "bannedsearchoveridelist",
+                        "bannedsearchlist",
+                        "localbannedsearchlist",
+                        "contentscanners/exceptionvirusmimetypelist",
+                        "bannedmimeitypelist",
+                        "exceptionregexpheaderlist",
+                        "exceptionregexpheaderlist",
+                        "bannedregexpuseragentlist",
+                        "bannedregexpuseragentlist",
+                        "searchregexplist",
+			"contentscanners/exceptionvirusextensionlist",
+                        "urlredirectregexplist");
 		foreach ($tlist as $tl) {
-			if ( ! file_exists(E2GUARDIAN_DIR . "/etc/e2guardian/{$tl}.g_{$e2guardian_groups['name']}") &&
-			       file_exists (E2GUARDIAN_DIR . "/etc/e2guardian/{$tl}.sample")) {
-				copy (E2GUARDIAN_DIR . "/etc/e2guardian/{$tl}.sample", E2GUARDIAN_DIR . "/etc/e2guardian/{$tl}.g_{$e2guardian_groups['name']}");
+			if ( ! file_exists(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$tl}.g_{$e2guardian_groups['name']}")) {
+				if ( file_exists (E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$tl}.sample")) {
+					copy (E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$tl}.sample", E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$tl}.g_{$e2guardian_groups['name']}");
+				} else {
+					file_put_contents(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$tl}.g_{$e2guardian_groups['name']}","",LOCK_EX);
+				}
 			}
 		}
 
@@ -1596,12 +1599,20 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 			return;
 		}
 	}
+
+	if (is_array($config['installedpackages']['e2guardian']['config'])) {
+                $e2g_cfg = $config['installedpackages']['e2guardian']['config'][0];
+        } else {
+                log_error('Cannot find E2guardian daemon configuration');
+        }
+
 	//as main squid daemon looks for any squid copy running, lets create an alias for us
 	$our_squid = "/usr/local/sbin/e2guid";
-	if (!file_exists($our_squid)) {
+	if (!file_exists($our_squid) && $e2g_cfg['parentmode'] == 'local') {
 		system("/usr/local/etc/rc.d/e2parent.sh stop");
 		symlink("/usr/local/sbin/squid", $our_squid);
 	}
+
 	//squid parent start stop script
 	$parent_pid = "/var/run/squid/e2gsquid.pid";
 	$parent_cmd = "$our_squid -f /usr/local/etc/e2guardian/squidparent.conf";
@@ -1619,12 +1630,8 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 	$script = '/usr/local/etc/rc.d/e2guardian.sh';
 	$script_parent = '/usr/local/etc/rc.d/e2parent.sh';
 	unlink_if_exists('/usr/local/etc/rc.d/e2guardian');
-	if (is_array($config['installedpackages']['e2guardian']['config'])) {
-		$e2g_cfg = $config['installedpackages']['e2guardian']['config'][0];
-	} else {
-		log_error('Cannot find E2guardian daemon configuration');
-	}
 	$squid_parent_pid = "/var/run/squid/e2gsquid.pid";
+
 	if ($e2g_cfg['enable'] == "on") {
 		chmod("/usr/local/sbin/e2guardian",0755);
 		copy('/usr/local/pkg/e2guardian_rc.template', $script);
@@ -1634,30 +1641,32 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 			switch ($e2g_cfg['applyaction']){
 				case "rc.d":
 					log_error("Restarting e2g with rc.d script");
-					 mwexec("$script stop");
-                     mwexec("$script start");
+					mwexec("$script stop");
+					sleep(2);
+                     			mwexec_bg("$script start");
 					break;
 				case "-r":
 					log_error("Sending USR1 to e2g processes");
-					exec("$max_threads;/usr/local/sbin/e2guardian -g");
+					mwexec_bg("$max_threads;/usr/local/sbin/e2guardian -g");
 					break;
 				default:
 					log_error("Restarting e2g by sending -Q action to e2g binaries");
-					exec("$max_threads;/usr/local/sbin/e2guardian -Q");
+					mwexec_bg("$max_threads;/usr/local/sbin/e2guardian -Q");
 					break;
 			}
 		} else {
 			//log_error('Starting E2guardian');
 			//mwexec("$script start");
 		}
+		//force local squid daemon stop or start depending on config files
 		$parent_status = ( $e2g_cfg['parentmode'] == 'local' ? "stop" : "start");
-		mwexec("$script_parent $parent_status");
+		mwexec_bg("$script_parent $parent_status");
 	} else {
 		if (is_process_running('e2guardian')) {
 			log_error('E2guardian is disabled, stopping process...');
-			mwexec("$script stop");
+			mwexec_bg("$script stop");
 		}
-		mwexec("$script_parent stop");
+		mwexec_bg("$script_parent stop");
 		if (file_exists($script)) {
 			chmod ($script, 444);
 		}
@@ -1668,16 +1677,6 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 
 	//check ca certs hashes
 	check_ca_hashes();
-
-	//check e2guardian squid integration
-	if (is_array($config['installedpackages']['squid'])) {
-		$squid_cfg = $config['installedpackages']['squid']['config'][0];
-		if ($squid_cfg['enable_squid'] == "on" && preg_match("@include /usr/local/etc/e2guardian/@",$squid_cfg['custom_options'])) {
-			log_error("[E2guardian] Reloading squid from package integration.");
-			require_once("/usr/local/pkg/squid.inc");
-			squid_resync();
-		}
-	}
 
 	//avoid sync during boot process
 	if (!isset($boot_process) || $via_rpc == "yes") {
@@ -1718,11 +1717,35 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 			if (is_array($rs)) {
 				log_error("[E2guardian] xmlrpc sync is starting.");
 				foreach ($rs as $sh) {
-					$sync_to_ip = $sh['ipaddress'];
-					$password = $sh['password'];
-					$username = ($sh['username']?$sh['username']:"admin");
-					if ($password && $sync_to_ip) {
-						e2guardian_do_xmlrpc_sync($sync_to_ip, $username, $password, $sync_type, $synctimeout);
+					if ($sh['syncdestinenable']) {
+						// Only sync enabled replication targets
+						$sync_to_ip = $sh['ipaddress'];
+						$port = $sh['syncport'];
+						$username = $sh['username'] ?: 'admin';
+						$password = $sh['password'];
+						$protocol = $sh['syncprotocol'];
+
+						$error = '';
+						$valid = TRUE;
+
+						if ($password == "") {
+							$error = "Password parameter is empty. ";
+							$valid = FALSE;
+						}
+						if (!is_ipaddr($sync_to_ip) && !is_hostname($sync_to_ip) && !is_domain($sync_to_ip)) {
+							$error .= "Misconfigured Replication Target IP Address or Hostname. ";
+							$valid = FALSE;
+						}
+						if (!is_port($port)) {
+							$error .= "Misconfigured Replication Target Port. ";
+							$valid = FALSE;
+						}
+						if ($valid) {
+							e2guardian_do_xmlrpc_sync($sync_to_ip, $port, $protocol, $username, $password, $synctimeout);
+						} else {
+							log_error("[E2guardian] XMLRPC sync with '{$sync_to_ip}' aborted due to the following error(s): {$error}");
+						}
+				
 					}
 				}
 				log_error("[E2guardian] xmlrpc sync is ending.");
@@ -1930,126 +1953,66 @@ function e2guardian_php_deinstall_command() {
 	clear_subsystem_dirty('e2guardian');
 }
 
-function e2guardian_do_xmlrpc_sync($sync_to_ip, $username, $password, $sync_type, $synctimeout) {
+
+
+
+function e2guardian_do_xmlrpc_sync($sync_to_ip, $port, $protocol, $username, $password, $synctimeout = 30) {
 	global $config, $g;
 
-	if (!$username) {
+	if ($username == "" || $password == "" || $sync_to_ip == "" || $port == "" || $protocol == "") {
+		log_error("[E2guardian] A required XMLRPC sync parameter (username, password, replication target, port or protocol) is empty ... aborting pkg sync");
 		return;
 	}
 
-	if (!$password) {
-		return;
-	}
-
-	if (!$sync_to_ip) {
-		return;
-	}
-
-	if (!$synctimeout) {
-		$synctimeout = 30;
-	}
 	$xmlrpc_sync_neighbor = $sync_to_ip;
-	if ($config['system']['webgui']['protocol'] != "") {
-		$synchronizetoip = $config['system']['webgui']['protocol'];
-		$synchronizetoip .= "://";
+        if ($config['system']['webgui']['protocol'] != "") {
+                $synchronizetoip  = $config['system']['webgui']['protocol'];
+                $synchronizetoip .= "://";
+		if ($protocol == "") {
+                	$protocol = $config['system']['webgui']['protocol'];
+        	}
+        }
+
+        /* if port is empty lets rely on the protocol selection */
+        if ($port == "") {
+                if ($config['system']['webgui']['protocol'] == "http") {
+                        $port = "80";
+                } else {
+                        $port = "443";
+                }
+        }
+
+        $synchronizetoip .= $sync_to_ip;
+
+	/* Commands to reload Squid settings on the destination sync host. */
+	$execcmd  = "require_once('/usr/local/pkg/e2guardian.inc');\n";
+	$execcmd .= "sync_package_e2guardian('yes');\n";
+	$execcmd .= "e2guardian_start('yes');";
+
+	 /* xml will hold the sections to sync */
+        log_error("Include e2guardian config");
+	$elements = array('e2guardian', 'e2guardianantivirusacl', 'e2guardianconfig', 'e2guardianblacklist', 'e2guardianblacklist',
+			'e2guardianldap', 'e2guardiancontentacl', 'e2guardianfileacl', 'e2guardiangroups', 'e2guardianheaderacl',
+			'e2guardianlimits', 'e2guardianlog', 'e2guardianphraseacl', 'e2guardianpicsacl', 'e2guardiansearchacl',
+			'e2guardiansiteacl', 'e2guardianurlacl', 'e2guardianusers', 'e2guardianips');
+
+        $xml = array();
+	foreach ($elements as $element) {
+		$xml[$element] = $config['installedpackages'][$element];
 	}
-	$port = $config['system']['webgui']['port'];
-	/* if port is empty lets rely on the protocol selection */
-	if ($port == "") {
-		if ($config['system']['webgui']['protocol'] == "http") {
-			$port = "80";
-		} else {
-			$port = "443";
-		}
-	}
-	$synchronizetoip .= $sync_to_ip;
 
-	/* xml will hold the sections to sync */
-	$xml = array();
-	log_error("Include e2guardian config");
-	$xml['e2guardian'] = $config['installedpackages']['e2guardian'];
-	$xml['e2guardianantivirusacl'] = $config['installedpackages']['e2guardianantivirusacl'];
-	$xml['e2guardianconfig'] = $config['installedpackages']['e2guardianconfig'];
-	$xml['e2guardianblacklist'] = $config['installedpackages']['e2guardianblacklist'];
-	$xml['e2guardianldap'] = $config['installedpackages']['e2guardianldap'];
-	$xml['e2guardiancontentacl'] = $config['installedpackages']['e2guardiancontentacl'];
-	$xml['e2guardianfileacl'] = $config['installedpackages']['e2guardianfileacl'];
-	$xml['e2guardiangroups'] = $config['installedpackages']['e2guardiangroups'];
-	$xml['e2guardianheaderacl'] = $config['installedpackages']['e2guardianheaderacl'];
-	$xml['e2guardianlimits'] = $config['installedpackages']['e2guardianlimits'];
-	$xml['e2guardianlog'] = $config['installedpackages']['e2guardianlog'];
-	$xml['e2guardianphraseacl'] = $config['installedpackages']['e2guardianphraseacl'];
-	$xml['e2guardianpicsacl'] = $config['installedpackages']['e2guardianpicsacl'];
-	$xml['e2guardiansearchacl'] = $config['installedpackages']['e2guardiansearchacl'];
-	$xml['e2guardiansiteacl'] = $config['installedpackages']['e2guardiansiteacl'];
-	$xml['e2guardianurlacl'] = $config['installedpackages']['e2guardianurlacl'];
-	$xml['e2guardianusers'] = $config['installedpackages']['e2guardianusers'];
-	$xml['e2guardianips'] = $config['installedpackages']['e2guardianips'];
-
-	if (count($xml) > 0) {
-		/* assemble xmlrpc payload */
-		$params = array(
-			XML_RPC_encode($password),
-			XML_RPC_encode($xml)
-		);
-
-		/* set a few variables needed for sync code borrowed from filter.inc */
-		$url = $synchronizetoip;
-		log_error("Beginning e2guardian XMLRPC sync to {$url}:{$port}.");
-		$method = 'pfsense.merge_installedpackages_section_xmlrpc';
-		$msg = new XML_RPC_Message($method, $params);
-		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-		$cli->setCredentials($username, $password);
-		if ($g['debug']) {
-			$cli->setDebug(1);
-		}
-		/* send our XMLRPC message and timeout after $synctimeout seconds */
-		$resp = $cli->send($msg, $synctimeout);
-		if (!$resp) {
-			$error = "A communications error occurred while attempting e2guardian XMLRPC sync with {$url}:{$port}.";
-			log_error($error);
-			file_notice("sync_settings", $error, gettext("e2guardian Settings Sync"), "");
-		} elseif ($resp->faultCode()) {
-			$cli->setDebug(1);
-			$resp = $cli->send($msg, $synctimeout);
-			$error = "An error code was received while attempting e2guardian XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
-			log_error($error);
-			file_notice("sync_settings", $error, gettext("e2guardian Settings Sync"), "");
-		} else {
-			log_error("e2guardian XMLRPC sync successfully completed with {$url}:{$port}.");
-		}
-
-		/* tell e2guardian to reload our settings on the destination sync host. */
-		$method = 'pfsense.exec_php';
-		$execcmd  = "require_once('/usr/local/pkg/e2guardian.inc');\n";
-		$execcmd .= "sync_package_e2guardian('yes');";
-		$execcmd .= "e2guardian_start('no', false, true);";
-
-		/* assemble xmlrpc payload */
-		$params = array(
-			XML_RPC_encode($password),
-			XML_RPC_encode($execcmd)
-		);
-
-		log_error("e2guardian XMLRPC reload data {$url}:{$port}.");
-		$msg = new XML_RPC_Message($method, $params);
-		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-		$cli->setCredentials($username, $password);
-		$resp = $cli->send($msg, $synctimeout);
-		if (!$resp) {
-			$error = "A communications error occurred while attempting e2guardian XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
-			log_error($error);
-			file_notice("sync_settings", $error, gettext("e2guardian Settings Sync"), "");
-		} elseif ($resp->faultCode()) {
-			$cli->setDebug(1);
-			$resp = $cli->send($msg, $synctimeout);
-			$error = "An error code was received while attempting e2guardian XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
-			log_error($error);
-			file_notice("sync_settings", $error, gettext("e2guardian Settings Sync"), "");
-		} else {
-			log_error("e2guardian XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
+	// since 2.4 xmlrpc cannot encode NULL objects/arrays..
+	foreach($xml as $xmlkey => $xmlvalue) {
+		if (gettype($xmlvalue) == "NULL") {
+			$xml[$xmlkey] = array();
 		}
 	}
+	$synctimeout = intval($synctimeout);
+	$rpc_client = new pfsense_xmlrpc_client();
+	$rpc_client->setConnectionData($sync_to_ip, $port, $username, $password, $protocol);
+	$resp = $rpc_client->xmlrpc_method('merge_installedpackages_section', $xml, $synctimeout);
+	$resp = $rpc_client->xmlrpc_exec_php($execcmd, $synctimeout);
+
 }
 
 ?>
