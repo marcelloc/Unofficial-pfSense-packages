@@ -138,6 +138,167 @@ function check_ca_hashes() {
 		}
 	}
 }
+
+/*
+ * E2guardian firewall rules configuration
+ */
+
+function e2g_generate_rules($type) {
+	global $config;
+	$e2g_conf = $config['installedpackages']['e2guardian']['config'][0];
+	file_put_contents("/tmp/rules.txt","teste123\n",FILE_APPEND);
+	// Do not install any firewall rules if E2guardian is disabled
+	if ($e2g_conf['enable'] != "on") {
+		log_error("[E2guardian] Installed but disabled. Not installing '{$type}' rules.");
+		return;
+	}
+
+	// Do not install any firewall rules if E2guardian is not running
+	if (!is_service_running('e2guardian')) {
+		log_error("[E2guardian] Installed but not started. Not installing '{$type}' rules.");
+		return;
+	}
+	file_put_contents("/tmp/rules.txt","teste456\n",FILE_APPEND);
+
+	// Proxy Interface(s)
+	$proxy_ifaces = explode(",", $e2g_conf['interface']);
+	$proxy_ifaces = array_map('convert_friendly_interface_to_real_interface_name', $proxy_ifaces);
+	// Transparent Proxy Interface(s)
+	if ($e2g_conf['transparent_proxy'] == "on") {
+		$transparent_ifaces = explode(",", $e2g_conf['transparent_active_interface']);
+		$transparent_ifaces = array_map('convert_friendly_interface_to_real_interface_name', $transparent_ifaces);
+	} else {
+		$transparent_ifaces = array();
+	}
+	// SSL Intercept Interface(s)
+	if ($e2g_conf['enablessl'] == "on") {
+		$ssl_ifaces = $transparent_ifaces;
+	} else {
+		$ssl_ifaces = array();
+	}
+
+	// Define proxy ports
+	$port = ($e2g_conf['filterports'] ? $e2g_conf['filterports'] : 8080);
+	$ssl_port = ($e2g_conf['ssl_proxy_port'] ? $e2g_conf['ssl_proxy_port'] : 8081);
+	$pf_rule_ports = "{{$port},{$ssl_port}}";
+
+	// Define NAT ports - 80 and 443 if SSL filtering is enabled
+	$pf_nat_ports = ($e2g_conf['enablessl'] == "on" ? "{80,443}" : "80");
+
+	/*
+	 * When transparent proxy is enabled and we are doing NAT, use rdr pass to pass traffic
+	 * For PPPoE server, the $pppoe below is a pf macro, not a PHP variable, needs to be escaped.
+	 */
+	switch($type) {
+		case 'nat':
+			// No NAT rules if transparent proxy is not enabled
+			if ($e2g_conf['transparent_proxy'] != 'on') {
+				break;
+			}
+			$rules .= "\n# Setup E2guardian proxy redirect\n";
+			/* Bypass Proxy for Private Address Destination - RFC1918 */
+			if ($e2g_conf['private_subnet_proxy_off'] == 'on') {
+				foreach ($transparent_ifaces as $iface) {
+					$pf_transparent_rule_port = (in_array($iface, $ssl_ifaces) ? "{80,443}" : "80");
+					$rules .= "no rdr on $iface proto tcp from any to { 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8 } port {$pf_transparent_rule_port}\n";
+				}
+				/* Handle PPPOE case */
+				if (($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) || (function_exists("is_pppoe_server_enabled") && is_pppoe_server_enabled())) {
+					$rules .= "no rdr on \$pppoe proto tcp from any to { 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8 } port {$pf_nat_ports}\n";
+				}
+			}
+			/* Bypass Proxy for These Source IPs */
+			if (!empty($e2g_conf['defined_ip_proxy_off'])) {
+				$defined_ip_proxy_off = explode(";", $e2g_conf['defined_ip_proxy_off']);
+				$exempt_ip = "";
+				foreach ($defined_ip_proxy_off as $ip_proxy_off) {
+					if (!empty($ip_proxy_off)) {
+						$ip_proxy_off = trim($ip_proxy_off);
+						if (is_alias($ip_proxy_off)) {
+							$ip_proxy_off = '$' . $ip_proxy_off;
+						}
+						$exempt_ip .= ", $ip_proxy_off";
+					}
+				}
+				$exempt_ip = substr($exempt_ip, 2);
+				foreach ($transparent_ifaces as $iface) {
+					$pf_transparent_rule_port = (in_array($iface, $ssl_ifaces) ? "{80,443}" : "80");
+					$rules .= "no rdr on $iface proto tcp from { $exempt_ip } to any port {$pf_transparent_rule_port}\n";
+				}
+				/* Handle PPPOE case */
+				if (($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) || (function_exists("is_pppoe_server_enabled") && is_pppoe_server_enabled())) {
+					$rules .= "no rdr on \$pppoe proto tcp from { $exempt_ip } to any port {$pf_nat_ports}\n";
+				}
+			}
+			/* Bypass Proxy for These Destination IPs */
+			if (!empty($e2g_conf['defined_ip_proxy_off_dest'])) {
+				$defined_ip_proxy_off_dest = explode(";", $e2g_conf['defined_ip_proxy_off_dest']);
+				$exempt_dest = "";
+				foreach ($defined_ip_proxy_off_dest as $ip_proxy_off_dest) {
+					if (!empty($ip_proxy_off_dest)) {
+						$ip_proxy_off_dest = trim($ip_proxy_off_dest);
+						if (is_alias($ip_proxy_off_dest)) {
+							$ip_proxy_off_dest = '$' . $ip_proxy_off_dest;
+						}
+						$exempt_dest .= ", $ip_proxy_off_dest";
+					}
+				}
+				$exempt_dest = substr($exempt_dest, 2);
+				foreach ($transparent_ifaces as $iface) {
+					$pf_transparent_rule_port = (in_array($iface, $ssl_ifaces) ? "{80,443}" : "80");
+					$rules .= "no rdr on $iface proto tcp from any to { $exempt_dest } port {$pf_transparent_rule_port}\n";
+				}
+				/* Handle PPPOE case */
+				if (($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) || (function_exists("is_pppoe_server_enabled") && is_pppoe_server_enabled())) {
+					$rules .= "no rdr on \$pppoe proto tcp from any to { $exempt_dest } port {$pf_nat_ports}\n";
+				}
+			}
+			/* Transparent Proxy Interface(s) */
+			foreach ($transparent_ifaces as $t_iface) {
+				$rules .= "rdr pass on $t_iface proto tcp from any to !($t_iface) port 80 -> 127.0.0.1 port {$port}\n";
+				if (in_array($t_iface, $ssl_ifaces)) {
+					$rules .= "rdr pass on $t_iface proto tcp from any to !($t_iface) port 443 -> 127.0.0.1 port {$ssl_port}\n";
+				}
+			}
+			/*
+			 * Transparent Proxy Interface(s) - handle the PPPOE case
+			 * For PPPoE server, mpd uses a group of different _local_ interfaces
+			 * The rules below are needed so that the clients can be transparently proxied
+			 */
+			if (($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) || (function_exists("is_pppoe_server_enabled") && is_pppoe_server_enabled())) {
+				$rules .= "rdr pass on \$pppoe proto tcp from any to !127.0.0.1 port 80 -> 127.0.0.1 port {$port}\n";
+				if ($e2g_conf['ssl_proxy'] == "on") {
+					$rules .= "rdr pass on \$pppoe proto tcp from any to !127.0.0.1 port 443 -> 127.0.0.1 port {$ssl_port}\n";
+				}
+			}
+			$rules .= "\n";
+			break;
+		case 'filter':
+		case 'rule':
+			/*
+			 * Non-Transparent Proxy Interface(s)
+			 * Pass traffic to proxy ports on the proxy interface(s) when 'Allow Users on Interface' is enabled
+			 * XXX: Consider ACLs > Allowed Subnets
+			 */
+			if ($e2g_conf['allow_interface'] == 'on') {
+				foreach ($proxy_ifaces as $iface) {
+					$rules .= "# Setup E2guardian pass rules for proxy\n";
+					$rules .= "pass in quick on $iface proto tcp from any to ($iface) port {$pf_rule_ports} flags S/SA keep state\n";
+					$rules .= "\n";
+				}
+				/* Handle PPPOE case */
+				if ($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) {
+					$rules .= "pass in quick on \$pppoe proto tcp from any to {$config['pppoe']['localip']} port {$pf_rule_ports} flags S/SA keep state\n";
+				}
+			}
+			break;
+		default:
+			break;
+	}
+	file_put_contents("/tmp/rules.txt",serialize($rules),LOCK_EX);
+	return $rules;
+}
+
 function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	global $config, $g, $savemsg, $e2g_sched_in_use;
 
@@ -1068,7 +1229,10 @@ break;
 						$aclschedule[$dacl][$list_value] == "Always active" ||
 						$e2g_sched_in_use[$aclschedule[$dacl][$list_value]]){
 						$dacl = (preg_match("/\w+/", $dacl) ? $dacl : "sample");
-						$file_temp = file_get_contents(E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$list_value}list.{$dacl}") . "\n";
+						$ft = E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$list_value}list.{$dacl}";
+						if (file_exists($ft)) {
+							$file_temp = file_get_contents($ft) . "\n";
+						}
 					} else {
 						$file_temp = "# acl {$dacl} {$list_value} is configured but current time is out of {$aclschedule[$dacl][$list_value]} schedule";
 					}
@@ -1220,17 +1384,19 @@ EOF;
 	}
 	$filterip = ($filterip == "" ? "filterip = " : $filterip);
 	$filterports = ($filterports == "" ? "filterports = $filterport" : $filterports);
+	$ssl_proxy_port = $e2guardian['ssl_proxy_port'] ? $e2guardian['ssl_proxy_port'] : "8081";
 	include("/usr/local/pkg/e2guardian.conf.template");
 
 
 	//log rotation script
     	log_error("Checking log rotation");
-	$cron_cmd = "/usr/local/bin/php -q /usr/local/www/e2guardian_logrotate.php";
+	$lrt_file = "/usr/local/www/e2guardian_logrotate.php";
+	$cron_cmd = "/usr/local/bin/php -q ${lrt_file}";
 	if ($logrotate == "on") {
         log_error("Log rotate on");
 		e2g_check_cron($cron_cmd, "create", "0", "0");
 	} else {
-		file_put_contents($cron_cmd, "", LOCK_EX);
+		file_put_contents($lrt_file, "", LOCK_EX);
 		e2g_check_cron($cron_cmd, "remove");
 	}
 	
@@ -1573,6 +1739,12 @@ function e2guardian_validate_input($post, &$input_errors) {
                 squid_update_clamav();
                 return;
         }
+	if (is_array($config['installedpackages']['e2guardian'])) {
+		$settings = $config['installedpackages']['e2guardian']['config'][0];
+	} else {
+		$settings = array();
+	}
+
 
 	if ( is_array($post['scan_options']) && in_array('logclienthostnames', $post['scan_options']) && 
 	    !in_array('reverseclientiplookups', $post['scan_options'])) {
@@ -1638,6 +1810,10 @@ function e2guardian_validate_input($post, &$input_errors) {
                 }
 	}
 
+	// check that the proxy port does not clash with WebGUI
+	$port = ($settings['filterports'] ? $settings['filterports'] : 8080);
+	$port = $post['filterports'] ? $post['filterports'] : $port;
+	$webgui_port = $config['system']['webgui']['port'];
 	if (($config['system']['webgui']['port'] == "") && ($config['system']['webgui']['protocol'] == "http")) {
                 $webgui_port = 80;
         }
@@ -1654,11 +1830,11 @@ function e2guardian_validate_input($post, &$input_errors) {
 		} else {
                         // allow HTTPS/SSL Interception only on interfaces where Squid is actually running to keep configuration sane
                         $a_ifaces = $post['interface'] ?: array();
-                        $s_ifaces = $post['ssl_active_interface'];
+                        $s_ifaces = $post['transparent_active_interface'];
                         foreach ($s_ifaces as $s_iface) {
                                 if (!in_array($s_iface, $a_ifaces)) {
                                         $err_iface = convert_friendly_interface_to_friendly_descr($s_iface);
-                                        $input_errors[] = "'SSL Intercept Interface(s)' may only contain interfaces also selected in 'Proxy Interface(s)' above. '{$err_iface}' is not valid.";
+                                        $input_errors[] = "'Transparent proxy Interface(s)' may only contain interfaces also selected in 'Proxy Interface(s)' above. '{$err_iface}' is not valid.";
                                         unset($err_iface);
                                 }
                         }
