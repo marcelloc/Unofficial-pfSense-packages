@@ -102,7 +102,7 @@
 				To counter this, you can limit the size of the document to be filtered and get it to just pass it straight through.<br>
 				This setting also applies to content regular expression modification.<br>
 				The value must not be higher than maxcontentramcachescansize<br>
-				The size is in Kibibytes - eg 2048 = 2Mb<br>
+				The size is in Kilobytes - eg 2048 = 2Mb<br>
 				use 0 to set it to maxcontentramcachescansize]]></description>
 		</field>
 		<field>
@@ -113,7 +113,7 @@
 			<description><![CDATA[<strong>Default is 2000</strong><br>
 				This is only used if you use a content scanner plugin such as AV. This is the max size of file that E2guardian will download and cache in RAM.<br>
 				After this limit is reached it will cache to disk. This value must be less than or equal to maxcontentfilecachescansize.<br>
-				The size is in Kibibytes - eg 10240 = 10Mb<br>
+				The size is in Kilobytes - eg 10240 = 10Mb<br>
 				use 0 to set it to maxcontentfilecachescansize<br>
 				This option may be ignored by the configured download manager.]]></description>
 		</field>
@@ -125,7 +125,7 @@
 			<description><![CDATA[<strong>Default is 2000</strong><br>
 				This is only used if you use a content scanner plugin such as AV. This is the max size file that E2guardian will download so that it can be scanned or virus checked.<br>
 				This value must be greater or equal to maxcontentramcachescansize.<br>
-				The size is in Kibibytes - eg 10240 = 10Mb]]></description>
+				The size is in Kilobytes - eg 10240 = 10Mb]]></description>
 		</field>
 		<field>
 			<fielddescr>Initial Trickle delay</fielddescr>

@@ -390,7 +390,7 @@ logclienthostnames = {$logclienthostnames}
 # filtered and get it to just pass it straight through.
 # This setting also applies to content regular expression modification.
 # The value must not be higher than maxcontentramcachescansize
-# The size is in Kibibytes - eg 2048 = 2Mb
+# The size is in Kilobytes - eg 2048 = 2Mb
 # use 0 to set it to maxcontentramcachescansize
 maxcontentfiltersize = {$maxcontentfiltersize}
 
@@ -399,7 +399,7 @@ maxcontentfiltersize = {$maxcontentfiltersize}
 # This is the max size of file that e2g will download and cache
 # in RAM.  After this limit is reached it will cache to disk
 # This value must be less than or equal to maxcontentfilecachescansize.
-# The size is in Kibibytes - eg 10240 = 10Mb
+# The size is in Kilobytes - eg 10240 = 10Mb
 # use 0 to set it to maxcontentfilecachescansize
 # This option may be ignored by the configured download manager.
 maxcontentramcachescansize = {$maxcontentramcachescansize}
@@ -409,7 +409,7 @@ maxcontentramcachescansize = {$maxcontentramcachescansize}
 # This is the max size file that DG will download
 # so that it can be scanned or virus checked.
 # This value must be greater or equal to maxcontentramcachescansize.
-# The size is in Kibibytes - eg 10240 = 10Mb
+# The size is in Kilobytes - eg 10240 = 10Mb
 maxcontentfilecachescansize = {$maxcontentfilecachescansize}
 
 # File cache dir
