@@ -161,7 +161,7 @@ urllist = 'name=exceptionfile,path={$e2_dir}/etc/e2guardian/lists/exceptionfileu
 # POST protection (web upload and forms)
 # does not block forms without any file upload, i.e. this is just for
 # blocking or limiting uploads
-# measured in kibobytes after MIME encoding and header bumph
+# measured in kilobytes after MIME encoding and header bumph
 # use 0 for a complete block
 # use higher (e.g. 512 = 512Kbytes) for limiting
 # use -1 for no blocking
