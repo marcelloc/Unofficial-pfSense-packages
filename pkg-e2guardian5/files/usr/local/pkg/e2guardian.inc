@@ -408,9 +408,19 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	if ($e2guardian_config['auth_plugin'] != "") {
 		$auth_plugins = explode(",", $e2guardian_config['auth_plugin']);
 		$authplugin = "";
+		$auth_prefix = E2GUARDIAN_DIR . "/etc/e2guardian/authplugins/";
 		foreach ($auth_plugins as $auth_selected) {
 			if ($auth_selected != "none") {
-				$authplugin .= "authplugin = '" . preg_replace("@/usr/local@", E2GUARDIAN_DIR, $auth_selected) . "'\n";
+				if ($auth_selected == "dnsauth.conf") {
+					$dns_conf = file_get_contents($auth_prefix.$auth_selected);
+					if (preg_match("/redirect_to_auth = .no/",$dns_conf)) {
+						 $authplugin = "authplugin= '{$auth_prefix}{$auth_selected}'\n" . $authplugin;
+					} else {
+						$authplugin .= "authplugin= '{$auth_prefix}{$auth_selected}'\n";
+					}
+				} else {
+					$authplugin .= "authplugin= '{$auth_prefix}{$auth_selected}'\n";
+				}
 			}
 		}
 	}
