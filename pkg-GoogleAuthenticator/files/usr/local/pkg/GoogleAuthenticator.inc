@@ -11,7 +11,7 @@
  */
 class PHPGangsta_GoogleAuthenticator
 {
-    protected $_codeLength = 6;
+    protected $_codeLength = 10;
 
     /**
      * Create new secret.
@@ -21,7 +21,7 @@ class PHPGangsta_GoogleAuthenticator
      *
      * @return string
      */
-    public function createSecret($secretLength = 16)
+    public function createSecret($secretLength = 32)
     {
         $validChars = $this->_getBase32LookupTable();
 
@@ -128,7 +128,7 @@ class PHPGangsta_GoogleAuthenticator
             $currentTimeSlice = floor(time() / 30);
         }
 
-        if (strlen($code) != 6) {
+        if (strlen($code) != 10) {
             return false;
         }
 
