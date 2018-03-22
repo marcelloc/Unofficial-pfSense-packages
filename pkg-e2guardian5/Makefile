@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-E2guardian5
 PORTVERSION=	0.5.0
-PORTREVISION=   8
+PORTREVISION=   10
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -13,7 +13,7 @@ COMMENT=	pfSense Unofficial E2guardian package
 
 LICENSE=	APACHE20
 
-RUN_DEPENDS=	${LOCALBASE}/sbin/e2guardian:www/e2guardian_5 \
+RUN_DEPENDS=	${LOCALBASE}/sbin/e2guardian:www/e2guardian5 \
 		/usr/local/sbin/squid:www/squid \
 		/usr/local/share/certs/ca-root-nss.crt:security/ca_root_nss
 

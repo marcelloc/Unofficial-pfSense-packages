@@ -103,13 +103,13 @@
 				 Current package configuration forces multiport to off.]]></description>
 			<type>select</type>
 			<options>
-				<option><name>Proxy-Basic</name><value>/usr/local/etc/e2guardian/authplugins/proxy-basic.conf</value></option>
-				<option><name>Proxy-Digest</name><value>/usr/local/etc/e2guardian/authplugins/proxy-digest.conf</value></option>
-				<option><name>Proxy-Ntlm</name><value>/usr/local/etc/e2guardian/authplugins/proxy-ntlm.conf</value></option>
-				<option><name>Ident</name><value>/usr/local/etc/e2guardian/authplugins/ident.conf</value></option>
-				<option><name>Ip Address</name><value>/usr/local/etc/e2guardian/authplugins/ip.conf</value></option>
-				<option><name>Proxy-Header</name><value>/usr/local/etc/e2guardian/authplugins/proxy-header.conf</value></option>
-				<option><name>DNS</name><value>/usr/local/etc/e2guardian/authplugins/dnsauth.conf</value></option>
+				<option><name>Proxy-Basic</name><value>proxy-basic.conf</value></option>
+				<option><name>Proxy-Digest</name><value>proxy-digest.conf</value></option>
+				<option><name>Proxy-Ntlm</name><value>proxy-ntlm.conf</value></option>
+				<option><name>Ident</name><value>ident.conf</value></option>
+				<option><name>Ip Address</name><value>ip.conf</value></option>
+				<option><name>Proxy-Header</name><value>proxy-header.conf</value></option>
+				<option><name>DNS</name><value>dnsauth.conf</value></option>
 				<option><name>none</name><value>none</value></option>
 			</options>
 			<multiple/>
