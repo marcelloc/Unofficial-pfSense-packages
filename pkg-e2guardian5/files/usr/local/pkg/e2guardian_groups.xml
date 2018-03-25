@@ -93,6 +93,10 @@
 			<fieldname>name</fieldname>
 		</columnitem>
 		<columnitem>
+			<fielddescr>Group type</fielddescr>
+			<fieldname>grouptype</fieldname>
+		</columnitem>
+		<columnitem>
 			<fielddescr>Reporting level</fielddescr>
 			<fieldname>lreportinglevel</fieldname>
 		</columnitem>
@@ -125,6 +129,23 @@
 			<size>60</size>
 		</field>
 		<field>
+			<name>Group Type</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>Group type</fielddescr>
+			<fieldname>grouptype</fieldname>
+			<description><![CDATA[Select filter action for this group.]]></description>
+			<type>select</type>
+			<options>
+				<option><name>Normal Group (default) - Allow or deny access based on acls</name><value>Normal</value></option>
+				<option><name>Deny ip  - Deny access to any ip based url</name><value>DenyIp</value></option>
+				<option><name>Deny all - No access to any site will be allowed</name><value>BlockAll</value></option>
+				<option><name>Unfiltered Access - Allow access to any site</name><value>Unfiltered</value></option>
+				<option><name>Exception Sites only - Allow sites only on acls exception lists</name><value>ExceptionSitesOnly</value></option>
+			</options>
+		</field>
+		<field>
 			<name>Access Lists</name>
 			<type>listtopic</type>
 			<fieldname>lgroupoptions</fieldname>
@@ -144,9 +165,10 @@
 				<option><name>Disable content scanning (off)</name><value>disablecontentscan</value></option>
 				<option><name>Check Server SSLCertificates (off)</name><value>sslcheckcert</value></option>
 				<option><name>Filter ssl sites forging SSL Certificates (off)</name><value>sslmitm</value></option>
+				<option><name>Limit ssl MITM filter to sslgreylist acls (off)</name><value>onlymitmsslgrey</value></option>
 			</options>
 			<multiple/>
-			<size>9</size>
+			<size>10</size>
 		</field>
 		<field>
 			<fielddescr>Pics</fielddescr>

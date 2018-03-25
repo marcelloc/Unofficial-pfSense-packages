@@ -1337,7 +1337,7 @@ EOF;
 		<field>
 			<fielddescr>Users</fielddescr>
 			<fieldname>info_checkbox</fieldname>
-			<type>checkbox</type>
+			<type>info</type>
 			<description><![CDATA[E2guardian users are required only when you have more then one group.<br>All unauthenticated users or unlisted users will match first filter group.]]></description>
 		</field>
 EOF;
