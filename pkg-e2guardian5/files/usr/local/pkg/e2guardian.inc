@@ -1187,17 +1187,17 @@ break;
 		    case "DenyIp":
 		        $group_type  = "#Deny ip sites\n";
 		        $group_type .= "function(checkblanketblock)\n";
-		        $group_type .= "if(siteisip,,505) return setblock  # = *ip ip blanket\n";
+		        $group_type .= "if(siteisip,,505) return setblock\n";
 		        $group_type .= "function(sslcheckblanketblock)\n";
-		        $group_type .= "if(siteisip,,507) return setblock  # = **ips ip blanket\n";
+		        $group_type .= "if(siteisip,,507) return setblock\n";
 		        break;
 
 		    case "ExceptionSitesOnly":
 		        $group_type  = "#ExceptionSitesOnly\n";
 		        $group_type .= "function(checkblanketblock)\n";
-		        $group_type .= "if(true,,502) return setblock  # = ** total blanket\n";
+		        $group_type .= "if(true,,502) return setblock\n";
 		        $group_type .= "function(sslcheckblanketblock)\n";
-		        $group_type .= "if(true,,506) return setblock  # = **s total blanket\n";
+		        $group_type .= "if(true,,506) return setblock\n";
 		        break;
 
 		    default:
