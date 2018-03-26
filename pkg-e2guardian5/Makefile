@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-E2guardian5
 PORTVERSION=	0.5.0.1
-#PORTREVISION=   11
+PORTREVISION=   1
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -82,6 +82,8 @@ do-install:
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian_users_footer.template \
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian_users_header.template \
+		${STAGEDIR}${PREFIX}/pkg
+	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian_story.template \
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardianfx.conf.template \
 		${STAGEDIR}${PREFIX}/pkg
