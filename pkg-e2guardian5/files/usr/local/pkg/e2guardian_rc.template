@@ -19,6 +19,9 @@ sysctl kern.maxfiles=131072
 sysctl kern.maxfilesperproc=104856
 sysctl kern.threads.max_threads_per_proc=20480
 
+if [ -f /var/run/e2guardian.dirty ]; then
+   rm -f /var/run/e2guardian.dirty
+fi
 e2guardian_enable=${e2guardian_enable:-"YES"}
 e2guardian_pidfile=${e2guardian_pidfile:-"/var/run/e2guardian.pid"}
 
