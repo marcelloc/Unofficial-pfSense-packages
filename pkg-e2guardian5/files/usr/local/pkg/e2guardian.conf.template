@@ -276,11 +276,11 @@ filtergroupslist = '{$e2guardian_dir}/lists/filtergroupslist'
 # These are now replaced with pre-authstoryboard logic but lists defined here
 #
 # bannediplist is ONLY for banned client IP
-#iplist = 'name=bannedclient,messageno=100,logmessageno=103,path=/usr/local/etc/e2guardian/lists/bannediplist'
+iplist = 'name=bannedclient,messageno=100,logmessageno=103,path=/usr/local/etc/e2guardian/lists/bannediplist'
 # Put client dns names in bannedclientlist if required
 #sitelist = 'name=bannedclient,messageno=100,logmessageno=104,path=/usr/local/etc/e2guardian/lists/bannedclientlist'
 # exceptioniplist is ONLY for exception client IP
-#iplist = 'name=exceptionclient,messageno=600,path=/usr/local/etc/e2guardian/lists/exceptioniplist'
+iplist = 'name=exceptionclient,messageno=600,path=/usr/local/etc/e2guardian/lists/exceptioniplist'
 # Put client dns names in exceptionclientlist if required
 #sitelist = 'name=exceptionclient,messageno=631,path=/usr/local/etc/e2guardian/lists/exceptionclientlist'
 

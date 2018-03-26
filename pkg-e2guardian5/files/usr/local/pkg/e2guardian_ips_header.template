@@ -89,18 +89,24 @@
 		</tab>
 	</tabs>
 	<fields>
-		<field>
-			<name>Exception IP list</name>
-			<type>listtopic</type>
-		</field>
-		<field>
+	<field>
 			<fieldname>exceptioniplist</fieldname>
 			<fielddescr>Exception Ip List</fielddescr>
 			<description><![CDATA[Include ip addresses and or ip addresses/netmask of computers from which web access should not be filtered.<br>
+								  Leave empty to load e2guardian defaults.<br>This list does not works with DenyAll group mode.]]></description>
+			<type>textarea</type>
+			<cols>80</cols>
+			<rows>11</rows>
+			<encoding>base64</encoding>
+	</field>
+	<field>
+			<fieldname>bannediplist</fieldname>
+			<fielddescr>Banned Ip List</fielddescr>
+			<description><![CDATA[Include ip addresses and or ip addresses/netmask of computers from which web access should be Denied.<br>
 								  Leave empty to load e2guardian defaults.]]></description>
 			<type>textarea</type>
 			<cols>80</cols>
-			<rows>12</rows>
+			<rows>11</rows>
 			<encoding>base64</encoding>
-		</field>
+	</field>
 		

@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 
-$dgf= <<<EOF
+$dgf = <<<EOF
 # e2guardian filter group config file for version 5.0.1
 
 # This file is re-read on gentle restart and any changes actioned

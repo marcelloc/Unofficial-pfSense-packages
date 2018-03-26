@@ -1076,13 +1076,14 @@ $files = array(
 	//exception ip list
 	//create a default setup if not exists
 	if (!is_array($config['installedpackages']['e2guardianips']['config'])) {
-		$config['installedpackages']['e2guardianips']['config'][0] = array("exceptioniplist" => "");
+	    $config['installedpackages']['e2guardianips']['config'][0] = array("exceptioniplist" => "", "bannediplist" => "");
 	}
 	if ($config['installedpackages']['e2guardianips']['config'][0]['exceptioniplist'] == "" && file_exists($e2guardian_dir . '/lists/exceptioniplist.sample')) {
 		$config['installedpackages']['e2guardianips']['config'][0]['exceptioniplist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/exceptioniplist.sample'));
 		$load_samples++;
 	}
 	file_put_contents($e2guardian_dir . "/lists/exceptioniplist", e2_text_area_decode($config['installedpackages']['e2guardianips']['config'][0]['exceptioniplist']), LOCK_EX);
+	file_put_contents($e2guardian_dir . "/lists/bannediplist", e2_text_area_decode($config['installedpackages']['e2guardianips']['config'][0]['bannediplist']), LOCK_EX);
 
 	if ($load_samples > 0) {
 		write_config();
@@ -1128,7 +1129,7 @@ $files = array(
 		$e2guardian_groups['infectionbypass'] = ($e2guardian_groups['infectionbypass'] ? $e2guardian_groups['infectionbypass'] : "0");
 		$e2guardian_groups['maxuploadsize'] = (is_numeric($e2guardian_groups['maxuploadsize']) ? $e2guardian_groups['maxuploadsize'] : "-1");
 		$groupreportinglevel = "reportinglevel = " . ($e2guardian_groups['reportinglevel'] == 'global' ? $reportlevel : $e2guardian_groups['reportinglevel']);
-switch (($e2guardian_groups['reportinglevel'] == 'global' ? $reportlevel : $e2guardian_groups['reportinglevel'])) {
+        switch (($e2guardian_groups['reportinglevel'] == 'global' ? $reportlevel : $e2guardian_groups['reportinglevel'])) {
 			case "1":
 			case "2":
 				if (is_URL($e2guardian_groups['reportingcgi'])) {
@@ -1158,10 +1159,58 @@ break;
 			default:
 				$groupaccessdeniedaddress = "";
 		}
-
+		
+        // assign all options selected under group_options
 		foreach ($groups as $group) {
 			$e2guardian_groups[$group] = (preg_match("/$group/", $e2guardian_groups['group_options']) ? "on" : "off");
 		}
+		
+		//story file options
+		switch ($e2guardian_groups['grouptype']) {
+		    
+		    case "Unfiltered":
+		        $group_type  = "#Unfiltered access\n";
+		        $group_type .= "function(checkrequest)\n";
+		        $group_type .= "if(true) return setexception\n";
+		        $group_type .= "function(thttps-checkrequest)\n";
+		        $group_type .= "if(true) return setexception\n";
+		        break;
+		        
+		    case "BlockAll":
+		        $group_type  = "#Block all sites\n";
+		        $group_type .= "function(checkrequest)\n";
+		        $group_type .= "if(true,,105) return setblock\n";
+		        $group_type .= "function(sslexceptioncheck)\n";
+		        $group_type .= "function(localsslcheckrequest)\n";
+		        break;
+
+		    case "DenyIp":
+		        $group_type  = "#Deny ip sites\n";
+		        $group_type .= "function(checkblanketblock)\n";
+		        $group_type .= "if(siteisip,,505) return setblock  # = *ip ip blanket\n";
+		        $group_type .= "function(sslcheckblanketblock)\n";
+		        $group_type .= "if(siteisip,,507) return setblock  # = **ips ip blanket\n";
+		        break;
+
+		    case "ExceptionSitesOnly":
+		        $group_type  = "#ExceptionSitesOnly\n";
+		        $group_type .= "function(checkblanketblock)\n";
+		        $group_type .= "if(true,,502) return setblock  # = ** total blanket\n";
+		        $group_type .= "function(sslcheckblanketblock)\n";
+		        $group_type .= "if(true,,506) return setblock  # = **s total blanket\n";
+		        break;
+
+		    default:
+		        $group_type = "# Normal filtering group type\n";
+		}
+		
+		if ( $e2guardian_groups['onlymitmsslgrey'] == "on" ) {
+    	    $sslcheckmitmgreyonly = "function(sslcheckmitm)\n";
+    	    $sslcheckmitmgreyonly = "if(true) return sslcheckmitmgreyonly";
+		} else {
+		    $sslcheckmitmgreyonly = "#Normal ssl filtering if enabled\n";
+		}
+		
 		// temp v5 static lists
 		$tlist_dirs = array('contentscanners');
 		foreach ($tlist_dirs as $tlist_dir) {
@@ -1264,6 +1313,10 @@ break;
 			}
 		}
 		$e2_dir = E2GUARDIAN_DIR;
+		
+		include("/usr/local/pkg/e2guardian_story.template");
+		file_put_contents($e2guardian_dir . "/g_" . $e2guardian_groups['name'] . ".story", $dg_story, LOCK_EX);
+		
 		include("/usr/local/pkg/e2guardianfx.conf.template");
 		file_put_contents($e2guardian_dir . "/e2guardianf" . $count . ".conf", $dgf, LOCK_EX);
 
