@@ -109,7 +109,7 @@ if (is_array($config['installedpackages']['e2guardiangroups']['config'])) {
 						if (in_array($server['dc'], $ldap_servers)) {
 							$ldap_dn = $server['dn'];
 							$ldap_host = $server['dc'];
-							$mask = (empty($server['mask'])?"USER":$server['mask']);
+							$mask = ( empty($server['mask']) ? "USER" : $server['mask'] );
 							if (preg_match("/cn/", $server['username'])) {
 								$ldap_username = $server['username'] . "," . $server['dn'];
 							} else {
@@ -121,7 +121,7 @@ if (is_array($config['installedpackages']['e2guardiangroups']['config'])) {
 							}
 							foreach ($result as $mvalue) {
 								if (preg_match ("/\w+/", $mvalue[0])) {
-									#var_dump($value);
+									//var_dump($value);
 									$name= preg_replace("/&([a-z])[a-z]+;/i", "$1", htmlentities($mvalue[1]));//preg_replace('/[^(\x20-\x7F)]*/','', $mvalue[1]);
 									$pattern[0] = "/USER/";
 									$pattern[1] = "/,/";
