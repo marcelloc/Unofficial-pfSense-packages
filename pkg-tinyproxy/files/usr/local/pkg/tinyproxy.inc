@@ -35,10 +35,6 @@ if ($pfs_version == "2.3" ) {
 }
 require_once("xmlrpc_client.inc");
 
-function tinyproxy_text_area_decode($text) {
-	return preg_replace('/\r\n/', "\n", base64_decode($text));
-}
-
 function tinyproxy_check_config() {
         global $savemsg, $config;
 
@@ -72,12 +68,13 @@ function sync_package_tinyproxy(){
 		$tpc['max'] = (is_numeric($e2g_config['max']) ? $e2g_config['max'] : 20);
 		$tpc['start'] = (is_numeric($e2g_config['start']) ? $e2g_config['start'] : 20);
 		$tpc['maxperchild'] = (is_numeric($e2g_config['maxperchild']) ? $e2g_config['maxperchild'] : 0);
-		//check acl
+		//fix acl
 		$tpc['allow'] = "Allow 127.0.0.1\n";
-		$aclines = $e2g_config['acl'];
-		$lines = explode ("\n",tinyproxy_text_area_decode($aclines));
-		foreach ($lines as $allow) {
-			$tpc['allow'] .= "Allow $allow\n";
+		if ($e2g_config['acl']) {
+                    $lines = preg_split('/\r\n|\r|\n/', base64_decode($e2g_config['acl']));
+                    foreach ($lines as $allow) {
+                            $tpc['allow'] .= "Allow ".$allow."\n";
+                    }
 		}
 
 		//load template
