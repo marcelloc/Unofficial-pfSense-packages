@@ -79,9 +79,6 @@ regexpurlboollist = 'name=exceptionuseragent,messageno=610,path={$e2_dir}/etc/e2
 #ipsitelist = 'name=authexception,path={$e2_dir}/etc/e2guardian/lists/authexceptionsiteiplist.g_{$e2guardian_groups['name']}'
 #urllist = 'name=authexception,messageno=603,path={$e2_dir}/etc/e2guardian/lists/authexceptionurllist.g_{$e2guardian_groups['name']}'
 
-sitelist = 'name=refererexception,messageno=620,path={$e2_dir}/etc/e2guardian/lists/refererexceptionsitelist.g_{$e2guardian_groups['name']}'
-ipsitelist = 'name=refererexception,messageno=620,path={$e2_dir}/etc/e2guardian/lists/refererexceptionsiteiplist.g_{$e2guardian_groups['name']}'
-urllist = 'name=refererexception,messageno=620,path={$e2_dir}/etc/e2guardian/lists/refererexceptionurllist.g_{$e2guardian_groups['name']}'
 sitelist = 'name=embededreferer,path={$e2_dir}/etc/e2guardian/lists/embededreferersitelist.g_{$e2guardian_groups['name']}'
 ipsitelist = 'name=embededreferer,path={$e2_dir}/etc/e2guardian/lists/embededreferersiteiplist.g_{$e2guardian_groups['name']}'
 urllist = 'name=embededreferer,path={$e2_dir}/etc/e2guardian/lists/embededrefererurllist.g_{$e2guardian_groups['name']}'
@@ -197,11 +194,11 @@ regexpboollist = 'name=bannedheader,path={$e2_dir}/etc/e2guardian/lists/bannedre
 regexpboollist = 'name=exceptionheader,path={$e2_dir}/etc/e2guardian/lists/exceptionregexpheaderlist.g_{$e2guardian_groups['name']}'
 
 #Virus checking exceptions - matched urls will not be virus checked
-mimelist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirusmimetypelist.g_{$e2guardian_groups['name']}'
-fileextlist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirusextensionlist.g_{$e2guardian_groups['name']}'
-sitelist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirussitelist.g_{$e2guardian_groups['name']}'
-ipsitelist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirussiteiplist.g_{$e2guardian_groups['name']}'
-urllist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirusurllist.g_{$e2guardian_groups['name']}'
+#5.0.2#mimelist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirusmimetypelist.g_{$e2guardian_groups['name']}'
+#5.0.2#fileextlist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirusextensionlist.g_{$e2guardian_groups['name']}'
+#5.0.2#sitelist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirussitelist.g_{$e2guardian_groups['name']}'
+#5.0.2#ipsitelist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirussiteiplist.g_{$e2guardian_groups['name']}'
+#5.0.2#urllist = 'name=exceptionvirus,path={$e2_dir}/etc/e2guardian/lists/contentscanners/exceptionvirusurllist.g_{$e2guardian_groups['name']}'
 
 # Weighted phrase mode
 # Optional; overrides the weightedphrasemode option in e2guardian.conf
@@ -248,7 +245,7 @@ regexpreplacelist = 'name=searchterms,path={$e2_dir}/etc/e2guardian/lists/search
 #
 # Banned Search Term list(s) for option 1
 searchlist = 'name=banned,path={$e2_dir}/etc/e2guardian/lists/bannedsearchlist.g_{$e2guardian_groups['name']}'
-searchlist = 'name=override,path={$e2_dir}/etc/e2guardian/lists/bannedsearchoveridelist.g_{$e2guardian_groups['name']}'
+#5.0.2#searchlist = 'name=override,path={$e2_dir}/etc/e2guardian/lists/bannedsearchoveridelist.g_{$e2guardian_groups['name']}'
 
 # Search term limit (for Option 2)
 # The limit over which requests will be blocked for containing search terms
@@ -323,8 +320,8 @@ bypasskey = '{$e2guardian_groups['bypasskey']}'
 
 #  Users will not be able to bypass sites/urls in these lists
 sitelist = 'name=bannedbypass,messageno=500,path={$e2_dir}/etc/e2guardian/lists/bannedsitelistwithbypass.g_{$e2guardian_groups['name']}'
-ipsitelist = 'name=bannedbypass,messageno=500,path={$e2_dir}/etc/e2guardian/lists/bannedsiteiplistwithbypass.g_{$e2guardian_groups['name']}'
-urllist = 'name=bannedbypass,messageno=501,path={$e2_dir}/etc/e2guardian/lists/bannedurllistwithbypass.g_{$e2guardian_groups['name']}'
+#5.0.2#ipsitelist = 'name=bannedbypass,messageno=500,path={$e2_dir}/etc/e2guardian/lists/bannedsiteiplistwithbypass.g_{$e2guardian_groups['name']}'
+#5.0.2#urllist = 'name=bannedbypass,messageno=501,path={$e2_dir}/etc/e2guardian/lists/bannedurllistwithbypass.g_{$e2guardian_groups['name']}'
 
 # Infection/Scan Error Bypass
 # Similar to the 'bypass' setting, but specifically for bypassing files scanned and found
@@ -434,6 +431,10 @@ deepurlanalysis = {$e2guardian_groups['deepurlanalysis']}
 # e.g. /usr/local/share/e2guardian/languages/ukenglish/custom.html
 #
 #htmltemplate = 'custom.html'
+
+#Template for use to report network issues and sites which are not responding
+# if blank htmltemplate will be used
+#neterrtemplate = 'neterr.html'
 
 # Non standard delimiter (only used with accessdeniedaddress)
 # To help preserve the full banned URL, including parameters, the variables
