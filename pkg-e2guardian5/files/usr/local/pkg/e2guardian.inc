@@ -160,6 +160,9 @@ function e2g_generate_rules($type) {
 	$proxy_ifaces = array_map('convert_friendly_interface_to_real_interface_name', $proxy_ifaces);
 	// Transparent Proxy Interface(s)
 	if ($e2g_conf['transparent_proxy'] == "on") {
+	    if (! in_array('lo0',$proxy_ifaces)) {
+	        $proxy_ifaces[] = 'lo0';
+	    }
 		$transparent_ifaces = explode(",", $e2g_conf['transparent_active_interface']);
 		$transparent_ifaces = array_map('convert_friendly_interface_to_real_interface_name', $transparent_ifaces);
 	} else {
@@ -277,13 +280,21 @@ function e2g_generate_rules($type) {
 			 */
 			if ($e2g_conf['allow_interface'] == 'on') {
 				foreach ($proxy_ifaces as $iface) {
+				    //TODO verify bandwidth under group settings too
+				    if (preg_match("/(\d+)/", $e2g_conf['inpipe'], $d1)){
+				        $pipe = "dnpipe ( {$d1[1]}";
+				        if (preg_match("/(\d+)/", $e2g_conf['outpipe'], $d2)){
+				            $pipe .= ",{$d2[1]}";
+				        }
+				        $pipe .= ")";
+				    }
 					$rules .= "# Setup E2guardian pass rules for proxy\n";
-					$rules .= "pass in quick on $iface proto tcp from any to ($iface) port {$pf_rule_ports} flags S/SA keep state\n";
+					$rules .= "pass in quick on $iface proto tcp from any to ($iface) port {$pf_rule_ports} flags S/SA keep state {$pipe}\n";
 					$rules .= "\n";
 				}
 				/* Handle PPPOE case */
 				if ($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) {
-					$rules .= "pass in quick on \$pppoe proto tcp from any to {$config['pppoe']['localip']} port {$pf_rule_ports} flags S/SA keep state\n";
+					$rules .= "pass in quick on \$pppoe proto tcp from any to {$config['pppoe']['localip']} port {$pf_rule_ports} flags S/SA keep state {$pipe}\n";
 				}
 			}
 			break;

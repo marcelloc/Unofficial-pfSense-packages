@@ -134,11 +134,35 @@
 			<description>If checked, the users connected to the interface(s) selected in the 'Proxy interface(s)' field will be allowed to use the proxy.</description>
 			<sethelp>
 				<![CDATA[
-				There will be no need to add the interface's subnet to the list of allowed subnets.
+				This options must be selected to use bandwidth limit options under Groups tab.
 				]]>
 			</sethelp>
 			<type>checkbox</type>
 			<default_value>on</default_value>
+		</field>
+		<field>
+			<fielddescr>Download rate limit</fielddescr>
+			<fieldname>inpipe</fieldname>
+			<description><![CDATA[Limit clients bandwidth to this limiter.<br>
+					You can configure limiters under firewall -> traffic shaper -> limiters<br>
+					Do not forget to apply a mask on limiter if you want to define a per user/ip limit.<br>
+					Also you need to check Allow Users on Interface under Daemon tab.]]></description>
+			<type>select_source</type>
+			<source><![CDATA[$config['dnshaper']['queue']]]></source>
+			<source_name>name</source_name>
+			<source_value>number</source_value>
+			<show_disable_value>none</show_disable_value>
+		</field>
+		<field>
+			<fielddescr>Upload rate limit</fielddescr>
+			<fieldname>outpipe</fieldname>
+			<description><![CDATA[Choose the Out queue/Virtual interface only if In is also selected.<br> 
+				The Out selection is applied to traffic leaving the interface where the rule is created, the In selection is applied to traffic coming into the chosen interface.]]></description>
+			<type>select_source</type>
+			<source><![CDATA[$config['dnshaper']['queue']]]></source>
+			<source_name>name</source_name>
+			<source_value>number</source_value>
+			<show_disable_value>none</show_disable_value>
 		</field>
 		<field>
 			<fielddescr>Daemon Options</fielddescr>
