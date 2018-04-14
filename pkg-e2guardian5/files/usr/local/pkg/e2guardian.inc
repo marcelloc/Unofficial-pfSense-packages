@@ -37,8 +37,29 @@ $pf_version = substr(trim(file_get_contents("/etc/version")), 0, 3);
 
 define('E2GUARDIAN_DIR', '/usr/local');
 
+if ($_POST['clear_cert_cache'] == 'clear_cert_cache') {
+    //clear MITM cert cache data
+    $tc_dir = "/usr/local/etc/e2guardian/ssl/generatedcerts/";
+    if (e2g_delTree($tc_dir)) {
+        mkdir ($tc_dir, "0755", true);
+        mwexec_bg("/usr/local/sbin/e2guardian -Q");
+    }
+}
 
-ini_set('memory_limit', '250M');
+function e2g_delTree($dir) {
+    //at least two slashes, two dirs and 10 char long
+    if(preg_match("/\w+/\w+", $dir) && strlen($dir) > 10) {
+        $files = array_diff(scandir($dir), array('.', '..'));
+        
+        foreach ($files as $file) {
+            (is_dir("$dir/$file")) ? delTree("$dir/$file") : unlink("$dir/$file");
+        }
+        
+        return rmdir($dir);
+    } else {
+        return false;
+    }
+} 
 
 function e2_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));

@@ -143,10 +143,10 @@
 		<field>
 			<fielddescr>Download rate limit</fielddescr>
 			<fieldname>inpipe</fieldname>
-			<description><![CDATA[Limit clients bandwidth to this limiter.<br>
+			<description><![CDATA[Limit non transparent clients bandwidth to this limiter.<br>
 					You can configure limiters under firewall -> traffic shaper -> limiters<br>
-					Do not forget to apply a mask on limiter if you want to define a per user/ip limit.<br>
-					Also you need to check Allow Users on Interface under Daemon tab.]]></description>
+					Do not forget to apply a mask on limiter if you want to define a per user/ip limit. and check Allow Users on Interface option above.<br>
+					<b>NOTE: </b> To match transparent clients too, apply limiters under <b>firewall -> rules</b> that allows access to this firewall(127.0.0.1) under Listen port(s).]]></description>
 			<type>select_source</type>
 			<source><![CDATA[$config['dnshaper']['queue']]]></source>
 			<source_name>name</source_name>
