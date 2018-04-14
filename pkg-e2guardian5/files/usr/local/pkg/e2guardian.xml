@@ -283,7 +283,9 @@
                         <fielddescr>CA</fielddescr>
                         <fieldname>dca</fieldname>
                         <description><![CDATA[Select Certificate Authority to use when SSL filtering is enabled on Group options<br>
-                                To create a CA on pfsense, go to <strong>system -> Cert Manager<strong>]]></description>
+                                To create a CA on pfsense, go to <strong>system -> Cert Manager<strong><br>
+                                <button class="btn btn-danger btn-sm" name='clear_cert_cache' id='force_update' type='submit' value='clear_cert_cache'>
+                                <i class="fa fa-trash icon-embed-btn"></i>Clear MITM certificate cache data</button>]]></description>
                         <type>select_source</type>
                         <source><![CDATA[$config['ca']]]></source>
                         <source_name>descr</source_name>
