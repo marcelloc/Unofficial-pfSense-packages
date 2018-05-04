@@ -36,8 +36,8 @@
 	<title>Squid log analyzer</title>
 	<include_file>/usr/local/pkg/squidanalyzer.inc</include_file>
 	<menu>
-		<name>Squidanalyzer</name>
-		<tooltiptext>Configure Squid report analyzer</tooltiptext>
+		<name>SquidAnalyzer</name>
+		<tooltiptext>Configure Squid Report Analyzer</tooltiptext>
 		<section>Status</section>
 		<url>/pkg_edit.php?xml=squidanalyzer.xml</url>
 	</menu>
