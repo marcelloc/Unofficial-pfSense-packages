@@ -1896,6 +1896,7 @@ function e2guardian_validate_input($post, &$input_errors) {
 			}
 		}
 	}
+	
 	if ($post['reportinglevel'] != "") {
 		 $rpa = array ( 'global' => 'Use Global log option',
  				'-1' => 'Stealth mode',
@@ -1905,12 +1906,20 @@ function e2guardian_validate_input($post, &$input_errors) {
 				'3' => 'Use HTML template');
 		$_POST['lreportinglevel'] = $rpa[$post['reportinglevel']];
 	}
-	if ($_POST['report_file'] == "") {
-		$rf = "/usr/local/share/e2guardian/languages/{$_POST['reportlanguage']}/template.html.sample";
-		if( file_exists($rf)) {
-			$report_file = file_get_contents($rf);
-			$_POST['report_file'] = preg_replace('/<.*(html|head)>/', '', $report_file);
-		}
+	
+	if ($post['report_language'] != "") {
+	    $e2glog = $config['installedpackages']['e2guardianlog']['config'][0];
+    	if ($_POST['report_file'] == "" || $post['report_language'] != $e2glog['report_language']) {
+    	    $rf = "/usr/local/share/e2guardian/languages/{$post['report_language']}/template.html";
+    	    if (file_exists($rf) && ! file_exists("{$rf}.sample")) {
+    	        copy ($rf, "{$rf}.sample");
+    	    }
+    		$rf .= ".sample";
+    		if( file_exists($rf)) {
+    			$report_file = file_get_contents($rf);
+    			$_POST['report_file'] = preg_replace('/<.*(html|head)>/', '', $report_file);
+    		}
+    	}
 	}
 
 	if ($post['reportingcgi'] != "") {

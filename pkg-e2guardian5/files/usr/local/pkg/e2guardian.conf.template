@@ -39,7 +39,7 @@ $dg=<<<EOF
 languagedir = '{$e2_dir}/share/e2guardian/languages'
 
 # language to use from languagedir.
-language = 'ukenglish'
+language = '{$reportlanguage}'
 
 #Debug Level
 #Enable debug e2guardian

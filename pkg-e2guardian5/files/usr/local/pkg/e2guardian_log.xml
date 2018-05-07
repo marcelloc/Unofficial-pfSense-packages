@@ -129,7 +129,7 @@
 		<field>
 			<fielddescr>Report Language</fielddescr>
 			<fieldname>report_language</fieldname>
-			<description><![CDATA[Language to use in HTML reports]]></description>
+			<description><![CDATA[Language to use in HTML reports<br><b>Warning! Changing language will replace report_file content field with saved language report file content.</b>]]></description>
 			<type>select</type>
 			<options>
 				<option><name>ukenglish</name><value>ukenglish</value></option>

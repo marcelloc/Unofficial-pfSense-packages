@@ -431,7 +431,7 @@ deepurlanalysis = {$e2guardian_groups['deepurlanalysis']}
 # e.g. /usr/local/share/e2guardian/languages/ukenglish/custom.html
 #
 #htmltemplate = 'custom.html'
-
+{$htmltemplate}
 #Template for use to report network issues and sites which are not responding
 # if blank htmltemplate will be used
 #neterrtemplate = 'neterr.html'
