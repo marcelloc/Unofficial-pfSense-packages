@@ -11,6 +11,6 @@ Feedbacks and contributions are always welcome.
 Install instructions
 You can enable unoffical repo running the commands below via SSH for pfSense 2.3 or higher:
 
-fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/${ABI}/Unofficial.conf
+fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.conf
 
 After fetching the repo file, you will be able to see these packages under System -> Package Manager
