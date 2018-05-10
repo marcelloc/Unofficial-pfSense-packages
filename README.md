@@ -9,20 +9,8 @@ This is not supported by Netgate or pfSense team. Use it at your own risk.
 Feedbacks and contributions are always welcome.
 
 Install instructions
-You can enable unoffical repo running the commands below via SSH depending on your version/architecture:
+You can enable unoffical repo running the commands below via SSH for pfSense 2.3 or higher:
 
-AMD64 pfSense 2.3 amd64:
-
-fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.conf
-
-pfSense 2.4 amd64:
-
-fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.24.conf
-
-pfSense 2.3 x86:
-
-fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficiali386.conf
-
-Note: pfSense 2.4 is not available for x86 (32bit) systems.
+fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/${ABI}/Unofficial.conf
 
 After fetching the repo file, you will be able to see these packages under System -> Package Manager
