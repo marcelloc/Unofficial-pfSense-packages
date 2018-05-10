@@ -2010,11 +2010,14 @@ function isValidXmlElementName($elementName)
 function e2guardian_php_install_command() {
 	sync_package_e2guardian("no", true);
 	echo "Checking Blacklist...\n";
-	if (!file_exists("/usr/local/pkg/blacklist.tgz")) {
-		require_once("/usr/local/www/e2guardian.php");
+	require_once("/usr/local/www/e2guardian.php");
+
+	if (file_exists("/usr/local/pkg/blacklist.tgz")) {
+		extract_black_list();
+	} else {
         	fetch_blacklist(false, true);
-                echo "Blacklist check done, continuing package config sync.\n";
 	}
+        echo "Blacklist check done, continuing package config sync.\n";
 	clear_subsystem_dirty('e2guardian');
 }
 
