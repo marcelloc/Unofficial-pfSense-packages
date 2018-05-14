@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-Sarg
-PORTVERSION=	0.6.10
+PORTVERSION=	0.6.11
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty

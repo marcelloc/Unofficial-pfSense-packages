@@ -54,7 +54,7 @@ graphs {$graphs}
 # 	Specify the title for html page.
 #
 #title "Squid User Access Reports"
-
+title "{$sarg_title} User Access Reports"
 # TAG:	font_face
 # 	Specify the font for html page.
 #

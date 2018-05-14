@@ -33,6 +33,11 @@ if ($savemsg) {
     print_info_box($savemsg);
 }
 
+if ($uname['machine'] == 'amd64') {
+        ini_set('memory_limit', '512M');
+}
+
+
 $pgtitle = array(gettext("Package"), gettext("Sarg"), gettext("Reports"));
 $shortcut_section = "sarg";
 include("head.inc");

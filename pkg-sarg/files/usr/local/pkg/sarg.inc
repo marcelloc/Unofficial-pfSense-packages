@@ -266,6 +266,7 @@ function sync_package_sarg() {
 	}
 	$sarguser = $config['installedpackages']['sarguser']['config'][0];
 	$access_log = $sarg['proxy_server'];
+	$sarg_title = ucfirst($sarg['proxy_server']);
 	switch ($sarg['proxy_server']) {
 		case 'e2guardian':
 			$access_log = $sarg_proxy['e2guardian_log'];
@@ -286,6 +287,7 @@ function sync_package_sarg() {
 			}
 			break;
 	}
+	$sarg_title = ucfirst($sarg['proxy_server']);
 	if (!file_exists($access_log) && $access_log != "") {
 		$error = "[sarg] Config error: " . $sarg['proxy_server'] . " log file ($access_log) does not exists";
 		log_error($error);
@@ -315,7 +317,12 @@ function sync_package_sarg() {
 	$date_format = (preg_match("/\w/", $sarg['report_date_format']) ? $sarg['report_date_format'] : "u");
 	$report_type = preg_replace('/,/', ' ', $sarg['report_type']);
 	$report_charset = $sarg['report_charset'] ?: "UTF-8";
-	$exclude_string = (empty($sarg['exclude_string']) ? "" : 'exclude_string "' . $sarg['exclude_string'] . '"');
+	
+	$exclude_string = 'exclude_string "e2gerror.php:[inet';
+	if ($sarg['exclude_string'] != "") {
+	    $exclude_string .= ":" .$sarg['exclude_string'];
+	}
+    $exclude_string .= '"';
 
 	// limits
 	$max_elapsed = $sarg['max_elapsed'] ?: "0";
