@@ -41,10 +41,17 @@ if ($uname['machine'] == 'amd64') {
 $pgtitle = array(gettext("Package"), gettext("Sarg"), gettext("Reports"));
 $shortcut_section = "sarg";
 include("head.inc");
-	
+
+if (file_exists("/usr/local/www/sarg_ng.php")) {
+    $sarg_frame = "sarg_ng.php";
+} else {
+    $sarg_frame = "sarg_frame.php";
+}
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+
+ 
 	
 <form>
 <div id="mainlevel">
@@ -71,7 +78,7 @@ include("head.inc");
 		//<![CDATA[
 		var axel = Math.random() + "";
 		var num = axel * 1000000000000000000;
-		document.writeln('<iframe src="/sarg_frame.php?prevent='+ num +'?"  frameborder="0" width="100%" height="600"></iframe>');
+		document.writeln('<iframe src="/<?=$sarg_frame ?>?prevent='+ num +'?"  frameborder="0" width="100%" height="600"></iframe>');
 		//]]>
 		</script>
 		<div id="file_div"></div>
