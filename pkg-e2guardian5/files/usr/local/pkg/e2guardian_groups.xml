@@ -139,7 +139,7 @@
 			<type>select</type>
 			<options>
 				<option><name>Normal Group (default) - Allow or deny access based on acls</name><value>Normal</value></option>
-				<option><name>Deny ip  - Deny access to any ip based url</name><value>DenyIp</value></option>
+				<option><name>Deny ip  - Deny access to any ip based url + acls</name><value>DenyIp</value></option>
 				<option><name>Deny all - No access to any site will be allowed</name><value>BlockAll</value></option>
 				<option><name>Unfiltered Access - Allow access to any site</name><value>Unfiltered</value></option>
 				<option><name>Exception Sites only - Allow sites only on acls exception lists</name><value>ExceptionSitesOnly</value></option>
