@@ -137,15 +137,15 @@ searchlist = 'name=localbanned,messageno=581,path={$e2_dir}/etc/e2guardian/lists
 # (on | off)
 #
 blockdownloads = {$e2guardian_groups['blockdownloads']}
-fileextlist = 'name=exceptionextension,messageno=900,path={$e2_dir}/etc/e2guardian/lists/exceptionextensionlist.g_{$e2guardian_groups['name']}'
-mimelist = 'name=exceptionmime,messageno=750,path={$e2_dir}/etc/e2guardian/lists/exceptionextensionlist.g_{$e2guardian_groups['name']}'
+fileextlist = 'name=exceptionextension,path={$e2_dir}/etc/e2guardian/lists/exceptionextensionlist.g_{$e2guardian_groups['name']}'
+mimelist = 'name=exceptionmime,path={$e2_dir}/etc/e2guardian/lists/exceptionmimetypelist.g_{$e2guardian_groups['name']}'
 
 #
 # Use the following lists to block specific kinds of file downloads.
 # The two exception lists above can be used to override these.
 #
-fileextlist = 'name=bannedextension,messageno=999,path={$e2_dir}/etc/e2guardian/lists/bannedextensionlist.g_{$e2guardian_groups['name']}'
-mimelist = 'name=bannedmime,messageno=750,path={$e2_dir}/etc/e2guardian/lists/bannedmimetypelist.g_{$e2guardian_groups['name']}'
+fileextlist = 'name=bannedextension,messageno=900,path={$e2_dir}/etc/e2guardian/lists/bannedextensionlist.g_{$e2guardian_groups['name']}'
+mimelist = 'name=bannedmime,messageno=800,path={$e2_dir}/etc/e2guardian/lists/bannedmimetypelist.g_{$e2guardian_groups['name']}'
 
 #
 # In either file filtering mode, the following list can be used to override
