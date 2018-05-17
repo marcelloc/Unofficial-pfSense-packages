@@ -136,7 +136,7 @@ searchlist = 'name=localbanned,messageno=581,path={$e2_dir}/etc/e2guardian/lists
 # Defaults to disabled.
 # (on | off)
 #
-blockdownloads = off
+blockdownloads = {$e2guardian_groups['blockdownloads']}
 fileextlist = 'name=exceptionextension,messageno=900,path={$e2_dir}/etc/e2guardian/lists/exceptionextensionlist.g_{$e2guardian_groups['name']}'
 mimelist = 'name=exceptionmime,messageno=750,path={$e2_dir}/etc/e2guardian/lists/exceptionextensionlist.g_{$e2guardian_groups['name']}'
 
@@ -145,7 +145,7 @@ mimelist = 'name=exceptionmime,messageno=750,path={$e2_dir}/etc/e2guardian/lists
 # The two exception lists above can be used to override these.
 #
 fileextlist = 'name=bannedextension,messageno=999,path={$e2_dir}/etc/e2guardian/lists/bannedextensionlist.g_{$e2guardian_groups['name']}'
-mimelist = 'name=bannedmime,messageno=750,path={$e2_dir}/etc/e2guardian/lists/bannedmimeitypelist.g_{$e2guardian_groups['name']}'
+mimelist = 'name=bannedmime,messageno=750,path={$e2_dir}/etc/e2guardian/lists/bannedmimetypelist.g_{$e2guardian_groups['name']}'
 
 #
 # In either file filtering mode, the following list can be used to override
@@ -431,7 +431,7 @@ deepurlanalysis = {$e2guardian_groups['deepurlanalysis']}
 # e.g. /usr/local/share/e2guardian/languages/ukenglish/custom.html
 #
 #htmltemplate = 'custom.html'
-{$htmltemplate}
+
 #Template for use to report network issues and sites which are not responding
 # if blank htmltemplate will be used
 #neterrtemplate = 'neterr.html'
