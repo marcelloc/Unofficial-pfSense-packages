@@ -2,6 +2,7 @@
 
 PORTNAME=	pfSense-pkg-Sarg
 PORTVERSION=	0.6.12
+PORTREVISION=	1
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
