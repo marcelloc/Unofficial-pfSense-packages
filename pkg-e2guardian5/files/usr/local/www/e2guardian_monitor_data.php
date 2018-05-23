@@ -57,7 +57,7 @@ if ($_POST) {
 					show_tds(array("","Date", "IP", "Url", "Response", "User", "Group", "Reason"));
 					foreach ($logarr as $logent) {
 						//split log
-						if (preg_match("/(\S+\s+\S+) (\S+) (\S+) (\S+) (.*) (GET|OPTIONS|POST|CONNECT) \d+ \d+ (.*) \d (\d\d\d) \S+ \S+ (\S+)/", $logent, $logline)) {
+						if (preg_match("/(\S+\s+\S+) (\S+) (\S+) (\S+) (.*) (GET|OPTIONS|POST|CONNECT|-) \d+ \d+ (.*) \d (\d+) \S+ \S+ (\S+)/", $logent, $logline)) {
 
 	                                                // Word wrap the URL
         	                                        $url = htmlentities($logline[4]);
