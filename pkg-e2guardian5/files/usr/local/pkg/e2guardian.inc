@@ -275,9 +275,9 @@ function e2g_generate_rules($type) {
 			}
 			/* Transparent Proxy Interface(s) */
 			foreach ($transparent_ifaces as $t_iface) {
-				$rules .= "rdr pass on $t_iface proto tcp from any to !($t_iface) port 80 -> 127.0.0.1 port {$port}\n";
+				$rules .= "rdr on $t_iface proto tcp from any to !(self) port 80 -> 127.0.0.1 port {$port}\n";
 				if (in_array($t_iface, $ssl_ifaces)) {
-					$rules .= "rdr pass on $t_iface proto tcp from any to !($t_iface) port 443 -> 127.0.0.1 port {$ssl_port}\n";
+					$rules .= "rdr on $t_iface proto tcp from any to !(self) port 443 -> 127.0.0.1 port {$ssl_port}\n";
 				}
 			}
 			/*
