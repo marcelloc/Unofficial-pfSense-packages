@@ -127,16 +127,9 @@ searchlist = 'name=localbanned,messageno=581,path={$e2_dir}/etc/e2guardian/lists
 # The following option is replaced by storyboard logic
 # bannedregexwithblanketblock = off
 #
-# Blanket download blocking
-# If enabled, all files will be blocked, unless they match the
-# exceptionextensionlist or exceptionmimetypelist.
-# These lists do not override virus scanning.
-# Exception lists defined above override all types of filtering, including
-# the blanket download block.
-# Defaults to disabled.
-# (on | off)
-#
-blockdownloads = {$e2guardian_groups['blockdownloads']}
+# The following option is replaced by storyboard logic
+# blockdownloads = off
+
 fileextlist = 'name=exceptionextension,path={$e2_dir}/etc/e2guardian/lists/exceptionextensionlist.g_{$e2guardian_groups['name']}'
 mimelist = 'name=exceptionmime,path={$e2_dir}/etc/e2guardian/lists/exceptionmimetypelist.g_{$e2guardian_groups['name']}'
 
@@ -545,6 +538,12 @@ mitmcheckcert = {$e2guardian_groups['sslcheckcert']}
 sitelist = 'name=nocheckcert,path={$e2_dir}/etc/e2guardian/lists/nocheckcertsitelist.g_{$e2guardian_groups['name']}'
 ipsitelist = 'name=nocheckcert,path={$e2_dir}/etc/e2guardian/lists/nocheckcertsiteiplist.g_{$e2guardian_groups['name']}'
 #
+
+# Auto switch to MITM with upstream connection error or to deliver block page
+# ignored if  sslmitm is off
+# To revert to v4 type behavour switch this off
+# Default is 'on'
+automitm = {$e2guardian_groups['automitm']}
 
 EOF;
 

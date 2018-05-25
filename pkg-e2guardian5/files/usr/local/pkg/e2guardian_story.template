@@ -63,6 +63,7 @@ $dg_story = <<<EOF
 #if(true) return sslcheckmitmgreyonly
 
 {$group_type}
+{$blockdownloads}
 {$sslcheckmitmgreyonly}
 
 EOF;

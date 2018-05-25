@@ -1144,7 +1144,7 @@ $files = array(
 			'mode' => "1",
 			'report_level' =>"global");
 	}
-	$groups = array("scancleancache", "hexdecodecontent", "blockdownloads", "enablepics", "deepurlanalysis", "infectionbypasserrorsonly", "disablecontentscan", "sslcheckcert", "sslmitm");
+	$groups = array("scancleancache", "hexdecodecontent", "blockdownloads", "enablepics", "deepurlanalysis", "infectionbypasserrorsonly", "disablecontentscan", "sslcheckcert", "sslmitm", "automitm");
 	//loop on array
 	$count = 1;
 	$user_xml = "";
@@ -1223,6 +1223,7 @@ break;
 		        $group_type .= "if(siteisip,,505) return setblock\n";
 		        $group_type .= "function(sslcheckblanketblock)\n";
 		        $group_type .= "if(siteisip,,507) return setblock\n";
+		        $blockdownloads = "function(checkrequest)\n";
 		        break;
 
 		    case "ExceptionSitesOnly":
@@ -1231,10 +1232,12 @@ break;
 		        $group_type .= "if(true,,502) return setblock\n";
 		        $group_type .= "function(sslcheckblanketblock)\n";
 		        $group_type .= "if(true,,506) return setblock\n";
+		        $blockdownloads = "function(checkrequest)\n";
 		        break;
 
 		    default:
 		        $group_type = "# Normal filtering group type\n";
+		        $blockdownloads = "function(checkrequest)\n";
 		}
 		
 		if ( $e2guardian_groups['onlymitmsslgrey'] == "on" ) {
@@ -1242,6 +1245,16 @@ break;
     	    $sslcheckmitmgreyonly = "if(true) return sslcheckmitmgreyonly";
 		} else {
 		    $sslcheckmitmgreyonly = "#Normal ssl filtering if enabled\n";
+		}
+		
+		if ($e2guardian_groups['blockdownloads'] == "off") {
+		    $blockdownloads = "";
+		} else {
+		    $blockdownloads .= "if(viruscheckset) checknoscantypes\n";
+		    $blockdownloads .= "if(urlin,exceptionfile) return true\n";
+		    $blockdownloads .= "if(mimein, exceptionmime) return true\n";
+		    $blockdownloads .= "if(extensionin, exceptionextension) return true\n";
+		    $blockdownloads .= "if(true,,750) return setblock";
 		}
 		
 		// temp v5 static lists
