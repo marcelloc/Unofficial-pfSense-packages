@@ -1223,7 +1223,6 @@ break;
 		        $group_type .= "if(siteisip,,505) return setblock\n";
 		        $group_type .= "function(sslcheckblanketblock)\n";
 		        $group_type .= "if(siteisip,,507) return setblock\n";
-		        $blockdownloads = "function(checkrequest)\n";
 		        break;
 
 		    case "ExceptionSitesOnly":
@@ -1232,12 +1231,10 @@ break;
 		        $group_type .= "if(true,,502) return setblock\n";
 		        $group_type .= "function(sslcheckblanketblock)\n";
 		        $group_type .= "if(true,,506) return setblock\n";
-		        $blockdownloads = "function(checkrequest)\n";
 		        break;
 
 		    default:
 		        $group_type = "# Normal filtering group type\n";
-		        $blockdownloads = "function(checkrequest)\n";
 		}
 		
 		if ( $e2guardian_groups['onlymitmsslgrey'] == "on" ) {
@@ -1250,6 +1247,7 @@ break;
 		if ($e2guardian_groups['blockdownloads'] == "off") {
 		    $blockdownloads = "";
 		} else {
+		    $blockdownloads  = "function(checkresponse)\n";
 		    $blockdownloads .= "if(viruscheckset) checknoscantypes\n";
 		    $blockdownloads .= "if(urlin,exceptionfile) return true\n";
 		    $blockdownloads .= "if(mimein, exceptionmime) return true\n";
