@@ -110,7 +110,7 @@ searchlist = 'name=localbanned,messageno=581,path={$e2_dir}/etc/e2guardian/lists
 #sitelist = 'name=localgrey,path={$e2_dir}/etc/e2guardian/lists/localgreysitelist.g_{$e2guardian_groups['name']}'
 #ipsitelist = 'name=localgrey,path={$e2_dir}/etc/e2guardian/lists/localgreysiteiplist.g_{$e2guardian_groups['name']}'
 #urllist = 'name=localgrey,path={$e2_dir}/etc/e2guardian/lists/localgreyurllist.g_{$e2guardian_groups['name']}'
-#sitelist = 'name=localgreyssl,path={$e2_dir}/etc/e2guardian/lists/localgreysslsitelist.g_{$e2guardian_groups['name']}'
+sitelist = 'name=localgreyssl,path={$e2_dir}/etc/e2guardian/lists/localgreysslsitelist.g_{$e2guardian_groups['name']}'
 #ipsitelist = 'name=localgreyssl,path={$e2_dir}/etc/e2guardian/lists/localgreysslsiteiplist.g_{$e2guardian_groups['name']}'
 
 #local exception lists
