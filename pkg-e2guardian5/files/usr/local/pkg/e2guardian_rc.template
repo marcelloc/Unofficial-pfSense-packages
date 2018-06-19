@@ -40,6 +40,10 @@ if [ -f /usr/local/sbin/libc.so.7 ];then
 	cp /usr/local/sbin/libc.so.7 /usr/local/lib
 fi
 
+if [ ! -x $command ];then
+        /bin/chmod +x $command
+fi
+
 run_rc_command "$1"
 
 #hack to get e2guardian working on 2.3.x
