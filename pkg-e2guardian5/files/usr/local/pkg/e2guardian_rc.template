@@ -35,4 +35,15 @@ load_rc_config $name
 
 pidfile="${e2guardian_pidfile}"
 
+#hack to get e2guardian working on 2.3.x
+if [ -f /usr/local/sbin/libc.so.7 ];then
+	cp /usr/local/sbin/libc.so.7 /usr/local/lib
+fi
+
 run_rc_command "$1"
+
+#hack to get e2guardian working on 2.3.x
+if [ -f /usr/local/lib/libc.so.7 ];then
+	sleep 3
+	rm -f /usr/local/lib/libc.so.7
+fi
