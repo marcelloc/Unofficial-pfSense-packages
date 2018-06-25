@@ -172,6 +172,26 @@
                         <source_value>name</source_value>
                         <show_disable_value>Always active</show_disable_value>
                 </field>
+        <field>
+			<name>Exception</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>Enable</fielddescr>
+			<fieldname>exception_enabled</fieldname>
+			<type>checkbox</type>
+			<description></description>
+		</field>
+		<field>
+			<fielddescr>config</fielddescr>
+			<fieldname>exception_regexpheaderlist</fieldname>
+			<description><![CDATA[Enter exception regexp header List for this group.<br>
+				Leave empty to load e2guardian defaults]]></description>
+			<type>textarea</type>
+			<cols>80</cols>
+			<rows>10</rows>
+			<encoding>base64</encoding>
+		</field>
 		<field>
 			<name>Banned</name>
 			<type>listtopic</type>
