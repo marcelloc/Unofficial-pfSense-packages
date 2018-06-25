@@ -1290,6 +1290,7 @@ break;
                         "bannedregexpuseragentlist",
                         "bannedregexpuseragentlist",
                         "searchregexplist",
+		                 "localgreysslsitelist",
 			"contentscanners/exceptionvirusextensionlist",
                         "urlredirectregexplist");
 		foreach ($tlist as $tl) {
@@ -1351,6 +1352,24 @@ break;
 		}
 		$e2_dir = E2GUARDIAN_DIR;
 		
+		//remove localchecks from common.story
+		$c_story_file = "/usr/local/etc/e2guardian/common.story";
+		if (file_exists($c_story_file)) {
+		  $c_story = file($c_story_file);
+		  $c_story_count = 0;
+		  $nc_story_file = "";
+		  foreach($c_story as $c_story_line) {
+		      if (preg_match("/^\w.*, local\w+/", $c_story_line)) {
+		          $c_story_count++;
+		          $nc_story_file .= "#". $c_story_line;
+		      } else {
+		          $nc_story_file .= $c_story_line;
+		      }
+		  }
+		  if ($c_story_count > 0) {
+		      file_put_contents($c_story_file, $nc_story_file, LOCK_EX);
+		  }
+		}
 		include("/usr/local/pkg/e2guardian_story.template");
 		file_put_contents($e2guardian_dir . "/g_" . $e2guardian_groups['name'] . ".story", $dg_story, LOCK_EX);
 		
