@@ -163,19 +163,12 @@ function check_ca_hashes() {
 function e2g_generate_rules($type) {
 	global $config;
 	$e2g_conf = $config['installedpackages']['e2guardian']['config'][0];
-	file_put_contents("/tmp/rules.txt","teste123\n",FILE_APPEND);
+
 	// Do not install any firewall rules if E2guardian is disabled
 	if ($e2g_conf['enable'] != "on") {
 		log_error("[E2guardian] Installed but disabled. Not installing '{$type}' rules.");
 		return;
 	}
-
-	// Do not install any firewall rules if E2guardian is not running
-	if (!is_service_running('e2guardian')) {
-		log_error("[E2guardian] Installed but not started. Not installing '{$type}' rules.");
-		return;
-	}
-	file_put_contents("/tmp/rules.txt","teste456\n",FILE_APPEND);
 
 	// Proxy Interface(s)
 	$proxy_ifaces = explode(",", $e2g_conf['interface']);
@@ -275,9 +268,9 @@ function e2g_generate_rules($type) {
 			}
 			/* Transparent Proxy Interface(s) */
 			foreach ($transparent_ifaces as $t_iface) {
-				$rules .= "rdr on $t_iface proto tcp from any to !(self) port 80 -> 127.0.0.1 port {$port}\n";
+				$rules .= "rdr on $t_iface proto tcp from any to ! 127.0.0.1 port 80 -> 127.0.0.1 port {$port}\n";
 				if (in_array($t_iface, $ssl_ifaces)) {
-					$rules .= "rdr on $t_iface proto tcp from any to !(self) port 443 -> 127.0.0.1 port {$ssl_port}\n";
+					$rules .= "rdr on $t_iface proto tcp from any to ! 127.0.0.1 port 443 -> 127.0.0.1 port {$ssl_port}\n";
 				}
 			}
 			/*
@@ -286,9 +279,9 @@ function e2g_generate_rules($type) {
 			 * The rules below are needed so that the clients can be transparently proxied
 			 */
 			if (($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) || (function_exists("is_pppoe_server_enabled") && is_pppoe_server_enabled())) {
-				$rules .= "rdr pass on \$pppoe proto tcp from any to !127.0.0.1 port 80 -> 127.0.0.1 port {$port}\n";
+				$rules .= "rdr pass on \$pppoe proto tcp from any to ! 127.0.0.1 port 80 -> 127.0.0.1 port {$port}\n";
 				if ($e2g_conf['ssl_proxy'] == "on") {
-					$rules .= "rdr pass on \$pppoe proto tcp from any to !127.0.0.1 port 443 -> 127.0.0.1 port {$ssl_port}\n";
+					$rules .= "rdr pass on \$pppoe proto tcp from any to ! 127.0.0.1 port 443 -> 127.0.0.1 port {$ssl_port}\n";
 				}
 			}
 			$rules .= "\n";
