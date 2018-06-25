@@ -163,19 +163,12 @@ function check_ca_hashes() {
 function e2g_generate_rules($type) {
 	global $config;
 	$e2g_conf = $config['installedpackages']['e2guardian']['config'][0];
-	file_put_contents("/tmp/rules.txt","teste123\n",FILE_APPEND);
+
 	// Do not install any firewall rules if E2guardian is disabled
 	if ($e2g_conf['enable'] != "on") {
 		log_error("[E2guardian] Installed but disabled. Not installing '{$type}' rules.");
 		return;
 	}
-
-	// Do not install any firewall rules if E2guardian is not running
-	if (!is_service_running('e2guardian')) {
-		log_error("[E2guardian] Installed but not started. Not installing '{$type}' rules.");
-		return;
-	}
-	file_put_contents("/tmp/rules.txt","teste456\n",FILE_APPEND);
 
 	// Proxy Interface(s)
 	$proxy_ifaces = explode(",", $e2g_conf['interface']);
@@ -275,9 +268,9 @@ function e2g_generate_rules($type) {
 			}
 			/* Transparent Proxy Interface(s) */
 			foreach ($transparent_ifaces as $t_iface) {
-				$rules .= "rdr on $t_iface proto tcp from any to !(self) port 80 -> 127.0.0.1 port {$port}\n";
+				$rules .= "rdr on $t_iface proto tcp from any to ! 127.0.0.1 port 80 -> 127.0.0.1 port {$port}\n";
 				if (in_array($t_iface, $ssl_ifaces)) {
-					$rules .= "rdr on $t_iface proto tcp from any to !(self) port 443 -> 127.0.0.1 port {$ssl_port}\n";
+					$rules .= "rdr on $t_iface proto tcp from any to ! 127.0.0.1 port 443 -> 127.0.0.1 port {$ssl_port}\n";
 				}
 			}
 			/*
@@ -286,9 +279,9 @@ function e2g_generate_rules($type) {
 			 * The rules below are needed so that the clients can be transparently proxied
 			 */
 			if (($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) || (function_exists("is_pppoe_server_enabled") && is_pppoe_server_enabled())) {
-				$rules .= "rdr pass on \$pppoe proto tcp from any to !127.0.0.1 port 80 -> 127.0.0.1 port {$port}\n";
+				$rules .= "rdr pass on \$pppoe proto tcp from any to ! 127.0.0.1 port 80 -> 127.0.0.1 port {$port}\n";
 				if ($e2g_conf['ssl_proxy'] == "on") {
-					$rules .= "rdr pass on \$pppoe proto tcp from any to !127.0.0.1 port 443 -> 127.0.0.1 port {$ssl_port}\n";
+					$rules .= "rdr pass on \$pppoe proto tcp from any to ! 127.0.0.1 port 443 -> 127.0.0.1 port {$ssl_port}\n";
 				}
 			}
 			$rules .= "\n";
@@ -549,6 +542,7 @@ $files = array(
 		"/lists/bannedmimetypelist",
 		"/lists/headerregexplist",
 		"/lists/bannedregexpheaderlist",
+        "/lists/exceptionregexpheaderlist",
 		"/lists/authplugins/ipgroups",
 		"/lists/contentscanners/exceptionvirusextensionlist",
 		"/lists/contentscanners/exceptionvirusmimetypelist",
@@ -1015,6 +1009,14 @@ $files = array(
 		//chech schedule
 		e2g_check_sched($e2guardian_header['aclschedule']);
 
+		//exceptionregexphedaer 
+		$aclschedule[$e2guardian_header['name']]['exceptionregexpheader'] = $e2guardian_header['aclschedule'];
+		if ($e2guardian_header['exception_regexpheaderlist'] == "" && file_exists($e2guardian_dir . '/lists/exceptionregexpheaderlist.sample')) {
+		    $config['installedpackages']['e2guardianheaderacl']['config'][$count]['exception_regexpheaderlist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/exceptionregexpheaderlist.sample'));
+		    $load_samples++;
+		}
+		file_put_contents($e2guardian_dir . "/lists/exceptionregexpheaderlist." . $e2guardian_header['name'], ($e2guardian_header['exception_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardianheaderacl']['config'][$count]['exception_regexpheaderlist']) : ""), LOCK_EX);
+		
 		//headerregexplist
 		$aclschedule[$e2guardian_header['name']]['headerregexp'] = $e2guardian_header['aclschedule'];
 		if ($e2guardian_header['header_regexplist'] == "" && file_exists($e2guardian_dir . '/lists/headerregexplist.sample')) {
@@ -1292,11 +1294,9 @@ break;
                         "localbannedsearchlist",
                         "contentscanners/exceptionvirusmimetypelist",
                         "bannedmimeitypelist",
-                        "exceptionregexpheaderlist",
-                        "exceptionregexpheaderlist",
-                        "bannedregexpuseragentlist",
                         "bannedregexpuseragentlist",
                         "searchregexplist",
+		                 "localgreysslsitelist",
 			"contentscanners/exceptionvirusextensionlist",
                         "urlredirectregexplist");
 		foreach ($tlist as $tl) {
@@ -1316,9 +1316,10 @@ break;
 			"urlacl" => array("bannedurl", "greyurl", "exceptionurl", "exceptionregexpurl", "bannedregexpurl", "urlregexp", "exceptionfileurl", "logurl", "logregexpurl"),
 			"contentacl" => array("contentregexp"),
 			"extensionacl" => array("exceptionextension", "exceptionmimetype", "bannedextension", "bannedmimetype"),
-			"headeracl" => array("headerregexp", "bannedregexpheader"),
+			"headeracl" => array("headerregexp", "bannedregexpheader", "exceptionregexpheader"),
 			"searchacl" => array("searchlistbanned", "searchlistoveride", "searchlistregexp")
 		);
+
 		foreach ($lists as $list_key => $list_array) {
 			// verify groups acls to avoid errors on empty acl group options
 			if (!preg_match("/\w+/", $e2guardian_groups[$list_key])) {
@@ -1330,10 +1331,11 @@ break;
 					if (!is_array(${$list_value})) {
 						${$list_value} = array();
 					}
+					
 					//print "$dacl {$list_value} {$aclschedule[$dacl][$list_value]} {$e2g_sched_in_use[$aclschedule[$dacl][$list_value]]}\n";
 					if (	$aclschedule[$dacl][$list_value] == "" || 
 						$aclschedule[$dacl][$list_value] == "Always active" ||
-						$e2g_sched_in_use[$aclschedule[$dacl][$list_value]]){
+						$e2g_sched_in_use[$aclschedule[$dacl][$list_value]]) {
 						$dacl = (preg_match("/\w+/", $dacl) ? $dacl : "sample");
 						$ft = E2GUARDIAN_DIR . "/etc/e2guardian/lists/{$list_value}list.{$dacl}";
 						if (file_exists($ft)) {
@@ -1345,7 +1347,7 @@ break;
 					${$list_value} = array_merge(explode("\n", $file_temp), ${$list_value});
 				}
 				//remove comments and blank lines
-                $save_array = array_unique(preg_grep("/^(\w|\"|\'|\/|\.|\<|\(|\*|\^|\# acl |\#listcategory|\#noconvert|\#ENDLIST)/",${$list_value}));
+                $save_array = array_unique(preg_grep("/^(\w|\"|\'|\/|\.|\<|\(|\*|\^|\# acl |\#listcategory|\#noconvert|\#ENDLIST)/", ${$list_value}));
 
 				//add a package warning
                 array_unshift($save_array, "#Do not edit this file.", "#It's created by e2guardian package and overwritten every config save.");
@@ -1356,8 +1358,27 @@ break;
 				unset(${$list_value});
 			}
 		}
+
 		$e2_dir = E2GUARDIAN_DIR;
 		
+		//remove localchecks from common.story
+		$c_story_file = "/usr/local/etc/e2guardian/common.story";
+		if (file_exists($c_story_file)) {
+		  $c_story = file($c_story_file);
+		  $c_story_count = 0;
+		  $nc_story_file = "";
+		  foreach($c_story as $c_story_line) {
+		      if (preg_match("/^\w.*, local\w+/", $c_story_line)) {
+		          $c_story_count++;
+		          $nc_story_file .= "#". $c_story_line;
+		      } else {
+		          $nc_story_file .= $c_story_line;
+		      }
+		  }
+		  if ($c_story_count > 0) {
+		      file_put_contents($c_story_file, $nc_story_file, LOCK_EX);
+		  }
+		}
 		include("/usr/local/pkg/e2guardian_story.template");
 		file_put_contents($e2guardian_dir . "/g_" . $e2guardian_groups['name'] . ".story", $dg_story, LOCK_EX);
 		
