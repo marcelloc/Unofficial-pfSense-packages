@@ -2,7 +2,7 @@
 /*
 	sarg.php
 	part of pfSense (https://www.pfSense.org/)
-	Copyright (C) 2012 Marcello Coutinho
+	Copyright (C) 2012-2018 Marcello Coutinho
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
 
@@ -35,7 +35,7 @@ require_once("/usr/local/pkg/sarg.inc");
 
 $uname = posix_uname();
 if ($uname['machine'] == 'amd64') {
-	ini_set('memory_limit', '250M');
+	ini_set('memory_limit', '768M');
 }
 
 if (preg_match("/(\d+)/", $argv[1], $matches)) {

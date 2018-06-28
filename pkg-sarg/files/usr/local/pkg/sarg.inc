@@ -171,15 +171,15 @@ function sarg_resync() {
 
 function run_sarg($id = -1) {
 	global $config, $g, $sarg_proxy;
-	// mount filesystem writeable
-	conf_mount_rw();
+
 	$cmd = SARG_DIR . "/bin/sarg";
 	if ($id >= 0 && is_array($config['installedpackages']['sargschedule']['config'])) {
-		$args = $config['installedpackages']['sargschedule']['config'][$id]['args'];
-		$gzip = $config['installedpackages']['sargschedule']['config'][$id]['gzip'];
-		$find = $config['installedpackages']['sargschedule']['config'][$id]['find'];
-		$gziplevel = $config['installedpackages']['sargschedule']['config'][$id]['gziplevel'];
-		$daylimit = $config['installedpackages']['sargschedule']['config'][$id]['daylimit'];
+	    $rsg = $config['installedpackages']['sargschedule']['config'][$id];
+		$args = $rsg['args'];
+		$gzip = $rsg['gzip'];
+		$find = $rsg['find'];
+		$gziplevel = $rsg['gziplevel'];
+		$daylimit = $rsg['daylimit'];
 	} else {
 		$args = $_POST['args'];
 		$gzip = $_POST['gzip'];
@@ -228,41 +228,35 @@ EOF;
 function sync_package_sarg() {
 	global $config, $g, $sarg_proxy;
 
-	// detect boot process
-	if (function_exists("platform_booting")) {
-		if (platform_booting()) {
-			return;
-		}
-	} elseif ($g['booting']) {
-		return;
-	}
-
 	// check pkg.php sent a sync request
 	$update_conf = 0;
 	// mount filesystem writeable
 	conf_mount_rw();
-	if (!is_array($config['installedpackages']['sarg']['config'])) {
-		$config['installedpackages']['sarg']['config'][0]['report_options'] = 'use_graphs,remove_temp_files,main_index,use_comma,date_time_by_bytes';
-		$config['installedpackages']['sarg']['config'][0]['report_type'] = 'topusers,topsites,sites_users,users_sites,date_time,denied,auth_failures,site_user_time_date,downloads';
-		$config['installedpackages']['sarg']['config'][0]['report_date_format'] = 'u';
-		$config['installedpackages']['sarg']['config'][0]['report_charset'] = 'UTF-8';
-		$config['installedpackages']['sarg']['config'][0]['topuser_num'] = '0';
-		$config['installedpackages']['sarg']['config'][0]['authfail_report_limit'] = '0';
-		$config['installedpackages']['sarg']['config'][0]['denied_report_limit'] = '0';
-		$config['installedpackages']['sarg']['config'][0]['user_report_limit'] = '0';
-		$config['installedpackages']['sarg']['config'][0]['lastlog'] = '0';
-		$config['installedpackages']['sarg']['config'][0]['max_elapsed'] = '0';
+	if (! is_array($config['installedpackages']['sarg']['config'])) {
+	    $update_conf++;
+		$config['installedpackages']['sarg']['config'][0] = array('report_options' => 'use_graphs,remove_temp_files,main_index,use_comma,date_time_by_bytes',
+		                                                          'report_type' => 'topusers,topsites,sites_users,users_sites,date_time,denied,auth_failures,site_user_time_date,downloads',
+		                                                          'report_date_format' => 'u',
+		                                                          'report_charset' => 'UTF-8',
+		                                                          'topuser_num' => '0',
+		                                                          'authfail_report_limit' => '0',
+		                                                          'denied_report_limit' => '0',
+		                                                          'user_report_limit' => '0',
+		                                                          'lastlog' => '0',
+		                                                          'proxy_server' => 'e2guardian',
+		                                                          'max_elapsed' => '0');
 	}
 	$sarg = $config['installedpackages']['sarg']['config'][0];
-	if (!is_array($config['installedpackages']['sarguser']['config'])) {
-		$config['installedpackages']['sarguser']['config'][0]['user_sort_field'] = 'BYTES';
-		$config['installedpackages']['sarguser']['config'][0]['exclude_userlist'] = $sarg['exclude_userlist'];
-		$config['installedpackages']['sarguser']['config'][0]['include_userlist'] = $sarg['include_userlist'];
-		$config['installedpackages']['sarguser']['config'][0]['usertab'] = $sarg['usertab'];
-		$config['installedpackages']['sarguser']['config'][0]['ldap_filter_search'] = '(uid=%s)';
-		$config['installedpackages']['sarguser']['config'][0]['ldap_target_attr'] = 'cn';
-		$config['installedpackages']['sarguser']['config'][0]['ldap_port'] = '389';
-		$config['installedpackages']['sarguser']['config'][0]['ntlm_user_format'] = 'domainname+username';
+	if (! is_array($config['installedpackages']['sarguser']['config'])) {
+	    $update_conf++;
+		$config['installedpackages']['sarguser']['config'][0] = array('user_sort_field' => 'BYTES',
+		                                                               'exclude_userlist' => $sarg['exclude_userlist'],
+		                                                               'include_userlist' => $sarg['include_userlist'],
+		                                                               'usertab' => $sarg['usertab'],
+		                                                               'ldap_filter_search' => '(uid=%s)',
+		                                                               'ldap_target_attr' => 'cn',
+		                                                               'ldap_port' => '389',
+		                                                               'ntlm_user_format' => 'domainname+username');
 	}
 	$sarguser = $config['installedpackages']['sarguser']['config'][0];
 	$access_log = $sarg['proxy_server'];
@@ -381,56 +375,52 @@ function sync_package_sarg() {
 		write_config();
 	}
 
-	// mount filesystem readonly
-	conf_mount_ro();
-
 	sarg_sync_on_changes();
 }
 
 function sarg_validate_input($post, &$input_errors) {
 	global $config, $g;
-	foreach ($post as $key => $value) {
-		if (empty($value)) {
-			continue;
-		}
-		// check dansguardian
-		if (substr($key, 0, 12) == "proxy_server" && $value == "e2guardian") {
-			if (is_array($config['installedpackages']['e2guardianlog'])) {
-				if ($config['installedpackages']['e2guardianlog']['config'][0]['logfileformat'] != 3) {
-					$input_errors[] = 'Sarg is only compatible with e2guardian squid mode log';
-					$input_errors[] = 'Please change it on Services -> E2guardian -> Report and log -> Log file format';
-				}
-			} else {
-				$input_errors[]='E2Guardian package is not installed';
+	// check dansguardian
+	if ($_POST["proxy_server"] == "e2guardian") {
+		if (is_array($config['installedpackages']['e2guardianlog'])) {
+			if ($config['installedpackages']['e2guardianlog']['config'][0]['logfileformat'] != 3) {
+				$input_errors[] = 'Sarg is only compatible with e2guardian squid mode log';
+				$input_errors[] = 'Please change it on Services -> E2guardian -> Report and log -> Log file format';
 			}
+		} else {
+			$input_errors[]='E2Guardian package is not installed';
 		}
+	}
 
-		# check squidguard
-		if (substr($key, 0, 10) == "proxy_server" && $value == "squidguard")
-			if (!is_array($config['installedpackages']['squidguardgeneral']))
-				$input_errors[]='SquidGuard package is not installed';
+	# check squidguard
+	if ($_POST["proxy_server"] == "squidguard")
+		if (!is_array($config['installedpackages']['squidguardgeneral']))
+			$input_errors[]='SquidGuard package is not installed';
 
-		# check squid
-		if (substr($key, 0, 5) == "proxy_server" && $value == "squid") {
-			if (is_array($config['installedpackages']['squid'])) {
-				if (!$config['installedpackages']['squid']['log_enabled']) {
-					$input_errors[]='Squid logging is not enabled';
-				}
-			} else {
-				$input_errors[]='Squid package is not installed';
+	# check squid
+	if ($_POST["proxy_server"] == "squid") {
+		if (is_array($config['installedpackages']['squid'])) {
+		    exit;
+			if (!$config['installedpackages']['squid']['log_enabled']) {
+				$input_errors[] = 'Squid logging is not enabled';
 			}
+			if (! file_exists($config['installedpackages']['squid']['config'][0]['log_dir'] . '/access.log')) {
+			    $input_errors[] = 'Squid log file does not exists.';
+			}
+		} else {
+			$input_errors[] = 'Squid package is not installed';
 		}
+	}
 
-		if (substr($key, 0, 11) == "description" && !preg_match("@^[a-zA-Z0-9 _/.-]+$@", $value)) {
-			$input_errors[] = "Do not use special characters in description";
-		}
-		if (substr($key, 0, 8) == "fullfile" && !preg_match("@^[a-zA-Z0-9_/.-]+$@", $value)) {
-			$input_errors[] = "Do not use special characters in filename";
-		}
-		// check cron option
-		if ($key == "frequency" && (!preg_match("/^\d+(h|m|d)$/", $value) || $value == 0)) {
-			$input_errors[] = "A valid number with a time reference is required for the field 'Update Frequency'";
-		}
+	if ($_POST['description'] != "" && !preg_match("@^[a-zA-Z0-9 _/.-]+$@", $_POST['description'])) {
+		$input_errors[] = "Do not use special characters in description";
+	}
+	if ($_POST["fullfile"] != "" && !preg_match("@^[a-zA-Z0-9_/.-]+$@", $_POST["fullfile"])) {
+		$input_errors[] = "Do not use special characters in filename";
+	}
+	// check cron option
+	if ($_POST["frequency"] != "" && !preg_match("/^\d+(h|m|d)$/", $_POST["frequency"])) {
+		$input_errors[] = "A valid number with a time reference is required for the field 'Update Frequency'";
 	}
 }
 
