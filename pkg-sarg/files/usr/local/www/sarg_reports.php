@@ -53,10 +53,6 @@ if (file_exists("/usr/local/www/sarg_ng.php")) {
 }
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-
- 
-	
 <form>
 <div id="mainlevel">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -90,8 +86,5 @@ if (file_exists("/usr/local/www/sarg_ng.php")) {
 </table>
 </div>
 </form>
-<?php 
-include("fend.inc");
-?>
 </body>
 </html>
