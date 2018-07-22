@@ -59,37 +59,44 @@ title "{$sarg_title} User Access Reports"
 # 	Specify the font for html page.
 #
 #font_face Tahoma,Verdana,Arial
+font_face "Segoe UI", "Dejavu Sans", "Helvetica Neue"
 
 # TAG:	header_color
 # 	Specify the header color
 #
 #header_color darkblue
+header_color lightgray
 
 # TAG:	header_bgcolor
 # 	Specify the header bgcolor
 #
 #header_bgcolor blanchedalmond
+header_bgcolor #212121
 
 # TAG:	font_size
 # 	Specify the text font size
 #
 #font_size 9px
+font_size 12px
 
 # TAG:	header_font_size
 # 	Specify the header font size
 #
 #header_font_size 9px
+header_font_size 12px
 
 # TAG:	title_font_size
 # 	Specify the title font size
 #
 #title_font_size 11px
+title_font_size 14px
 
 # TAG:	background_color
 # TAG:	background_color
 #	Html page background color
 #
 # background_color white
+background_color whitesmoke
 
 # TAG:	text_color
 #	Html page text color
@@ -100,11 +107,13 @@ title "{$sarg_title} User Access Reports"
 #	Html page text background color
 #
 #text_bgcolor lavender
+text_bgcolor whitesmoke
 
 # TAG:	title_color
 #	Html page title color
 #
 #title_color green
+title_color #212121
 
 # TAG:	logo_image
 #	Html page logo.
@@ -701,6 +710,7 @@ www_document_root /usr/local/www
 #     it to your liking.
 #
 #external_css_file none
+
 # TAG: user_authentication yes|no
 #     Allow user authentication in User Reports using .htaccess
 #     Parameters:
