@@ -72,8 +72,8 @@ if (is_array($config['installedpackages']['e2guardianlog'])) {
 					<td width="78%" class="vtable">
 						<select name="maxlines" id="maxlines">
 							<option value="5">5 lines</option>
-							<option value="10" selected="selected">10 lines</option>
-							<option value="15">15 lines</option>
+							<option value="10">10 lines</option>
+							<option value="15" selected="selected">15 lines</option>
 							<option value="20">20 lines</option>
 							<option value="25">25 lines</option>
 							<option value="100">100 lines</option>
@@ -89,9 +89,9 @@ if (is_array($config['installedpackages']['e2guardianlog'])) {
 					<td width="22%" valign="top" class="vncellreq">Update Interval:</td>
 					<td width="78%" class="vtable">
 						<select name="interval" id="interval">
-							<option value="1000">1 second</option>
+							<option value="1000" selected="selected">1 second</option>
 							<option value="3000">3 seconds</option>
-							<option value="5000" selected="selected">5 seconds</option>
+							<option value="5000">5 seconds</option>
 							<option value="1000">10 seconds</option>
 							<option value="15000">15 seconds</option>
 							<option value="20000">20 seconds</option>
