@@ -1,4 +1,9 @@
+UPDATE: Since 2.4.4, only official packages are listed under package manager by default.
+To install unofficial/extra packages on pfSense on 2.4.4 or higher, you need to apply via system patches the file 244_unofficial_packages_list.patch
+
 Unofficial packages for pfSense software
+
+
 
 As many people know already, Netgate has removed a lot of packages from official repo since pfSense® 2.3.
 
