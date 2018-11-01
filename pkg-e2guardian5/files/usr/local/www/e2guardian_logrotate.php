@@ -39,7 +39,7 @@ require_once("service-utils.inc");
 log_error("e2guardian - rotating logs.");
 
 //TODO: Make all of this less hardcoded and hacky
-service_control_stop("e2guardian");
+service_control_stop("e2guardian", array());
 
 log_error("e2guardian - stoping");
 $e2guardian_log = $config['installedpackages']['e2guardianlog']['config'][0];
@@ -69,7 +69,7 @@ if (file_exists($log)){
 //log_error("e2guardian - Rotate command result: " . $result);
 
 log_error("e2guardian - starting");
-service_control_start("e2guardian");
+service_control_start("e2guardian", array());
 
 log_error("e2guardian - log rotation complete.");
 ?>
