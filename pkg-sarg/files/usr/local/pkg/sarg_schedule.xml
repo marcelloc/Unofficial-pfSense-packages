@@ -9,7 +9,7 @@
 /*
 	sarg_schedule.xml
 	part of pfSense (https://www.pfSense.org/)
-	Copyright (C) 2012 Marcello Coutinho
+	Copyright (C) 2012-2018 Marcello Coutinho
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
 */
@@ -82,6 +82,15 @@
 			<fieldname>args</fieldname>
 		</columnitem>
 		<columnitem>
+			<fielddescr>logfile(s)</fielddescr>
+			<fieldname>logfiles</fieldname>
+		</columnitem>
+		<columnitem>
+			<fielddescr>Folder suffix</fielddescr>
+			<fieldname>foldersuffix</fieldname>
+		</columnitem>
+
+		<columnitem>
 			<fielddescr>Gzip</fielddescr>
 			<fieldname>gzip</fieldname>
 		</columnitem>
@@ -119,9 +128,28 @@
 				<strong>TODAY:</strong>&nbsp;&nbsp;-d `date +%d/%m/%Y`<br />
 				<strong>YESTERDAY:</strong>&nbsp;&nbsp;-d `date -v-1d +%d/%m/%Y`<br />
 				<strong>WEEKAGO:</strong>&nbsp;&nbsp;-d `date -v-1w +%d/%m/%Y`-`date -v-1d +%d/%m/%Y`<br />
-				<strong>MONTHAGO:</strong>&nbsp;&nbsp;-d `date -v-1m +01/%m/%Y`-`date -v-1m +31/%m/%Y`
+				<strong>THIS MONTH:</strong>&nbsp;&nbsp;-d month 0<br />
+				<strong>MONTHAGO:</strong>&nbsp;&nbsp;-d month-1
 				]]>
 			</description>
+			<type>input</type>
+			<size>50</size>
+		</field>
+		<field>
+			<fielddescr>Log File(s)</fielddescr>
+			<fieldname>logfiles</fieldname>
+			<type>select</type>
+ 			<options>
+ 				<option><name>current log file</name><value>current log</value></option>
+				<option><name>current + rotated log files</name><value>all logs</value></option>
+			</options>
+			<description>Choose logfiles to use.</description>
+		</field>
+		<field>
+			<fielddescr>Destination folder suffix</fielddescr>
+			<fieldname>foldersuffix</fieldname>
+			<description><![CDATA[Enter a sub dir destination folder(single word) for these report(ex:weekly). It will be appended to sarg default destination folder.<br/>
+			Default is empty.]]> </description>
 			<type>input</type>
 			<size>50</size>
 		</field>
@@ -140,6 +168,7 @@
 			</description>
 			<required/>
 		</field>
+		
 		<field>
 			<type>listtopic</type>
 			<name>Compress Options</name>

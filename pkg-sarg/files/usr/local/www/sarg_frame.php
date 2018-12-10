@@ -51,8 +51,16 @@ if (preg_match("/(\S+)\W(\w+.html)/", $_REQUEST['file'], $matches)) {
 
 $url = ($_REQUEST['file'] == "" ? "index.html" : $_REQUEST['file']);
 $dir = "/usr/local/sarg-reports";
+if ($_REQUEST['dir'] != "") {
+    $dsuffix = preg_replace("/\W/", "", $_REQUEST['dir']);
+    $dir .= "/" . $dsuffix;
+} else {
+    $dsuffix = "";
+}
+    
 $rand = rand(100000000000, 999999999999);
 $report = "";
+
 if (file_exists("{$dir}/{$url}")) {
 	$report = file_get_contents("{$dir}/{$url}");
 } elseif (file_exists("{$dir}/{$url}.gz")) {
@@ -62,7 +70,7 @@ if (file_exists("{$dir}/{$url}")) {
 }
 if ($report != "" ) {
 	$pattern[0] = "/href=\W(\S+html)\W/";
-	$replace[0] = "href=/sarg_frame.php?prevent=" . $rand . "&file=$prefix/$1";
+	$replace[0] = "href=/sarg_frame.php?dir=" . $dsuffix . "&prevent=" . $rand . "&file=$prefix/$1";
 	$pattern[1] = '/img src="\S+\W([a-zA-Z0-9.-]+.png)/';
 	$replace[1] = 'img src="/sarg-images/$1';
 	$pattern[2] = '@img src="([.a-z/]+)/(\w+\.\w+)@';

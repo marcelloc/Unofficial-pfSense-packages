@@ -51,6 +51,13 @@ if (file_exists("/usr/local/www/sarg_ng.php")) {
     $wd = "100%";
     $ht = "600";
 }
+
+if ($_REQUEST['dir'] != "") {
+    $sarg_frame .= "?dir=" . preg_replace("/\W/", "", $_REQUEST['dir']) . "&";
+} else {
+    $sarg_frame .= "?";
+}
+    
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
@@ -78,7 +85,7 @@ if (file_exists("/usr/local/www/sarg_ng.php")) {
 		//<![CDATA[
 		var axel = Math.random() + "";
 		var num = axel * 1000000000000000000;
-		document.writeln('<iframe src="/<?=$sarg_frame ?>?prevent='+ num +'?"  frameborder="0" width="<?=$wd ?>" height="<?=$ht ?>"></iframe>');
+		document.writeln('<iframe src="/<?=$sarg_frame ?>prevent='+ num +'?"  frameborder="0" width="<?=$wd ?>" height="<?=$ht ?>"></iframe>');
 		//]]>
 		</script>
 		<div id="file_div"></div>
