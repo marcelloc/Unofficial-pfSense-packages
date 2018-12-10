@@ -1,8 +1,8 @@
 # $FreeBSD$
 
-PORTNAME=	pfSense-pkg-Filer
+PORTNAME=	pfSense-pkg-Filer-dev
 PORTVERSION=	0.6.2
-PORTREVISION=	1
+PORTREVISION=	2
 CATEGORIES=	sysutils
 MASTER_SITES=	# empty
 DISTFILES=	# empty
