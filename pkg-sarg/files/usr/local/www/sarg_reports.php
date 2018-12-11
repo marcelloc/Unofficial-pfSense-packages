@@ -72,9 +72,32 @@ if ($_REQUEST['dir'] != "") {
 		$tab_array[] = array(gettext("View Report"), true, "/sarg_reports.php");
 		$tab_array[] = array(gettext("XMLRPC Sync"), false, "/pkg_edit.php?xml=sarg_sync.xml&id=0");
 		display_top_tabs($tab_array);
-		conf_mount_rw();
+		$rdirs = array();
 		mwexec('/bin/rm -f /usr/local/www/sarg-images/temp/*');
-		conf_mount_ro();
+		if (is_array($config['installedpackages']['sargschedule']['config'])) {
+		    $scs = $config['installedpackages']['sargschedule']['config'];
+		    foreach ($scs as $sc) {
+		        if ($sc['foldersuffix'] == "") {
+		            $rdirs['default'] = "";
+		        } else {
+		            $rdirs[$sc['foldersuffix']] = "?dir={$sc['foldersuffix']}";
+		        }
+		    }
+		}
+		foreach ($rdirs as $rdir_i => $rdir_d ) {
+		    $m_sel = false;
+		    if (preg_match("/dir=$rdir_i/",$_SERVER['REQUEST_URI'])) {
+		      $m_sel = true;
+		    }
+		    if ($rdir_i == "default"  && ! preg_match ("/dir/", $_SERVER['REQUEST_URI'])) {
+		        $m_sel = true;
+		    }
+		    $tab_array2[] = array(gettext("$rdir_i Reports"), $m_sel, "/sarg_reports.php$rdir_d");
+		    
+		}
+		if (count ($rdirs) > 1 || !array_key_exists("default",$rdirs)) {
+		  display_top_tabs($tab_array2);
+		}
 		?>
 	</td></tr>
 	<tr><td>

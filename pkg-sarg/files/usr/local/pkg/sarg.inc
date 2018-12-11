@@ -217,7 +217,7 @@ function run_sarg($id = -1) {
 	    $args .= "/$fsuffix";
 	    symlink ( "/usr/local/sarg-reports//images" , "/usr/local/sarg-reports/$fsuffix/images" );
 	}
-	print "$cmd $args\n";
+	print "$cmd -f /usr/local/etc/sarg/sarg.conf $args\n";
 	$find = (preg_match("/(\d+)/", $find, $find_matches) ? $find_matches[1] : "60");
 	log_error("[sarg] Force refresh now with {$args} args, compress({$gzip}).");
 	$gzip_script = "#!/bin/sh\n";
