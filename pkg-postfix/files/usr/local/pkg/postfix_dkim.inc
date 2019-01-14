@@ -79,7 +79,7 @@ function check_dkim_service($cfg){
 
 	// check if any domain has keys
 	foreach (glob("$dkim_base_dir/*") as $domain_path) {
-		$file_domain = array_pop(split("/",$domain_path));
+		$file_domain = array_pop(explode("/",$domain_path));
 		if (is_dir($domain_path) && is_domain($file_domain)) {
 			$status = "YES";
 		}
@@ -298,7 +298,7 @@ EOF;
 		//list current keys on disk
 		$domains_on_disk=array();
 		foreach (glob("$dkim_base_dir/*") as $domain_path) {
-			$file_domain=array_pop(split("/",$domain_path));
+			$file_domain=array_pop(explode("/",$domain_path));
 			//var_dump($file_domain);
 			if (is_dir($domain_path) && is_domain($file_domain)) {
 				if (! array_key_exists ($file_domain,$dkim_domains)) {
