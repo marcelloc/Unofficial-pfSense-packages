@@ -1,0 +1,10 @@
+/usr/local/share/licenses/pfSense-pkg-SpeedTest-0.1/catalog.mk
+/usr/local/share/licenses/pfSense-pkg-SpeedTest-0.1/LICENSE
+/usr/local/share/licenses/pfSense-pkg-SpeedTest-0.1/APACHE20
+pkg/speedtest.xml
+www/diag_speedtest.php
+/etc/inc/priv/speedtest.priv.inc
+share/pfSense-pkg-SpeedTest/info.xml
+@dir /etc/inc/priv
+@dir /usr/local/www
+
