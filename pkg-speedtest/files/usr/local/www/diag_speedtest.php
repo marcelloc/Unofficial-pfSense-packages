@@ -125,7 +125,7 @@ if ($input_errors) {
 
 $form = new Form(false);
 
-$section = new Form_Section('speedtest');
+$section = new Form_Section('Speedtest');
 /*
 $section->addInput(new Form_Input(
 	'host',
@@ -161,7 +161,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	'speedtest',
+	'Speedtest',
 	null,
 	'fa-rss'
 ))->addClass('btn-primary');
