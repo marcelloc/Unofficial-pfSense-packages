@@ -107,7 +107,7 @@ if ($do_speedtest) {
 	}
 
 	//$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
-	$cmd = "{$command} {$srcip} ";
+	$cmd = "{$command} {$srcip} --json --share";
 	//echo "speedtest command: {$cmd}\n";
 	$result = shell_exec($cmd);
 
@@ -175,8 +175,11 @@ if ($do_speedtest && !empty($result) && !$input_errors) {
 			<h2 class="panel-title"><?=gettext('Results')?></h2>
 		</div>
 
-		<div class="panel-body">
-			<pre><?= $result ?></pre>
+		<div class="panel-body" align="center">
+		<br/>
+		<?php $json = json_decode($result,true)?>
+			<a><img src="<?=$json['share']?>" alt="Speedtest Result"></a>
+		<br/>
 		</div>
 	</div>
 <?php
