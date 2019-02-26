@@ -1139,27 +1139,28 @@ function squid_resync_general() {
 		if ($srv_cert != false) {
 			if (base64_decode($srv_cert['prv'])) {
 				// check if ssl_db was initilized by Squid
-				if (!file_exists(SQUID_SSL_DB . "/serial")) {
+				if (!file_exists(SQUID_SSL_DB . "/size")) {
 					if (is_dir(SQUID_SSL_DB)) {
 						mwexec("/bin/rm -rf " . SQUID_SSL_DB);
 					}
-					mwexec(SQUID_LOCALBASE . "/libexec/squid/security_file_certgen -c -s " . SQUID_SSL_DB);
+					mwexec(SQUID_LOCALBASE . "/libexec/squid/security_file_certgen -c -s " . SQUID_SSL_DB . " -M 4MB -b 2048\n");
 				}
 				// force squid user permission on /var/squid/lib/ssl_db/
 				squid_chown_recursive(SQUID_SSL_DB, SQUID_UID, SQUID_GID);
 				// cert, key, version, cipher, options, clientca, cafile, capath, crlfile, tls-dh, sslflags, sslcontext
 				$crt_pk = SQUID_CONFBASE . "/serverkey.pem";
 				$crt_capath = SQUID_LOCALBASE . "/share/certs/";
-				$sslproxy_options = "NO_SSLv2,NO_SSLv3";
+				$sslproxy_options = "NO_SSLv3";
 				/* XXX: Bug #4453, Bug #6592, Feature #6593, Bug #6563
 				 * http://wiki.squid-cache.org/ConfigExamples/Intercept/SslBumpExplicit#Modern_DH.2FEDH_ciphers_usage
 				 */
 				if (empty($settings['sslproxy_compatibility_mode']) || ($settings['sslproxy_compatibility_mode'] == 'modern')) {
 					// Modern cipher suites
 					$sslproxy_cipher = "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH+aRSA+RC4:EECDH:EDH+aRSA:!RC4:!aNULL:!eNULL:!LOW:!3DES:!SHA1:!MD5:!EXP:!PSK:!SRP:!DSS";
-					$sslproxy_options .= ",NO_TLSv1";
+					$sslproxy_min_tls = "1.2";
 				} else {
 					$sslproxy_cipher = "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH+aRSA+RC4:EECDH:EDH+aRSA:HIGH:!RC4:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS";
+					 $sslproxy_min_tls = "1.0";
 				}
 				if (!empty($settings["dhparams_size"])) {
 					if ($settings['dhparams_size'] == '4096') {
@@ -1169,11 +1170,11 @@ function squid_resync_general() {
 					} elseif ($settings['dhparams_size'] == '1024') {
 						$sslproxy_dhparams = "tls-dh=prime256v1:/etc/dh-parameters.1024";
 					}
-					$sslproxy_options .= ",SINGLE_DH_USE,SINGLE_ECDH_USE";
+					$sslproxy_options .= ",SINGLE_DH_USE";
 				} elseif (file_exists("/etc/dh-parameters.2048")) {
 					// Fallback options for defaults on install
 					$sslproxy_dhparams = "tls-dh=prime256v1:/etc/dh-parameters.2048";
-					$sslproxy_options .= ",SINGLE_DH_USE,SINGLE_ECDH_USE";
+					$sslproxy_options .= ",SINGLE_DH_USE";
 				} else {
 					// Should never get here
 					$sslproxy_dhparams = "";
@@ -1183,9 +1184,10 @@ function squid_resync_general() {
 				$ssl_interception .= "ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=" . ($sslcrtd_children*2) . "MB cert={$crt_pk} capath={$crt_capath} cipher={$sslproxy_cipher} {$sslproxy_dhparams} options={$sslproxy_options}\n";
 				$interception_checks = "sslcrtd_program " . SQUID_LOCALBASE . "/libexec/squid/security_file_certgen -s " . SQUID_SSL_DB . " -M 4MB -b 2048\n";
 				$interception_checks .= "sslcrtd_children {$sslcrtd_children}\n";
-				$interception_checks .= "sslproxy_capath {$crt_capath}\n";
-				$interception_checks .= "sslproxy_options {$sslproxy_options}\n";
-				$interception_checks .= "sslproxy_cipher {$sslproxy_cipher}\n";
+				$interception_checks .= "tls_outgoing_options capath={$crt_capath}\n";
+				$interception_checks .= "tls_outgoing_options options={$sslproxy_options}\n";
+				$interception_checks .= "tls_outgoing_options cipher={$sslproxy_cipher}\n";
+				$interception_checks .= "tls_outgoing_options min-version={$sslproxy_min_tls}\n";		
 				if (preg_match("/sslproxy_cert_error/", $settings["interception_checks"])) {
 					$interception_checks .= "sslproxy_cert_error allow all\n";
 				}
@@ -1360,6 +1362,7 @@ EOD;
 				}
 			}
 		}
+
 		if (!empty($src)) {
 			$conf .= "# Allow local network(s) on interface(s)\n";
 			$conf .= "acl localnet src $src\n";
@@ -1558,6 +1561,10 @@ function squid_resync_nac() {
 	$webgui_port = $config['system']['webgui']['port'];
 	$addtl_ports = $settings['addtl_ports'];
 	$addtl_sslports = $settings['addtl_sslports'];
+
+	//TODO add to gui and conf http://www.squid-cache.org/Doc/config/on_unsupported_protocol/
+	//on_unsupported_protocol to handle new features on unsupported protocol
+
 	// do not add (default) proxy ports when using Squid as reverse proxy only
 	if (!empty($squidsettings['active_interface'])) {
 		$port = $squidsettings['proxy_port'] ? $squidsettings['proxy_port'] : 3128;
