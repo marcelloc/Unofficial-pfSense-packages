@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+	<package>
+		<name>squid-dev</name>
+		<internal_name>squid-dev</internal_name>
+		<descr><![CDATA[High performance web proxy cache (4.5 branch). It combines Squid as a proxy server with its capabilities of acting as a HTTP / HTTPS reverse proxy.&lt;br /&gt;
+			It includes an Exchange-Web-Access (OWA) Assistant, SSL filtering and antivirus integration via C-ICAP.
+			]]></descr>
+		<pkginfolink>https://forum.pfsense.org/index.php?board=60.0</pkginfolink>
+		<website>http://www.squid-cache.org/</website>
+		<version>%%PKGVERSION%%</version>
+		<configurationfile>squid.xml</configurationfile>
+	</package>
+</pfsensepkgs>

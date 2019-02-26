@@ -1,0 +1,19 @@
+name: "pfSense-pkg-squid-dev"
+version: "0.4.5"
+origin: www/pkg-squid-dev
+comment: <<EOD
+pfSense package squid
+EOD
+maintainer: coreteam@pfsense.org
+prefix: /usr/local
+categories: [ www, ]
+licenselogic: single
+licenses: [ APACHE20, ]
+deps: { 
+"c-icap-modules": {origin: "www/c-icap-modules", version: "0.5.3_1"}
+"squid": {origin: "www/squid", version: "4.4_1"}
+"squid_radius_auth": {origin: "www/squid_radius_auth", version: "1.10"}
+"squidclamav": {origin: "www/squidclamav", version: "6.16"}
+}
+options: {
+}
