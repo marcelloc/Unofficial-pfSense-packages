@@ -22,13 +22,13 @@
 
 global $priv_list;
 
-$priv_list['page-firewall-ipguard'] = array();
-$priv_list['page-firewall-ipguard']['name'] = "WebCfg - Firewall: SpeedTest package";
-$priv_list['page-firewall-ipguard']['descr'] = "Allow access to SpeedTest package GUI";
+$priv_list['page-diagnostics-speedtest'] = array();
+$priv_list['page-diagnostics-speedtest']['name'] = "WebCfg - Diagnostics: SpeedTest package";
+$priv_list['page-diagnostics-speedtest']['descr'] = "Allow access to SpeedTest package GUI";
 
-$priv_list['page-firewall-ipguard']['match'] = array();
-$priv_list['page-firewall-ipguard']['match'][] = "pkg.php?xml=speedtest.xml*";
-$priv_list['page-firewall-ipguard']['match'][] = "pkg_edit.php?xml=speedtest.xml*";
-$priv_list['page-firewall-ipguard']['match'][] = "diag_speedtest.php*";
+$priv_list['page-diagnostics-speedtest']['match'] = array();
+$priv_list['page-diagnostics-speedtest']['match'][] = "pkg.php?xml=speedtest.xml*";
+$priv_list['page-diagnostics-speedtest']['match'][] = "pkg_edit.php?xml=speedtest.xml*";
+$priv_list['page-diagnostics-speedtest']['match'][] = "diag_speedtest.php*";
 
 ?>

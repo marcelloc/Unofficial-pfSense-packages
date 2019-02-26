@@ -2,6 +2,7 @@
 
 PORTNAME=	pfSense-pkg-SpeedTest
 PORTVERSION=	0.1
+PORTREVISION=	2
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
