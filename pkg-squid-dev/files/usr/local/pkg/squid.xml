@@ -145,6 +145,38 @@
 			<multiple/>
 		</field>
 		<field>
+			<fielddescr>SMP / Workes</fielddescr>
+			<fieldname>workers</fieldname>
+			<description>
+				<![CDATA[
+				Number of main Squid processes or "workers" to fork and maintain.<br/>
+				<br/>
+				<span class="text-info">Default: 1, "no SMP" mode, start one main Squid process daemon</span><br/>
+				<span class="text-info">N: start N main Squid process daemons (i.e., SMP mode)</span> <br/>
+				<br/>
+				<strong><span class="text-danger">Do not condiser HT threads, just CPU cores to prevent system overload</span></strong><br/>
+				<br/>
+				<span class="text-info">Please see <a href="http://wiki.squid-cache.org/Features/SslPeekAndSplice" target="_blank">SslBump Peek and Splice wiki documentation</a>
+				In SMP mode, each worker does nearly all what a single Squid daemon	does (e.g., listen on http_port and forward HTTP requests).<br/></span>
+				]]>
+			</description>
+			<type>select</type>
+			<options>
+				<option><name>01 - Single process</name><value>1</value></option>
+				<option><name>02 - Workers in SMP mode</name><value>2</value></option>
+				<option><name>03 - Workers in SMP mode</name><value>3</value></option>
+				<option><name>04 - Workers in SMP mode</name><value>4</value></option>
+				<option><name>05 - Workers in SMP mode</name><value>5</value></option>
+				<option><name>06 - Workers in SMP mode</name><value>6</value></option>
+				<option><name>07 - Workers in SMP mode</name><value>7</value></option>
+				<option><name>08 - Workers in SMP mode</name><value>8</value></option>
+				<option><name>09 - Workers in SMP mode</name><value>9</value></option>
+				<option><name>10 - Workers in SMP mode</name><value>10</value></option>
+			</options>
+			<size>1</size>
+			<default_value>1</default_value>
+		</field>
+		<field>
 			<fielddescr>Proxy Port</fielddescr>
 			<fieldname>proxy_port</fieldname>
 			<description>
