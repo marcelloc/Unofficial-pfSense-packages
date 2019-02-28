@@ -1,8 +1,8 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-E2guardian5
-PORTVERSION=	0.5.0.3
-#PORTREVISION=   4
+PORTVERSION=	0.5.3.1
+PORTREVISION=   1
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -13,9 +13,11 @@ COMMENT=	pfSense Unofficial E2guardian package
 
 LICENSE=	APACHE20
 
-RUN_DEPENDS=	${LOCALBASE}/sbin/e2guardian:www/e2guardian5 \
-		/usr/local/sbin/squid:www/squid \
+RUN_DEPENDS=	${LOCALBASE}/sbin/e2guardian:www/e2guardian53 \
+		/usr/local/sbin/clamd:security/clamav \
 		/usr/local/share/certs/ca-root-nss.crt:security/ca_root_nss
+
+CONFLITS_WITH=	www/e2guardian5
 
 NO_BUILD=	yes
 NO_MTREE=	yes
@@ -90,6 +92,8 @@ do-install:
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian_ips.xml \
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/e2guardian_users.xml \
+		${STAGEDIR}${PREFIX}/pkg
+	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/blacklist.tgz \
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/www/e2guardian.php \
 		${STAGEDIR}${PREFIX}/www
