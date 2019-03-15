@@ -10,5 +10,6 @@ $priv_list['page-status-sarg-reports']['match'][] = "sarg_reports.php*";
 $priv_list['page-status-sarg-reports']['match'][] = "sarg_frame.php*";
 $priv_list['page-status-sarg-reports']['match'][] = "sarg_ng.php*";
 $priv_list['page-status-sarg-reports']['match'][] = "sarg_realtime.php*";
+$priv_list['page-status-sarg-reports']['match'][] = "pkg_edit.php?xml=sarg.xml*";
 
 ?>
