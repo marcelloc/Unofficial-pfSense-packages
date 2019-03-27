@@ -305,9 +305,13 @@ function sync_package_sarg() {
 			// leave this case without break to include squid log file on squidguard option
 		case 'squid':
 			$access_log = $sarg_proxy['squid_config'];
-			if (is_array($config['installedpackages']['squid']['config'])) {
-				if (file_exists($config['installedpackages']['squid']['config'][0]['log_dir'] . '/access.log')) {
-					$access_log = $config['installedpackages']['squid']['config'][0]['log_dir'] . '/access.log';
+			$pkg_squid = "squid";
+			if (is_array($config['installedpackages']['squiddev'])) {
+			    $pkg_squid = "squiddev";
+			}
+			if (is_array($config['installedpackages'][$pkg_squid]['config'])) {
+			    if (file_exists($config['installedpackages'][$pkg_squid]['config'][0]['log_dir'] . '/access.log')) {
+			        $access_log = $config['installedpackages'][$pkg_squid]['config'][0]['log_dir'] . '/access.log';
 				}
 			}
 			break;
@@ -430,12 +434,15 @@ function sarg_validate_input($post, &$input_errors) {
 
 	# check squid
 	if ($_POST["proxy_server"] == "squid") {
-		if (is_array($config['installedpackages']['squid'])) {
-		    exit;
-			if (!$config['installedpackages']['squid']['log_enabled']) {
+	    $pkg_squid = "squid";
+	    if (is_array($config['installedpackages']['squiddev'])) {
+	        $pkg_squid = "squiddev";
+	    }
+	    if (is_array($config['installedpackages'][$pkg_squid])) {
+	        if ($config['installedpackages'][$pkg_squid]['config'][0]['log_enabled'] != "on") {
 				$input_errors[] = 'Squid logging is not enabled';
 			}
-			if (! file_exists($config['installedpackages']['squid']['config'][0]['log_dir'] . '/access.log')) {
+			if (! file_exists($config['installedpackages'][$pkg_squid]['config'][0]['log_dir'] . '/access.log')) {
 			    $input_errors[] = 'Squid log file does not exists.';
 			}
 		} else {
