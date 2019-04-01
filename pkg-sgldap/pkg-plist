@@ -1,0 +1,8 @@
+bin/squidguard_ldap.php
+pkg/sgldap.xml
+pkg/sgldap.inc
+%%DATADIR%%/info.xml
+pkg/squidguard.sgldap.xml
+pkg/squidguard.sgldap.inc
+pkg/squidguard_acl.sgldap.xml
+pkg/squidguard_configurator.sgldap.inc

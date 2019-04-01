@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+	<package>
+		<name>sgldap</name>
+		<descr><![CDATA[Enable ldap batch mode on squidguarp package.]]></descr>
+		<pkginfolink/>
+		<version>%%PKGVERSION%%</version>
+		<configurationfile>sgldap.xml</configurationfile>
+	</package>
+</pfsensepkgs>
