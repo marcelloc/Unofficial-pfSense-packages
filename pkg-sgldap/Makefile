@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-sgldap
-PORTVERSION=	1.0
+PORTVERSION=	1.0.1
 #PORTREVISION=	2
 CATEGORIES=	sysutils
 MASTER_SITES=	# empty
@@ -9,7 +9,7 @@ DISTFILES=	# empty
 EXTRACT_ONLY=	# empty
 
 MAINTAINER=	marcellocoutinho@gmail.com
-COMMENT=	pfSense Unofficial filer package
+COMMENT=	pfSense Unofficial sgldap package
 
 LICENSE=	APACHE20
 
