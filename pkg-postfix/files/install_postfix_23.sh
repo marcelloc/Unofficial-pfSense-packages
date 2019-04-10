@@ -4,7 +4,7 @@
 # * install_postfix_23.sh
 # *
 # * part of unofficial packages for pfSense(R) software
-# * Copyright (c) 2011-2017 Marcello Coutinho
+# * Copyright (c) 2011-2019 Marcello Coutinho
 # * All rights reserved.
 # *
 # * Licensed under the Apache License, Version 2.0 (the "License");
