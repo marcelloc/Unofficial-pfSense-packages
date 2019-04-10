@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 <pfsensepkgs>
 	<package>
-		<name>Postfix Forwarder</name>
-		<internal_name>Postfix_Forwarder</internal_name>
-		<website>http://www.postfix.org/</website>
+		<name>postfix</name>
 		<descr><![CDATA[
 			Postfix mail forwarder acts as a relay server for your domain.<br />
 			It can do first and second line antispam combat before sending incoming mail to local mail servers.<br />
@@ -12,12 +10,8 @@
 		</descr>
 		<category>Services</category>
 		<pkginfolink>https://forum.pfsense.org/index.php/topic,40622.0.html</pkginfolink>
-		<version>2.5</version>
-		<status>RC</status>
-		<required_version>2.3</required_version>
+		<version>3.3.4</version>
 		<configurationfile>postfix.xml</configurationfile>
-		<port_category>mail</port_category>
 		<maintainer>marcellocoutinho@gmail.com</maintainer>
-		<build_options>postfix_SET_FORCE=PCRE SASL2 SPF TLS</build_options>
 	</package>
 </pfsensepkgs>
