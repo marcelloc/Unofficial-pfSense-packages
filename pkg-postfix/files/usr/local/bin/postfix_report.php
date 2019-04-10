@@ -161,7 +161,7 @@ EOF;
 $tds=1;
 $td="</td>\n<td>";
 
-exec("/bin/sh /root/mail_report.sh {$report_log_file}",$mreport);
+exec("/bin/sh /usr/local/bin/mail_report.sh {$report_log_file}",$mreport);
 
 foreach ($mreport as $line) {
         if (preg_match("/message (deferral|bounce|reject|reject warning) detail/",$line)) {

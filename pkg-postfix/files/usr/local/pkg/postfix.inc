@@ -238,7 +238,7 @@ function check_cron() {
 	}
 
 	// check report log
-	$cron_email="/usr/local/bin/php -q /root/postfix_report.php";
+	$cron_email="/usr/local/bin/php -q /usr/local/bin/postfix_report.php";
 	if ($report_status == "on") {        
 		install_cron_job($cron_email, true, "0", "0", "*", "*", "*", "root");
 	} else {
