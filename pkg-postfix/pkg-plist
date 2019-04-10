@@ -18,3 +18,27 @@ pkg/postfix_acl.xml
 @dir /etc/inc
 @dir /etc/inc/priv
 /etc/inc/priv/postfix.priv.inc
+bin/postwhite
+bin/sa-learn-pipe.sh
+bin/sigh
+bin/check_postfix_service.php
+bin/mail_report.sh
+bin/postfix_report.php
+pkg/postfix_dkim.inc
+pkg/postfix_dmarc.inc
+pkg/postfix_postfwd.inc
+pkg/postfix_postwhite.template
+www/postfix.sql.php
+www/postfix_cloud_domains.php
+www/postfix_migrate_config.php
+@dir /usr/local/www/vendor
+@dir /usr/local/www/vendor/datatable
+@dir /usr/local/www/vendor/datatable/css
+www/vendor/datatable/css/jquery.dataTables.min.css
+www/vendor/datatable/datatables.css
+www/vendor/datatable/datatables.js
+www/vendor/datatable/datatables.min.css
+www/vendor/datatable/datatables.min.js
+@dir /usr/local/www/vendor/datatable/js
+www/vendor/datatable/js/jquery.dataTables.min.js
+
