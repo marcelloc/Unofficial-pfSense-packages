@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-postfix
 PORTVERSION=	3.3.4
-#PORTREVISION=	1
+PORTREVISION=	3
 CATEGORIES=	mail
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -11,9 +11,15 @@ EXTRACT_ONLY=	# empty
 MAINTAINER=	marcellocoutinho@gmail.com
 COMMENT=	pfSense package Postfix Forwarder.
 
-RUN_DEPENDS=	postfix:mail/postfix \
+RUN_DEPENDS=	postfix:mail/postfix-sasl \
 		p5-perl-ldap>0:net/p5-perl-ldap \
-		opendkim:mail/opendkim
+		opendkim:mail/opendkim \
+		pflogsumm:mail/pflogsumm \
+		libspf2>0:mail/libspf \
+		postfix-policyd-spf-perl>0:mail/postfix-policyd-spf-perl \
+		postfwd:mail/postfix-postfwd \
+		opendmarc:mail/opendmarc \
+		zip:archivers/zip
 
 USE_PERL5=	run
 USES=		perl5
