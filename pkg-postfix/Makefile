@@ -1,8 +1,8 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-postfix
-PORTVERSION=	2.5
-PORTREVISION=	1
+PORTVERSION=	3.3.4
+#PORTREVISION=	1
 CATEGORIES=	mail
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -12,7 +12,8 @@ MAINTAINER=	marcellocoutinho@gmail.com
 COMMENT=	pfSense package Postfix Forwarder.
 
 RUN_DEPENDS=	${LOCALBASE}/sbin/postfix:${PORTSDIR}/mail/postfix \
-		p5-perl-ldap>0:${PORTSDIR}/net/p5-perl-ldap
+		p5-perl-ldap>0:${PORTSDIR}/net/p5-perl-ldap \
+		opendkim>0:${PORTSDIR}/mail/opendkim \
 
 USE_PERL5=	run
 USES=		perl5

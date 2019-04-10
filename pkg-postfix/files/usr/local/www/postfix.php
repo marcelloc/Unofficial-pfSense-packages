@@ -3,7 +3,7 @@
  * postfix.php
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2011-2017 Marcello Coutinho
+ * Copyright (c) 2011-2019 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,14 +23,13 @@ require_once("/etc/inc/util.inc");
 require_once("/etc/inc/functions.inc");
 require_once("/etc/inc/pkg-utils.inc");
 require_once("/etc/inc/globals.inc");
-require_once("xmlrpc.inc");
 require_once("xmlrpc_client.inc");
 require_once("/usr/local/pkg/postfix.inc");
 
 define('POSTFIX_DEBUG', '0');
 $uname = posix_uname();
 if ($uname['machine'] == 'amd64') {
-        ini_set('memory_limit', '768M');
+        ini_set('memory_limit', '900M');
 }
 
 function get_remote_log() {

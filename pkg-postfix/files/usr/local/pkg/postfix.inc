@@ -3,7 +3,7 @@
  * postfix.inc
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2011-2017 Marcello Coutinho
+ * Copyright (c) 2011-2019 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,6 @@ require_once("notices.inc");
 require_once("pkg-utils.inc");
 require_once("services.inc");
 require_once("util.inc");
-require_once("xmlrpc.inc");
 require_once("xmlrpc_client.inc");
 require_once("postfix_dkim.inc");
 require_once("postfix_dmarc.inc");
@@ -238,7 +237,7 @@ function check_cron() {
 	}
 
 	// check report log
-	$cron_email="/usr/local/bin/php -q /usr/local/bin/postfix_report.php";
+	$cron_email="/usr/local/bin/php -q /root/postfix_report.php";
 	if ($report_status == "on") {        
 		install_cron_job($cron_email, true, "0", "0", "*", "*", "*", "root");
 	} else {

@@ -3,7 +3,7 @@
  * postfix_dkim.inc
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2011-2017 Marcello Coutinho
+ * Copyright (c) 2011-2019 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +29,8 @@ require_once("pkg-utils.inc");
 require_once("services.inc");
 require_once("util.inc");
 
-$dkim_user="mailnull";
-$dkim_base_dir="/home/{$dkim_user}/keys";
+$dkim_user = "mailnull";
+$dkim_base_dir = "/home/{$dkim_user}/keys";
 
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 
@@ -40,7 +40,7 @@ function dkim_text_area_decode($text) {
 
 function postfix_domain_validate_input($post, &$input_errors) {
         global $dkim_user,$dkim_base_dir,$savemsgi,$config;
-        $remain_domains=array();
+        $remain_domains = array();
 	if (!is_domain($post['domain'])) {
 		$input_errors[] = "{$post['domain']} is not a valid domain name.";
 	}
@@ -56,7 +56,7 @@ function postfix_domain_validate_input($post, &$input_errors) {
 	$_POST['dmarctxt'] = dmarc_create_txt_record($post);
 }
 
-function remove_dkim_files($dkim_domain,$remove_dir){
+function remove_dkim_files($dkim_domain, $remove_dir){
 	global $dkim_base_dir;
 	if ($dkim_domain != "" && is_dir("{$dkim_base_dir}/{$dkim_domain}")) {
 		unlink_if_exists("{$dkim_base_dir}/{$dkim_domain}/default.private");
@@ -85,21 +85,21 @@ function check_dkim_service($cfg){
 		}
 	}
 
-        $service="milter-opendkim";
-        $service_dir="/usr/local/etc/rc.d";
-        $service_file_content=file_get_contents("{$service_dir}/{$service}");
-        $service_file_content=preg_replace("/milteropendkim_enable=\"(YES|NO)\"/","milteropendkim_enable=\"$status\"",$service_file_content);
+        $service = "milter-opendkim";
+        $service_dir = "/usr/local/etc/rc.d";
+        $service_file_content = file_get_contents("{$service_dir}/{$service}");
+        $service_file_content = preg_replace("/milteropendkim_enable=\"(YES|NO)\"/","milteropendkim_enable=\"$status\"",$service_file_content);
         file_put_contents("{$service_dir}/{$service}",$service_file_content,LOCK_EX);
         if (!file_exists("{$service_dir}/{$service}.sh")) {
                 symlink ( "{$service_dir}/{$service}","{$service_dir}/{$service}.sh");
         }
-        if ($status=="YES"){
+        if ($status == "YES"){
                 exec("{$service_dir}/{$service}.sh restart",$savemsg_array);
         }else{
                 exec("{$service_dir}/{$service}.sh onestop",$savemsg_array);
         }
 }
-function check_dkim_dir($dir,$user){
+function check_dkim_dir($dir, $user){
         if (! file_exists($dir)){
                 log_error("[postfix] Creating dkim folder {$dir}");
                 mkdir($dir, 0750, true);
@@ -108,35 +108,35 @@ function check_dkim_dir($dir,$user){
         chgrp($dir, 'wheel');
 }
 
-function dkim_save_files($domain,$private,$pub) {
-	global $dkim_user,$dkim_base_dir;
+function dkim_save_files($domain, $private, $pub) {
+	global $dkim_user, $dkim_base_dir;
 	$dkim_dir = "$dkim_base_dir/$domain";
 	check_dkim_dir($dkim_dir,$dkim_user);
-	file_put_contents("{$dkim_dir}/default.private",dkim_text_area_decode($private),LOCK_EX);
-        file_put_contents("{$dkim_dir}/default.txt",dkim_text_area_decode($pub),LOCK_EX);
-        chmod ("{$dkim_dir}/default.private",0640);
-        chmod ("{$dkim_dir}/default.txt",0640);
+	file_put_contents("{$dkim_dir}/default.private", dkim_text_area_decode($private), LOCK_EX);
+        file_put_contents("{$dkim_dir}/default.txt", dkim_text_area_decode($pub), LOCK_EX);
+        chmod ("{$dkim_dir}/default.private", 0640);
+        chmod ("{$dkim_dir}/default.txt", 0640);
 }
 
-function dkim_create_key($domain,$bits,$gui_id) {
-	global $config,$dkim_user,$dkim_base_dir;
+function dkim_create_key($domain,$bits, $gui_id) {
+	global $config, $dkim_user, $dkim_base_dir;
 
 	$dkim_dir = "$dkim_base_dir/$domain";
-	check_dkim_dir($dkim_dir,$dkim_user);
+	check_dkim_dir($dkim_dir, $dkim_user);
 	log_error("[postfix] Creating Domain key for {$domain} under {$dkim_dir}");
 	system("/usr/local/sbin/opendkim-genkey -D {$dkim_dir} -b {$bits} -h rsa-sha256 --subdomains -d {$domain} -s default");
 
-	chmod ("{$dkim_base_dir}/{$domain}/default.private",0640);
-        chmod ("{$dkim_base_dir}/{$domain}/default.txt",0640);
+	chmod ("{$dkim_base_dir}/{$domain}/default.private", 0640);
+        chmod ("{$dkim_base_dir}/{$domain}/default.txt", 0640);
 
-	chown("{$dkim_dir}/default.txt",$dkim_user);
-        chown("{$dkim_dir}/default.private",$dkim_user);
+	chown("{$dkim_dir}/default.txt", $dkim_user);
+        chown("{$dkim_dir}/default.private", $dkim_user);
 
-	dkim_sake_key_from_disk($domain,$gui_id);
+	dkim_sake_key_from_disk($domain, $gui_id);
 }
 
-function dkim_sake_key_from_disk($domain,$gui_id) {
-	global $config,$dkim_user,$dkim_base_dir;
+function dkim_sake_key_from_disk($domain, $gui_id) {
+	global $config, $dkim_user, $dkim_base_dir;
 	
 	$dkim_private=base64_encode(file_get_contents("{$dkim_base_dir}/{$domain}/default.private"));
         $dkim_pub=base64_encode(file_get_contents("{$dkim_base_dir}/{$domain}/default.txt"));
@@ -145,12 +145,12 @@ function dkim_sake_key_from_disk($domain,$gui_id) {
         $config['installedpackages']['postfixdomainsng']['config'][$gui_id]['pub'] = $dkim_pub;	
 }
 
-function check_dkim_config (){
+function check_dkim_config () {
  global $config;
- $postfix_config=$config['installedpackages']['postfix']['config'][0];
+ $postfix_config = $config['installedpackages']['postfix']['config'][0];
         if (is_array($config['installedpackages']['postfixdomainsng'])) {
                 $postfix_domains=$config['installedpackages']['postfixdomainsng']['config'];
-                $dkim_domains=array();
+                $dkim_domains = array();
                 foreach ($postfix_domains as $id => $domain) {
                         // var_dump($domain);
                         if ($domain['dkim'] != 'no' ) {
