@@ -692,13 +692,13 @@ EOF;
 		case '':
         	case 'disable':
         	case 'No_Check':
-                	$spf="";
-                	$spf_helo_reject="No_Check";
+                	$spf = "";
+                	$spf_helo_reject = "No_Check";
                 	break;
         	default:
-                	$spf_helo_reject=$antispam['postfix_spf'];
-                	//$postfix_main.= "spf-policy_time_limit = 3600\n";
-                	$spf="check_policy_service unix:private/spf-policy,\n\t\t\t\t";
+                	$spf_helo_reject = $antispam['postfix_spf'];
+                	$postfix_main .= "policyd-spf_time_limit = 3600\n";
+                	$spf="check_policy_service unix:private/policyd-spf,\n\t\t\t\t";
                 	break;
 	}
 
@@ -706,13 +706,13 @@ EOF;
         	case '':
         	case 'disable':
         	case 'No_Check':
-                	$spf="";
-                	$spf_mail_reject="No_Check";
+                	$spf = "";
+                	$spf_mail_reject = "No_Check";
                 	break;
         	default:
-                	$spf_mail_reject=$antispam['postfix_spf_mail'];
-                	//$postfix_main.= "spf-policy_time_limit = 3600\n";
-                	$spf="check_policy_service unix:private/spf-policy,\n\t\t\t\t";
+                	$spf_mail_reject = $antispam['postfix_spf_mail'];
+                	$postfix_main .= "policyd-spf_time_limit = 3600\n";
+                	$spf = "check_policy_service unix:private/policyd-spf,\n\t\t\t\t";
                 	break;
 	}
 
@@ -720,8 +720,8 @@ EOF;
 		$spf_skip = ",{$antispam['postfix_spf_skip']}";
 	}
 
-	$postfix_main  = preg_replace("/SPFSPFSPF/",$spf,$postfix_main);
-	$postfix_main .= $postfix_main_antispam.$check_debug;
+	$postfix_main  = preg_replace("/SPFSPFSPF/", $spf, $postfix_main);
+	$postfix_main .= $postfix_main_antispam . $check_debug;
 	switch ($antispam['zombie_blocker']) {
 		case "enforce":
 		case "drop":
@@ -745,18 +745,18 @@ EOF;
 		$inet_interfaces[] = "loopback-only";
 	} else {
 		$ifaces = ($postfix_config['enabled_interface'] ? $postfix_config['enabled_interface'] : 'wan');
-		foreach (explode(',',$ifaces) as $listenon) {
-			if (is_ipaddrv6($listenon) && preg_match("/(ipv6|all)/i",$inet_protocols)) {
-				$inet_interfaces[]= "{$listenon}";
-			} elseif (is_ipaddr($listenon) && preg_match("/(ipv4|all)/i",$inet_protocols)) {
-				$inet_interfaces[]= "{$listenon}";
+		foreach (explode(',', $ifaces) as $listenon) {
+			if (is_ipaddrv6($listenon) && preg_match("/(ipv6|all)/i", $inet_protocols)) {
+				$inet_interfaces[] = "{$listenon}";
+			} elseif (is_ipaddr($listenon) && preg_match("/(ipv4|all)/i", $inet_protocols)) {
+				$inet_interfaces[] = "{$listenon}";
 			} else {
-				$listenon=(pfSense_get_interface_addresses(convert_friendly_interface_to_real_interface_name($listenon)));
-				if (is_ipaddr($listenon['ipaddr']) && preg_match("/(ipv4|all)/i",$inet_protocols)) {
-					$inet_interfaces []= "{$listenon['ipaddr']}";
+				$listenon = (pfSense_get_interface_addresses(convert_friendly_interface_to_real_interface_name($listenon)));
+				if (is_ipaddr($listenon['ipaddr']) && preg_match("/(ipv4|all)/i", $inet_protocols)) {
+					$inet_interfaces [] = "{$listenon['ipaddr']}";
 				}
-				if (is_ipaddrv6($listenon['ipaddr6']) && preg_match("/(ipv6|all)/i",$inet_protocols)) {
-					$inet_interfaces []= "{$listenon['ipaddr6']}";
+				if (is_ipaddrv6($listenon['ipaddr6']) && preg_match("/(ipv6|all)/i", $inet_protocols)) {
+					$inet_interfaces [] = "{$listenon['ipaddr6']}";
 				}
 			}
 		}
@@ -765,8 +765,8 @@ EOF;
 	$postfix_main .= "inet_interfaces = ".implode(",",$inet_interfaces)."\n";
 
 	if ($postscreen == 1) { //Postscreen enabled
-		if (preg_match("/(\d+),(\d+)(s|m|h|w)/",$antispam['greet_time'],$greet)) {
-			$postfix_main .= 'postscreen_greet_wait = ${stress?'.$greet[1].'}${stress:'.$greet[2].'}'.$greet[3]."\n";
+		if (preg_match("/(\d+),(\d+)(s|m|h|w)/", $antispam['greet_time'], $greet)) {
+			$postfix_main .= 'postscreen_greet_wait = ${stress?'.$greet[1].'}${stress:'.$greet[2].'}' . $greet[3] . "\n";
 		}
 		$ag = $antispam['after_greeting'];
 		if (preg_match("/postscreen_disable_vrfy_command/",$antispam['after_greeting'])) {
@@ -793,14 +793,14 @@ EOF;
 		$postfix_main .= "postscreen_dnsbl_action= ".$antispam['zombie_blocker']."\n";
 		$postfix_main .= "postscreen_blacklist_action= ".$antispam['zombie_blocker']."\n";
 
-		$postfix_master=  px_check_sa_learn('master');
-		$postfix_master  .= "smtp	inet  n       -       n       -       1       postscreen\n\t-o user=postfix\n";
+		$postfix_master  = px_check_sa_learn('master');
+		$postfix_master .= "smtp	inet  n       -       n       -       1       postscreen\n\t-o user=postfix\n";
 		$postfix_master .= ($antispam['soft_bounce'] == "postscreen" ? "\t-o soft_bounce=yes\n" : "");
 		$postfix_master .= $postfix_inets.<<<MASTEREOF
 smtpd     pass  -       -       n       -       -       smtpd
 dnsblog   unix  -       -       n       -       0       dnsblog
 tlsproxy  unix  -       -       n       -       0       tlsproxy
-spf-policy unix -       n       n       -       0       spawn
+policyd-spf unix -       n       n       -       0       spawn
           user=nobody argv=/usr/local/bin/policyd-spf
 
 MASTEREOF;
@@ -875,10 +875,13 @@ $policyd_spf = <<<SPF
 # or http://www.filewatcher.com/p/postfix-policyd-spf-python_1.0-2_all.deb.37100/usr/share/doc/postfix-policyd-spf-python/policyd-spf.conf.commented.html
 
 debugLevel = {$antispam['postfix_spf_debug']}
-defaultSeedOnly = 1
+TestOnly = 1
 
 HELO_reject = {$spf_helo_reject}
 Mail_From_reject = {$spf_mail_reject}
+PermError_reject = False
+TempError_Defer = False
+
 skip_addresses = 127.0.0.0/8,::ffff:127.0.0.0/104,::1{$spf_skip}
 
 SPF;
