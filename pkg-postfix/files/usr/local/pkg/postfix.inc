@@ -358,16 +358,16 @@ function postfix_check_postwhite($status,$domains) {
 		//save file
 		$postwhite_domains = preg_replace("/\s+/"," ",$domains);
 		include("/usr/local/pkg/postfix_postwhite.template");
-		$postwhite_conf_file=POSTFIX_LOCALBASE . "/etc/postwhite.conf";
-               file_put_contents("{$postwhite_conf_file}.tmp",$postwhite_conf , LOCK_EX);
-               $new_md5=md5_file("{$postwhite_conf_file}.tmp");
+		$postwhite_conf_file = "/etc/postwhite.conf";
+               file_put_contents("{$postwhite_conf_file}.tmp", $postwhite_conf , LOCK_EX);
+               $new_md5 = md5_file("{$postwhite_conf_file}.tmp");
                if (file_exists($postwhite_conf_file)) {
-                        $current_md5=md5_file($postwhite_conf_file);
+                        $current_md5 = md5_file($postwhite_conf_file);
                 }
 
                $config_file_changed = 0;
                if ($new_md5 != $current_md5) {
-                       rename("{$postwhite_conf_file}.tmp",$postwhite_conf_file);
+                       rename("{$postwhite_conf_file}.tmp", $postwhite_conf_file);
                        $config_file_changed = 1;
                }
 
