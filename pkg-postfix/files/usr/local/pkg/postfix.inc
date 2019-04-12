@@ -1031,7 +1031,36 @@ function postfix_validate_input($post, &$input_errors) {
 }
 
 function postfix_php_install_command() {
-	sync_package_postfix();
+    $spf_dir = "/usr/local/bin/spf-tools";
+    if ( ! file_exists($spf_dir)) {
+        print "\nDownloading spftools from jsarenik@github...";
+        $zip_file = "/tmp/spftools.zip";
+        file_put_contents($zip_file, fopen("https://github.com/jsarenik/spf-tools/archive/master.zip", 'r'));
+        if( file_exists($zip_file) ) {
+            print "done\n";
+            $zip = new ZipArchive;
+            $res = $zip->open($zip_file);
+            if ($res === TRUE) {
+                $zip->extractTo('/tmp/');
+                $zip->close();
+            } else {
+                echo "Failed to extract spftools\n";
+            }
+        } else {
+            print "failed\n";
+        }
+        unlink_if_exists($zip_file);
+    }
+    if (file_exists("/tmp/spf-tools-master")) {
+        system( "mv /tmp/spf-tools-master $spf_dir");
+        system("chmod -R 755 $spf_dir");
+    }
+    
+    if (file_exists("/usr/local/bin/postwhite")) {
+        chmod("/usr/local/bin/postwhite", 0755);
+    }
+    
+    sync_package_postfix();
 }
 
 function postfix_php_deinstall_command() {
@@ -1044,6 +1073,7 @@ function postfix_php_deinstall_command() {
 	sync_package_postfix();
 	unlink_if_exists("/usr/local/etc/rc.d/postfix.sh");
 	unlink_if_exists("/etc/aliases");
+	
 }
 
 /* Uses XMLRPC to synchronize the changes to a remote node */

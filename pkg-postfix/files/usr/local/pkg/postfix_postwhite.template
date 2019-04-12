@@ -12,7 +12,7 @@ postfixpath=/usr/local/etc/postfix
 postfixbinarypath=/usr/local/sbin
 whitelist=postscreen_spf_whitelist.cidr
 blacklist=postscreen_spf_blacklist.cidr
-yahoo_static_hosts=/usr/local/etc/postfix/yahoo_static_hosts.txt
+#yahoo_static_hosts=/usr/local/etc/postfix/yahoo_static_hosts.txt
 
 # CUSTOM HOSTS
 # Enter custom hosts separated by a space, ex: "example.com example2.com example3.com"
