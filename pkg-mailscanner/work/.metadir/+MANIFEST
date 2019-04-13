@@ -1,0 +1,17 @@
+name: "pfSense-pkg-mailscanner"
+version: "5.1.2"
+origin: mail/pkg-mailscanner
+comment: <<EOD
+pfSense package Mailscanner.
+EOD
+maintainer: marcellocoutinho@gmail.com
+prefix: /usr/local
+categories: [ mail, ]
+licenselogic: single
+deps: { 
+"MailScanner": {origin: "mail/mailscanner", version: "5.1.2_1"}
+"bash": {origin: "shells/bash", version: "4.4.23_1"}
+"perl5": {origin: "lang/perl5.28", version: "5.28.1"}
+}
+options: {
+}

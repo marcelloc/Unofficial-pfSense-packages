@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE packagegui SYSTEM "./schema/packages.dtd">
+<?xml-stylesheet type="text/xsl" href="./xsl/package.xsl"?>
+<packagegui>
+	<copyright>
+	<![CDATA[
+/* $Id$ */
+/*
+ * mailscanner_attachments.xml
+ *
+ * part of Unofficial packages for pfSense(R) softwate
+ * Copyright (c) 2011-2017 Marcello Coutinho
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+	]]>
+	</copyright>
+	<description>Describe your package here</description>
+	<requirements>Describe your package requirements here</requirements>
+	<faq>Currently there are no FAQ items provided.</faq>
+	<name>msattachments</name>
+	<version>1.1</version>
+	<title>Services: MailScanner</title>
+	<include_file>/usr/local/pkg/mailscanner.inc</include_file>
+<tabs>
+		<tab>
+			<text>General</text>
+			<url>/pkg_edit.php?xml=mailscanner.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Attachments</text>
+			<url>/pkg_edit.php?xml=mailscanner_attachments.xml&amp;id=0</url>
+			<active/>
+		</tab>
+		<tab>
+			<text>Antivirus</text>
+			<url>/pkg_edit.php?xml=mailscanner_antivirus.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Content</text>
+			<url>/pkg_edit.php?xml=mailscanner_content.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>AntiSpam</text>
+			<url>/pkg_edit.php?xml=mailscanner_antispam.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Alerts</text>
+			<url>/pkg_edit.php?xml=mailscanner_alerts.xml&amp;id=0</url>
+		</tab>
+			<tab>
+			<text>Reporting</text>
+			<url>/pkg_edit.php?xml=mailscanner_report.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>XMLRPC Sync</text>
+			<url>/pkg_edit.php?xml=mailscanner_sync.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Help</text>
+			<url>/mailscanner_about.php</url>
+		</tab>
+</tabs>
+<fields>
+	<field>
+			<name>Attachments</name>
+			<type>listtopic</type>
+		</field>
+			<field>
+			<fielddescr>Attachments features</fielddescr>
+			<fieldname>features</fieldname>
+			<description>
+			<![CDATA[Select mailscanner attachments tests to enable. Mailscanner default options are in (&nbsp;).]]>
+			</description>
+	    	<type>select</type>
+ 				<options>
+				<option><name>Expand TNEF (yes)</name><value>ExpandTNEF</value></option>
+				<option><name>Deliver Unparsable TNEF (no)</name><value>DeliverUnparsableTNEF</value></option>
+				<option><name>Find Archive By Content (yes)</name><value>FindArchiveByContent</value></option>
+				<option><name>Unpack Microsoft Documents (yes)</name><value>UnpackMicrosoftDocuments</value></option>
+				<option><name>Zip Attachments (no)</name><value>ZipAttachments</value></option>
+				<option><name>Scan PDF Attachments with PDFiD (no)</name><value>ScanPDF</value></option>
+				<option><name>Deliver Suspicious PDF (no)</name><value>DeliverSuspiciousPDF</value></option>
+				</options>
+				<size>08</size>
+				<multiple/>
+		</field>
+		<field>
+			<fielddescr>TNEF Contents</fielddescr>
+			<fieldname>tnef_contents</fieldname>
+			<type>select</type>
+ 				<options>
+ 				<option><name>replace</name><value>replace</value></option>
+				<option><name>no</name><value>no</value></option>
+				<option><name>add</name><value>add</value></option>
+				</options>
+			<description><![CDATA[When the TNEF (winmail.dat) attachments are expanded, should the attachments contained in there be added to the list of attachments in the message?<br>
+							If you set this to "add" or "replace" then recipients of messages sent in "Outlook Rich Text Format" (TNEF) will be able to read the attachments if they are not using Microsoft Outlook.]]>
+			</description>
+		</field>
+		<field>
+		<fielddescr>Maximum Attachment size</fielddescr>
+				<fieldname>max_sizes</fieldname>
+				<description><![CDATA[The maximum size, in bytes, of any attachment in a message. If this is set to zero, effectively no attachments are allowed.<br>
+									If this is set less than zero, then no size checking is done.<br>
+									You might want to set this quite small for large mailing lists so they don't get deluged by large attachments.<br>
+									<strong>Default is -1.</strong>]]></description>
+				<type>input</type>
+				<size>10</size>
+		</field>
+		<field>
+		<fielddescr>Maximum Archive depth</fielddescr>
+				<fieldname>archive_depth</fieldname>
+				<description><![CDATA[The maximum depth to which zip archives, rar archives and Microsoft Office documents will be unpacked, to allow for checking filenames and filetypes
+ 										within zip and rar archives and embedded within Office documents.<br>
+										<strong>Default is 8.</strong>]]></description>
+				<type>input</type>
+				<size>10</size>
+		</field>
+
+		<field>
+		<fielddescr>Attachment Zip filename</fielddescr>
+				<fieldname>attachment_filename</fieldname>
+				<description><![CDATA[If the attachments are to be compressed into a single zip file,this is the filename of the zip file.<br>
+				<strong>Default is MessageAttachments.zip</strong>]]></description>
+				<type>input</type>
+				<size>20</size>
+		</field>
+		<field>
+		<fielddescr>Attachment extension exclude</fielddescr>
+				<fieldname>attachment_extension_exclude</fieldname>
+				<description><![CDATA[This is the maximum number of files in each archive. If an archive contains more files than this, we do not try to unpack it at all.<br>
+									Set this value to 0 to disable this feature.]]></description>
+				<type>input</type>
+				<size>40</size>
+		</field>
+		<field>
+		<fielddescr>Unzip Maximum files per Archive</fielddescr>
+				<fieldname>attachment_max_per_archive</fieldname>
+				<description><![CDATA[The maximum unpacked size of each file in an archive. Bigger than this, and the file will not be unpacked.<br>
+									Setting this value to 0 will disable this feature completely.<br>
+									<strong>Default is 0.</strong>]]></description>
+				<type>input</type>
+				<size>5</size>
+		</field>	
+		<field>
+		<fielddescr>Unzip Maximum file size</fielddescr>
+				<fieldname>attachment_max</fieldname>
+				<description><![CDATA[The maximum unpacked size of each file in an archive. Bigger than this, and the file will not be unpacked.<br>
+									Setting this value to 0 will disable this feature completely.<br>
+									<strong>Default is 50k.</strong>]]></description>
+				<type>input</type>
+				<size>5</size>
+		</field>
+		<field>
+			<name>filename.rules.conf</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>filename.rules.conf</fielddescr>
+			<fieldname>filename_rules</fieldname>
+			<dontdisplayname/>
+			<usecolspan2/>
+			<description><![CDATA[Edit archives.filename.rules.conf file here.<br>Leave this field blank to load sample file.]]></description>
+			<type>textarea</type>
+			<cols>90</cols>
+			<rows>15</rows>
+			<encoding>base64</encoding>
+		</field>
+		<field>
+			<name>filetypes.rules.conf</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>filetypes.rules.conf</fielddescr>
+			<fieldname>filetype_rules</fieldname>
+			<dontdisplayname/>
+			<usecolspan2/>
+			<description><![CDATA[Edit archives.filetype.rules.conf file here.<br>Leave this field blank to load sample file.]]></description>
+			<type>textarea</type>
+			<cols>90</cols>
+			<rows>15</rows>
+			<encoding>base64</encoding>
+		</field>
+		
+	</fields>
+	<custom_php_install_command>
+		mailscanner_php_install_command();
+	</custom_php_install_command>
+	<custom_php_deinstall_command>
+		mailscanner_php_deinstall_command();
+	</custom_php_deinstall_command>
+	<custom_php_validation_command>
+		mailscanner_validate_input($_POST, $input_errors);
+	</custom_php_validation_command>	
+	<custom_php_resync_config_command>
+		sync_package_mailscanner();
+	</custom_php_resync_config_command>
+	<custom_php_command_before_form>
+		mailscanner_check_config();
+	</custom_php_command_before_form>
+</packagegui>

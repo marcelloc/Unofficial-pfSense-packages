@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE packagegui SYSTEM "./schema/packages.dtd">
+<?xml-stylesheet type="text/xsl" href="./xsl/package.xsl"?>
+<packagegui>
+	<copyright>
+	<![CDATA[
+/* $Id$ */
+/*
+ * mailscanner_contents.xml
+ *
+ * part of Unofficial packages for pfSense(R) softwate
+ * Copyright (c) 2011-2017 Marcello Coutinho
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+	]]>
+	</copyright>
+	<description>Describe your package here</description>
+	<requirements>Describe your package requirements here</requirements>
+	<faq>Currently there are no FAQ items provided.</faq>
+	<name>mscontent</name>
+	<version>1.1</version>
+	<title>Services: MailScanner</title>
+	<include_file>/usr/local/pkg/mailscanner.inc</include_file>
+<tabs>
+		<tab>
+			<text>General</text>
+			<url>/pkg_edit.php?xml=mailscanner.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Attachments</text>
+			<url>/pkg_edit.php?xml=mailscanner_attachments.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Antivirus</text>
+			<url>/pkg_edit.php?xml=mailscanner_antivirus.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Content</text>
+			<url>/pkg_edit.php?xml=mailscanner_content.xml&amp;id=0</url>
+			<active/>
+		</tab>
+		<tab>
+			<text>AntiSpam</text>
+			<url>/pkg_edit.php?xml=mailscanner_antispam.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Alerts</text>
+			<url>/pkg_edit.php?xml=mailscanner_alerts.xml&amp;id=0</url>
+		</tab>
+			<tab>
+			<text>Reporting</text>
+			<url>/pkg_edit.php?xml=mailscanner_report.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>XMLRPC Sync</text>
+			<url>/pkg_edit.php?xml=mailscanner_sync.xml&amp;id=0</url>
+		</tab>
+		<tab>
+			<text>Help</text>
+			<url>/mailscanner_about.php</url>
+		</tab>
+</tabs>
+	<fields>
+		<field>
+			<name>Removing/Logging dangerous or potentially offensive content</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>Contents</fielddescr>
+			<fieldname>checks</fieldname>
+			<description>
+			<![CDATA[Strings listed here will be searched for in the output of the virus scanners.<br>It is used to list which viruses should be handled differently from other viruses.<br>
+					Mailscanner default options are in (&nbsp;).]]>
+			</description>
+	    	<type>select</type>
+ 				<options>
+				<option><name>Dangerous Content Scanning (yes)</name><value>DangerousContentScanning</value></option>
+				<option><name>Allow Partial Messages (no)</name><value>AllowPartialMessages</value></option>
+				<option><name>Allow External Message Bodies (no)</name><value>AllowExternalMessageBodies</value></option>
+				<option><name>Find Phishing Fraud (yes)</name><value>FindPhishingFraud</value></option>
+				<option><name>Also Find Numeric Phishing (yes)</name><value>AlsoFindNumericPhishing</value></option>
+				<option><name>Use Stricter Phishing Net (yes)</name><value>UseStricterPhishingNet</value></option>
+				<option><name>Highlight Phishing Fraud (yes)</name><value>HighlightPhishingFraud</value></option>
+				<option><name>Convert Dangerous HTML To Text (no)</name><value>ConvertDangerousHTMLToText</value></option>
+				<option><name>Convert HTML To Text (no)</name><value>ConvertHTMLToText</value></option>
+				 
+				
+				</options>
+				<size>10</size>
+				<multiple/>
+		</field>
+		<field>
+			<fielddescr>IFrame Tags</fielddescr>
+			<fieldname>iframe_tags</fieldname>
+			<type>select</type>
+ 				<options>
+ 				<option><name>Disarm</name><value>disarm</value></option>
+				<option><name>Allow</name><value>yes</value></option>
+				<option><name>Deny</name><value>no</value></option>
+				</options>
+			<description><![CDATA[Do you want to allow 'IFrame' tags in email messages?<br>
+					This is not a good idea as it allows various Microsoft Outlook security vulnerabilities to remain unprotected, but if you have a load of mailing lists sending them,
+# then you will want to allow them to keep your users happy.]]>
+			</description>
+		</field>
+			<field>
+			<fielddescr>Form Tags</fielddescr>
+			<fieldname>form_tags</fieldname>
+			<type>select</type>
+ 				<options>
+ 				<option><name>disarm</name><value>disarm</value></option>
+				<option><name>Allow</name><value>yes</value></option>
+				<option><name>Deny</name><value>no</value></option>
+				</options>
+			<description><![CDATA[Do you want to allow 'Form' tags in email messages?<br>
+								This is a bad idea as these are used as scams to pursuade people to part with credit card information and other personal data.]]>
+			</description>
+		</field>
+			<field>
+			<fielddescr>Script Tags</fielddescr>
+			<fieldname>script_tags</fieldname>
+			<type>select</type>
+ 				<options>
+ 				<option><name>Disarm</name><value>disarm</value></option>
+				<option><name>Allow</name><value>yes</value></option>
+				<option><name>Deny</name><value>no</value></option>
+				</options>
+			<description><![CDATA[Do you want to allow 'Script' tags in email messages?<br>
+								This is a bad idea as these are used to exploit vulnerabilities in email applications and web browsers.]]>
+			</description>
+		</field>
+			<field>
+			<fielddescr>Web bugs</fielddescr>
+			<fieldname>web_bugs</fieldname>
+			<type>select</type>
+ 				<options>
+ 				<option><name>Disarm</name><value>disarm</value></option>
+				<option><name>Allow</name><value>yes</value></option>
+				<option><name>Deny</name><value>no</value></option>
+				</options>
+			<description><![CDATA[Do you want to allow 'Img' tags with very small images in email messages?<br>
+								This is a bad idea as these are used as 'web bugs' to find out if a message	has been read.<br>
+								It is not dangerous, it is just used to make you give away information.]]>
+			</description>
+		</field>
+			<field>
+			<fielddescr>Object Codebase Tags</fielddescr>
+			<fieldname>codebase_tags</fieldname>
+			<type>select</type>
+ 				<options>
+ 				<option><name>disarm</name><value>disarm</value></option>
+				<option><name>allow</name><value>yes</value></option>
+				<option><name>deny</name><value>no</value></option>
+				</options>
+			<description><![CDATA[Do you want to allow <strong>'Object Codebase=...' or 'Object Data=...'</strong> tags in email messages?<br>
+								This is a bad idea as it leaves you unprotected against various	Microsoft-specific security vulnerabilities.<br>
+								But if your users demandit, you can do it.]]>
+			</description>
+		</field>
+		<field>
+			<name>country.domains.conf</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>country.domains.conf</fielddescr>
+			<fieldname>country_domains</fieldname>
+			<dontdisplayname/>
+			<usecolspan2/>
+			<description><![CDATA[country.domains.conf config file.<br>Leave this field blank to load sample file.]]></description>
+			<type>textarea</type>
+			<cols>90</cols>
+			<rows>15</rows>
+			<encoding>base64</encoding>
+		</field>
+	</fields>
+	<custom_php_install_command>
+		mailscanner_php_install_command();
+	</custom_php_install_command>
+	<custom_php_deinstall_command>
+		mailscanner_php_deinstall_command();
+	</custom_php_deinstall_command>
+	<custom_php_validation_command>
+		mailscanner_validate_input($_POST, $input_errors);
+	</custom_php_validation_command>	
+	<custom_php_resync_config_command>
+		sync_package_mailscanner();
+	</custom_php_resync_config_command>
+	<custom_php_command_before_form>
+		mailscanner_check_config();
+	</custom_php_command_before_form>
+
+</packagegui>
