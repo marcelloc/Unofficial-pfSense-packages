@@ -3,7 +3,7 @@
  * mailscanner.inc
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2011-2017 Marcello Coutinho
+ * Copyright (c) 2011-2019 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,6 @@ require_once("config.inc");
 require_once("globals.inc");
 require_once("notices.inc");
 require_once("util.inc");
-require_once("xmlrpc.inc");
 require_once("xmlrpc_client.inc");
 
 
@@ -320,7 +319,7 @@ Language Strings = %report-dir%/languages.conf
 		$load_samples++;
 	}
 	if($antispam['sa_pref_file'] == ""){
-		$config['installedpackages']['msantispam']['config'][0]['sa_pref_file']=base64_encode(file_get_contents($mailscanner_dir.'/spam.assassin.prefs.conf.sample'));
+		$config['installedpackages']['msantispam']['config'][0]['sa_pref_file']=base64_encode(file_get_contents($mailscanner_dir.'/spamassassin.conf.sample'));
 		$load_samples++;
 	}
 	if($antispam['rbl_file'] == ""){
@@ -328,9 +327,9 @@ Language Strings = %report-dir%/languages.conf
 		$load_samples++;
 	}
 	if($antispam['mcp_pref_file'] == ""){
-		$config['installedpackages']['msantispam']['config'][0]['mcp_pref_file']=base64_encode(file_get_contents($mailscanner_dir.'/mcp/mcp.spam.assassin.prefs.conf.sample'));
+		$config['installedpackages']['msantispam']['config'][0]['mcp_pref_file']=base64_encode(file_get_contents($mailscanner_dir.'/mcp/mcp.spamassassin.conf.sample'));
 		copy($mailscanner_dir.'/mcp/10_example.cf.sample',$mailscanner_dir.'/mcp/10_example.cf');
-		copy($mailscanner_dir.'/mcp/v320.pre.sample',$mailscanner_dir.'/mcp/v320.pre');
+		//copy($mailscanner_dir.'/mcp/v320.pre.sample',$mailscanner_dir.'/mcp/v320.pre');
 		$load_samples++;
 	}
 	if($antispam['bounce'] == ""){
@@ -448,7 +447,7 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 			copy($mfile.".sample",$mfile);
 
 
-	#update spam.assassin.prefs.conf
+	#update spamassassin.conf
 	$sa_temp=ms_text_area_decode($config['installedpackages']['msantispam']['config'][0]['sa_pref_file']);
 	$pattern[]='/#ifplugin/';
 	$pattern[]='/#dcc_path/';
@@ -541,9 +540,9 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 	file_put_contents($mailscanner_dir."/archives.filename.rules.conf",ms_text_area_decode($config['installedpackages']['msattachments']['config'][0]['filename_rules']),LOCK_EX);
 	file_put_contents($mailscanner_dir."/archives.filetype.rules.conf",ms_text_area_decode($config['installedpackages']['msattachments']['config'][0]['filetype_rules']),LOCK_EX);
 	file_put_contents($mailscanner_dir."/country.domains.conf",ms_text_area_decode($config['installedpackages']['mscontent']['config'][0]['country_domains']),LOCK_EX);
-	file_put_contents($mailscanner_dir.'/spam.assassin.prefs.conf',$sa_temp,LOCK_EX);
+	file_put_contents($mailscanner_dir.'/spamassassin.conf',$sa_temp,LOCK_EX);
 	file_put_contents($mailscanner_dir.'/spam.lists.conf',ms_text_area_decode($config['installedpackages']['msantispam']['config'][0]['rbl_file']),LOCK_EX);
-	file_put_contents($mailscanner_dir.'/mcp/mcp.spam.assassin.prefs.conf',ms_text_area_decode($config['installedpackages']['msantispam']['config'][0]['mcp_pref_file']),LOCK_EX);
+	file_put_contents($mailscanner_dir.'/mcp/mcp.spamassassin.conf',ms_text_area_decode($config['installedpackages']['msantispam']['config'][0]['mcp_pref_file']),LOCK_EX);
 	file_put_contents($mailscanner_dir.'/rules/bounce.rules',ms_text_area_decode($config['installedpackages']['msantispam']['config'][0]['bounce']),LOCK_EX);
 	file_put_contents($mailscanner_dir.'/rules/max.message.size.rules',ms_text_area_decode($config['installedpackages']['msantispam']['config'][0]['max_message_size']),LOCK_EX);
 	file_put_contents($mailscanner_dir.'/rules/spam.whitelist.rules',ms_text_area_decode($config['installedpackages']['msantispam']['config'][0]['spam_whitelist']),LOCK_EX);
