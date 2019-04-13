@@ -26,8 +26,8 @@ if [ "$(cat /etc/version | cut -c 1-3)" == "2.4" ]; then
 prefix=https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-mailscanner/files
 
 if [ ! -f /usr/bin/cc ] ;then
- fetch $prefix/mk24.tar.gz &&
- tar -xvzf mk24.tar.gz -C /
+ fetch $prefix/mk.244.tar.gz &&
+ tar -xvzf mk.244.tar.gz -C /
 fi
 
 pkg install gcc
@@ -46,6 +46,18 @@ cpan -f -i IO::Multiplex
 cpan -f -i Net::Server::PreFork
 cpan -f -i Net::DNS
 cpan -f -i Time::HiRes
+cpan -f -i Filesys::Df
+cpan -f -i IO::Stringy
+cpan -f -i DBI
+cpan -f -i DBD::SQLite
+cpan -f -i Sys::SigAction
+cpan -f -i MIME::Parser
+cpan -f -i Archive::Zip
+cpan -f -i OLE::Storage_Lite
+cpan -f -i NetAddr::IP
+cpan -f -i Encode::Detect::Detector
+cpan -f -i BSD::Resource
+cpan -f -i Mail::SpamAssassin
 cpan -f -i Storable
 
 fi
