@@ -1,4 +1,4 @@
-# Mailscanner Unofficial packages for pfSense software
+# Mailscanner Unofficial packages for pfSense® software
 
 UPDATE: Since 2.4.4, only official packages are listed under package manager by default.
 To install unofficial/extra packages on pfSense 2.4.4 or higher, you need to apply via system patches the file 244_unofficial_packages_list.patch
