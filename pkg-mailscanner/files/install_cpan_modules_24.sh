@@ -54,6 +54,7 @@ cpan -f -i NetAddr::IP
 cpan -f -i Encode::Detect::Detector
 cpan -f -i BSD::Resource
 cpan -f -i Mail::SpamAssassin
+cpan -f -i Mail::SPF
 cpan -f -i Storable
 
 fi
