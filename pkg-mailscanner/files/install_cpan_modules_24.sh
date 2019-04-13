@@ -30,10 +30,6 @@ if [ ! -f /usr/bin/cc ] ;then
  tar -xvzf mk.244.tar.gz -C /
 fi
 
-pkg install gcc
-
-rehash
-
 export PERL_MM_USE_DEFAULT=1
 
 cpan -f -i Razor2::Client::Agent
