@@ -1,4 +1,4 @@
-# Unofficial packages for pfSense software
+# Unofficial packages for pfSense® software
 
 As many people know already, Netgate has removed a lot of packages from official repo since pfSense® 2.3.
 
