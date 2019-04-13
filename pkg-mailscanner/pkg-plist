@@ -12,6 +12,7 @@ pkg/mailscanner_sync.xml
 %%DATADIR%%/info.xml
 www/mailscanner_about.php
 www/shortcuts/pkg_mailscanner.inc
+bin/gpg
 @dir www/widgets/widgets
 @dir /etc/inc/priv
 @dir /etc/inc

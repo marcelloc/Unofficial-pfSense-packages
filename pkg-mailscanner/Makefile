@@ -12,7 +12,11 @@ MAINTAINER=	marcellocoutinho@gmail.com
 COMMENT=	pfSense package Mailscanner.
 
 RUN_DEPENDS=	MailScanner:mail/mailscanner \
-		bash:shells/bash
+		bash:shells/bash \
+		dccif-test:mail/dcc-dccd \
+		7z:archivers/p7zip \
+		unrar:archivers/unrar \
+		rsync:net/rsync
 
 USE_PERL5=	run
 USES=		perl5
@@ -60,6 +64,8 @@ do-install:
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/mailscanner_about.php \
 		${STAGEDIR}${PREFIX}/www
+	${INSTALL_DATA} ${FILESDIR}${PREFIX}/bin/gpg \
+		${STAGEDIR}${PREFIX}/bin
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/shortcuts/pkg_mailscanner.inc \
 		${STAGEDIR}${PREFIX}/www/shortcuts
 .include <bsd.port.mk>
