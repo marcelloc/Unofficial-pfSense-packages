@@ -32,29 +32,24 @@ fi
 
 export PERL_MM_USE_DEFAULT=1
 
-cpan -f -i Razor2::Client::Agent
-cpan -f -i Geo::IP
-cpan -f -i Net::Patricia
-cpan -f -i LWP::UserAgent
-cpan -f -i Net::Server::Daemonize
-cpan -f -i Net::Server::Multiplex
-cpan -f -i IO::Multiplex
-cpan -f -i Net::Server::PreFork
-cpan -f -i Net::DNS
-cpan -f -i Time::HiRes
+cpan -f -i CPAN
 cpan -f -i Filesys::Df
-cpan -f -i IO::Stringy
 cpan -f -i DBI
 cpan -f -i DBD::SQLite
-cpan -f -i Sys::SigAction
-cpan -f -i MIME::Parser
 cpan -f -i Archive::Zip
-cpan -f -i OLE::Storage_Lite
 cpan -f -i NetAddr::IP
-cpan -f -i Encode::Detect::Detector
-cpan -f -i BSD::Resource
-cpan -f -i Mail::SpamAssassin
+cpan -f -i Digest::SHA1
 cpan -f -i Mail::SPF
-cpan -f -i Storable
+cpan -f -i Geo::IP
+cpan -f -i Razor2::Client::Agent
+cpan -f -i Geo::IP
+cpan -f -i IO::Socket::INET6
+cpan -f -i Mail::DKIM
+cpan -f -i BSD::Resource
+cpan -f -i HTTP::Date
+cpan -f -i Encode::Detect::Detector
+cpan -f -i LWP::UserAgent
+cpan -f -i Net::Patricia
+cpan -f -i Mail::SpamAssassin
 
 fi
