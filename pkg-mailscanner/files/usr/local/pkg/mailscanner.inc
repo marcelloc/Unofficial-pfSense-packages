@@ -834,8 +834,112 @@ function mailscanner_validate_input($post, &$input_errors) {
 	}
 }
 
+function get_github_plugin($url, $glob_array = "", $dest_dir = "", $msg = "", $extra_dir = "") {
+    if ($dest_dir != "") {
+        if (! is_dir($dest_dir)) {
+            mkdir($dest_dir,0755,true);
+        }
+    }
+    $parts = explode ("/", $url);
+    $tmp_dir = "/tmp/github";
+    system("rm -rf $tmp_dir");
+    if ($extra_dir != "") {
+        $zip_file = "/tmp/$extra_dir.zip";
+        $extra_dir = "/" . $extra_dir;
+    } else {
+        $zip_file = "/tmp/{$parts[4]}.zip";
+    }
+    mkdir ($tmp_dir, 0755, true);
+    if ($msg != "") {
+        print "\nDownloading $msg...";
+    } else {
+        print "\nDownloading {$parts[4]} from {$parts[3]}@github...";
+    }
+    file_put_contents($zip_file, fopen($url, 'r'));
+    if( file_exists($zip_file) ) {
+        print "done\n";
+        
+        $zip = new ZipArchive;
+        $res = $zip->open($zip_file);
+        if ($res === TRUE) {
+            $zip->extractTo($tmp_dir . $extra_dir);
+            $zip->close();
+            foreach (glob("$tmp_dir/*") as $a) {
+                //print "$a\n";
+                if (is_array($glob_array)) {
+                    foreach ($glob_array as $glob_parameter) {
+                        foreach (glob ("$a/$glob_parameter") as $plugin_path) {
+                            $parts = explode ("/", $plugin_path);
+                            $file = array_pop($parts);
+                            //print "$plugin_path, $dest_dir/$file\n";
+                            copy ($plugin_path, "$dest_dir/$file");
+                            if (preg_match("/\.sh/", $file)) {
+                                chmod ("$dest_dir/$file", 0755);
+                            }
+                        }
+                    }
+                    return;
+                }
+                if ($dest_dir != "") {
+                    system ("mv $a $dest_dir");
+                } else {
+                    return ($a);
+                }
+            }
+        } else {
+            echo 'Failed to extract spftools\n';
+        }
+    } else {
+        print "failed\n";
+    }
+    
+}
+
+
 function mailscanner_php_install_command() {
-	sync_package_mailscanner();
+    // spf-tools
+    $url = "https://github.com/jsarenik/spf-tools/archive/master.zip";
+    $plugin_dir = "/usr/local/bin/spf-tools";
+    get_github_plugin($url, "", $plugin_dir);
+    
+    // spamassassin-extremeshok_fromreplyto
+    $glob_parameters = array('/plugins/*pm', '/*cf');
+    $plugins_dir = "/usr/local/etc/mail/spamassassin/plugins";
+    $url = "https://github.com/extremeshok/spamassassin-extremeshok_fromreplyto/archive/master.zip";
+    get_github_plugin($url, $glob_parameters, $plugins_dir);
+    
+    // DecodeShortURLs
+    $glob_parameters = array('/*pm', '/*cf');
+    $url = "https://github.com/smfreegard/DecodeShortURLs/archive/master.zip";
+    get_github_plugin($url, $glob_parameters, $plugins_dir);
+    
+    //pdfid
+    $glob_parameters = array('/p*py','/p*ini');
+    $plugin_dir = "/usr/local/bin";
+    $url = "http://didierstevens.com/files/software/pdfid_v0_2_5.zip";
+    get_github_plugin($url, $glob_parameters, $plugin_dir, "pdfid from didierstevens", "pdfpy" );
+    system ('sed -i \'.bak\' "s@/usr/bin/env python@/usr/local/bin/python2@" /usr/local/bin/p*.py');
+    system("chmod +x /usr/local/bin/p*py");
+    
+    //unofficial sigs for improving malware protection
+    $glob_parameters = array('/clamav-unofficial-*.sh');
+    $plugin_dir = "/usr/local/sbin";
+    $url = "https://github.com/extremeshok/clamav-unofficial-sigs/archive/master.zip";
+    $dir = get_github_plugin($url, $glob_parameters, $plugin_dir);
+    system('sed -i \'.bak\' "s@!/bin/bash@!/usr/local/bin/bash@" /usr/local/sbin/clamav-unofficial-sigs.sh');
+    $plugin_log_dir = "/var/log/clamav-unofficial-sigs";
+    if (!file_exists($plugin_log_dir)) {
+        mkdir ($plugin_log_dir);
+    }
+    $plugin_conf_dir = "/etc/clamav-unofficial-sigs";
+    if (!file_exists($plugin_conf_dir)) {
+        mkdir ($plugin_conf_dir);
+    }
+    copy ("/tmp/github/clamav-unofficial-sigs-master/config/os.pfsense.conf", "/etc/clamav-unofficial-sigs/os.conf");
+    copy ("/tmp/github/clamav-unofficial-sigs-master/config/user.conf", "/etc/clamav-unofficial-sigs/user.conf");
+    system('sed -i \'.bak\' \'s@clam_user=.*@clam_user="postfix"@\' ' . $plugin_conf_dir .'/os.conf');
+    system('sed -i \'.bak\' \'s@#user_configuration.*@user_configuration_complete="yes"@\' ' . $plugin_conf_dir .'/user.conf');
+    sync_package_mailscanner();
 }
 
 function mailscanner_php_deinstall_command() {
