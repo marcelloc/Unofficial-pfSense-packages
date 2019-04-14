@@ -32,24 +32,24 @@ fi
 
 export PERL_MM_USE_DEFAULT=1
 
-cpan -f -i CPAN
-cpan -f -i Filesys::Df
-cpan -f -i DBI
-cpan -f -i DBD::SQLite
-cpan -f -i Archive::Zip
-cpan -f -i NetAddr::IP
-cpan -f -i Digest::SHA1
-cpan -f -i Mail::SPF
-cpan -f -i Geo::IP
-cpan -f -i Razor2::Client::Agent
-cpan -f -i Geo::IP
-cpan -f -i IO::Socket::INET6
-cpan -f -i Mail::DKIM
-cpan -f -i BSD::Resource
-cpan -f -i HTTP::Date
-cpan -f -i Encode::Detect::Detector
-cpan -f -i LWP::UserAgent
-cpan -f -i Net::Patricia
-cpan -f -i Mail::SpamAssassin
+cpan -i CPAN
+cpan -i Filesys::Df
+cpan -i DBI
+cpan -i DBD::SQLite
+cpan -i Archive::Zip
+cpan -i NetAddr::IP
+cpan -i Digest::SHA1
+cpan -i Mail::SPF
+cpan -i Geo::IP
+cpan -i Razor2::Client::Agent
+cpan -i Geo::IP
+cpan -i IO::Socket::INET6
+cpan -i Mail::DKIM
+cpan -i BSD::Resource
+cpan -i HTTP::Date
+cpan -i Encode::Detect::Detector
+cpan -i LWP::UserAgent
+cpan -i Net::Patricia
+cpan -i Mail::SpamAssassin
 
 fi
