@@ -19,7 +19,7 @@ RUN_DEPENDS=	MailScanner:mail/mailscanner \
 		rsync:net/rsync \
 		gcc:lang/gcc \
 		re2c:devel/re2c \
-		/usr/local/include/php/main/php.h:archivers/php72-zip
+		php72-zip>0:archivers/php72-zip
 
 USE_PERL5=	run
 USES=		perl5
