@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-mailscanner
 PORTVERSION=	5.1.2
-PORTREVISION=	2
+PORTREVISION=	3
 CATEGORIES=	mail
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -18,7 +18,8 @@ RUN_DEPENDS=	MailScanner:mail/mailscanner \
 		unrar:archivers/unrar \
 		rsync:net/rsync \
 		gcc:lang/gcc \
-		re2c:devel/re2c
+		re2c:devel/re2c \
+		/usr/local/include/php/main/php.h:archivers/php72-zip
 
 USE_PERL5=	run
 USES=		perl5
