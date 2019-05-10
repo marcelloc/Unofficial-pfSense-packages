@@ -223,7 +223,7 @@ function check_dkim_config () {
         if ($check_dkmi == "on") {
         	$dkim_mode .= "v";
         }
-        $dmarc_config = check_dmarc_config($postfix_antispam);
+        //$dmarc_config = check_dmarc_config($postfix_antispam);
 	if ($check_dkmi == "on" || sizeof($dkim_domains) > 0 ){
                 // print "configure dkim\n";
                 $config_domains = "";

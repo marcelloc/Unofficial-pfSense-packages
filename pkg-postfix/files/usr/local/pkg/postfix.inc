@@ -30,7 +30,7 @@ require_once("services.inc");
 require_once("util.inc");
 require_once("xmlrpc_client.inc");
 require_once("postfix_dkim.inc");
-require_once("postfix_dmarc.inc");
+#require_once("postfix_dmarc.inc");
 require_once("postfix_postfwd.inc");
 
 define('POSTFIX_LOCALBASE','/usr/local');
@@ -984,7 +984,7 @@ EOF;
 		check_dkim_service($cfg);
 
 		// check dmarc service
-		check_dmarc_service($cfg);
+		//check_dmarc_service($cfg);
 
 		// check postfwd service
 		postfix_check_postfwd_service($cfg);
