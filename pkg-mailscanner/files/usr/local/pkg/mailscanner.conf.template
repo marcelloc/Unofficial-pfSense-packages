@@ -479,7 +479,7 @@ MCP Max SpamAssassin Timeouts = 20
 MCP Max SpamAssassin Size = {$mcp_max}
 MCP SpamAssassin Timeout = 10
 
-MCP SpamAssassin Prefs File = %mcp-dir%/mcp.spam.assassin.prefs.conf
+MCP SpamAssassin Prefs File = %mcp-dir%/mcp.spamassassin.conf
 MCP SpamAssassin User State Dir =
 MCP SpamAssassin Local Rules Dir = %mcp-dir%
 MCP SpamAssassin Default Rules Dir = %mcp-dir%
