@@ -53,7 +53,7 @@ function postfix_domain_validate_input($post, &$input_errors) {
 		//remove files from disk if domain exists
 		remove_dkim_files($dkim_domain,'yes');
 	}
-	$_POST['dmarctxt'] = dmarc_create_txt_record($post);
+	//$_POST['dmarctxt'] = dmarc_create_txt_record($post);
 }
 
 function remove_dkim_files($dkim_domain, $remove_dir){
