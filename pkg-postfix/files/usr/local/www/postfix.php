@@ -793,6 +793,7 @@ $(document).ready(function() {
     $('#dtresult').DataTable({
 	scrollY:        '60vh',
 	scrollCollapse: true,
+	pageLength: 30,
 	dom: 'Bfrtip',
 	colReorder: {
             realtime: false
