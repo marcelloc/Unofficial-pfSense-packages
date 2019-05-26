@@ -1409,8 +1409,10 @@ break;
 				}
 			}
 		}
-		$filtergroup_count = count($import_users);
-		$filtergroupip_count = count($import_ips);
+		is_countable($import_users) ? $filtergroup_count = count($import_users) : $filtergroup_count=0;
+		is_countable($import_ips) ? $filtergroupip_count = count($import_ips) : $filtergroupip_count=0;
+// 		$filtergroup_count = count($import_users);
+// 		$filtergroupip_count = count($import_ips);
 		//Default group catch all unauth groups as well non listed users
 		if ($count > 1)
 		$user_xml .=<<<EOF
@@ -1903,7 +1905,7 @@ function e2guardian_validate_input($post, &$input_errors) {
 	    !in_array('reverseclientiplookups', $post['scan_options'])) {
 		$input_errors[] = "Scan option 'Log client hostnames' needs 'Reverse client ip lookups' to be selected as well.";
 	}
-	if (sizeof ($post['group_options']) > 0) {
+	if (is_array($post['group_options']) && sizeof ($post['group_options']) > 0) {
 		$_POST['lgroupoptions'] = implode (" ", $post['group_options']);
 	}
 	if ($post['banned_sitelist'] != "") {
