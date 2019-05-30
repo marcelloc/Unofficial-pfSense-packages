@@ -505,7 +505,9 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$loglevel = ($e2guardian_log['loglevel'] ? $e2guardian_log['loglevel'] : "2");
 	$logexceptionhits = ($e2guardian_log['logexceptionhits'] ? $e2guardian_log['logexceptionhits'] : "2");
 	$logfileformat = ($e2guardian_log['logfileformat'] ? $e2guardian_log['logfileformat'] : "1");
-	$logrotate = ($e2guardian_log['logrotate'] == "on" ? "on" : "off");
+	$logrotate = ($e2guardian_log['logrotate']  ? "on" : "off");
+	$cronminute = ($e2guardian_log['cronminute'] ? $e2guardian_log['cronminute'] : "*");
+	$cronhour = ($e2guardian_log['cronhour']  ? $e2guardian_log['cronhour'] : "*");
 	$logfilecount = ($e2guardian_log['logcount'] ? $e2guardian_log['logcount'] : "30");
 
 	
@@ -1527,7 +1529,7 @@ EOF;
 	$cron_cmd = "/usr/local/bin/php -q ${lrt_file}";
 	if ($logrotate == "on") {
         log_error("Log rotate on");
-		e2g_check_cron($cron_cmd, "create", "0", "0");
+		e2g_check_cron($cron_cmd, "create", $cronminute, $cronhour);
 	} else {
 		file_put_contents($lrt_file, "", LOCK_EX);
 		e2g_check_cron($cron_cmd, "remove");
