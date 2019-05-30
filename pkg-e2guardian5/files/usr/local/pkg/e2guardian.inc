@@ -506,8 +506,8 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$logexceptionhits = ($e2guardian_log['logexceptionhits'] ? $e2guardian_log['logexceptionhits'] : "2");
 	$logfileformat = ($e2guardian_log['logfileformat'] ? $e2guardian_log['logfileformat'] : "1");
 	$logrotate = ($e2guardian_log['logrotate']  ? "on" : "off");
-	$cronminute = ($e2guardian_log['cronminute'] ? $e2guardian_log['cronminute'] : "*");
-	$cronhour = ($e2guardian_log['cronhour']  ? $e2guardian_log['cronhour'] : "*");
+	$cronminute = ($e2guardian_log['cronminute'] ? $e2guardian_log['cronminute'] : "0");
+	$cronhour = ($e2guardian_log['cronhour']  ? $e2guardian_log['cronhour'] : "0");
 	$logfilecount = ($e2guardian_log['logcount'] ? $e2guardian_log['logcount'] : "30");
 
 	
