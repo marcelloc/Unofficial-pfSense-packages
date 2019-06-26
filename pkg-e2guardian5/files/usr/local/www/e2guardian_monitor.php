@@ -92,7 +92,7 @@ if (is_array($config['installedpackages']['e2guardianlog'])) {
 							<option value="1000">1 second</option>
 							<option value="3000" selected="selected">3 seconds</option>
 							<option value="5000">5 seconds</option>
-							<option value="1000">10 seconds</option>
+							<option value="10000">10 seconds</option>
 							<option value="15000">15 seconds</option>
 							<option value="20000">20 seconds</option>
 						</select>
