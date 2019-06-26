@@ -505,7 +505,9 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	$loglevel = ($e2guardian_log['loglevel'] ? $e2guardian_log['loglevel'] : "2");
 	$logexceptionhits = ($e2guardian_log['logexceptionhits'] ? $e2guardian_log['logexceptionhits'] : "2");
 	$logfileformat = ($e2guardian_log['logfileformat'] ? $e2guardian_log['logfileformat'] : "1");
-	$logrotate = ($e2guardian_log['logrotate'] == "on" ? "on" : "off");
+	$logrotate = ($e2guardian_log['logrotate']  ? "on" : "off");
+	$cronminute = ($e2guardian_log['cronminute'] ? $e2guardian_log['cronminute'] : "0");
+	$cronhour = ($e2guardian_log['cronhour']  ? $e2guardian_log['cronhour'] : "0");
 	$logfilecount = ($e2guardian_log['logcount'] ? $e2guardian_log['logcount'] : "30");
 
 	
@@ -1409,8 +1411,10 @@ break;
 				}
 			}
 		}
-		$filtergroup_count = count($import_users);
-		$filtergroupip_count = count($import_ips);
+		is_countable($import_users) ? $filtergroup_count = count($import_users) : $filtergroup_count=0;
+		is_countable($import_ips) ? $filtergroupip_count = count($import_ips) : $filtergroupip_count=0;
+// 		$filtergroup_count = count($import_users);
+// 		$filtergroupip_count = count($import_ips);
 		//Default group catch all unauth groups as well non listed users
 		if ($count > 1)
 		$user_xml .=<<<EOF
@@ -1525,7 +1529,7 @@ EOF;
 	$cron_cmd = "/usr/local/bin/php -q ${lrt_file}";
 	if ($logrotate == "on") {
         log_error("Log rotate on");
-		e2g_check_cron($cron_cmd, "create", "0", "0");
+		e2g_check_cron($cron_cmd, "create", $cronminute, $cronhour);
 	} else {
 		file_put_contents($lrt_file, "", LOCK_EX);
 		e2g_check_cron($cron_cmd, "remove");
@@ -1903,7 +1907,7 @@ function e2guardian_validate_input($post, &$input_errors) {
 	    !in_array('reverseclientiplookups', $post['scan_options'])) {
 		$input_errors[] = "Scan option 'Log client hostnames' needs 'Reverse client ip lookups' to be selected as well.";
 	}
-	if (sizeof ($post['group_options']) > 0) {
+	if (is_array($post['group_options']) && sizeof ($post['group_options']) > 0) {
 		$_POST['lgroupoptions'] = implode (" ", $post['group_options']);
 	}
 	if ($post['banned_sitelist'] != "") {

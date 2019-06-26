@@ -250,6 +250,18 @@
 			<fieldname>logrotate</fieldname>
 			<description><![CDATA[ Log File Rotation]]></description>
 			<type>checkbox</type>
+		</field>		
+        <field>
+			<fielddescr>Log Rotation Cron Minute</fielddescr>
+			<fieldname>cronminute</fieldname>
+			<description><![CDATA[ The minute(s) at the log rotation command will be executed. (0-59, ranges, or divided, *=all)]]></description>
+			<type>input</type>
+		</field>
+        <field>
+			<fielddescr>Log Rotation Cron Hour</fielddescr>
+			<fieldname>cronhour</fieldname>
+			<description><![CDATA[ The hour(s) at the log rotation command will be executed. (0-23, ranges, or divided, *=all)]]></description>
+			<type>input</type>
 		</field>
 		<field>
 			<fielddescr>Log File Count</fielddescr>
