@@ -31,6 +31,12 @@ $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 
 require_once("xmlrpc_client.inc");
 
+if (version_compare(PHP_VERSION, "7.3") < 0 && !function_exists("is_countable")) {
+    function is_countable($var): bool{
+        return (is_array($var) || is_object($var) || is_iterable($var) || $var instanceof Countable);
+    }
+}
+
 $shortcut_section = "e2guardian";
 
 $pf_version = substr(trim(file_get_contents("/etc/version")), 0, 3);
@@ -371,7 +377,10 @@ function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 			'loglevel' => '3',
 			'logexceptionhits' => '2',
 			'logfileformat' => '1',
-            'logrotate' => 'on');
+            'logrotate' => 'on',
+		    'cronminute' => '0',
+		    'cronhour' => '0'
+		);
 	}
 	$e2guardian_log = $config['installedpackages']['e2guardianlog']['config'][0];
 	if (is_array($config['installedpackages']['e2guardianlimits'])) {
