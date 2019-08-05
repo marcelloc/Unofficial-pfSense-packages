@@ -45,16 +45,6 @@ if ($_POST) {
 	unset($input_errors);
 	unset($do_speedtest);
 
-	/* input validation */
-	//$reqdfields = explode(" ", "host count");
-	//$reqdfieldsn = array(gettext("Host"), gettext("Count"));
-	//do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
-
-	//if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
-	//	$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);
-	//}
-
-	//$host = trim($_REQUEST['host']);
 	$ipproto = $_REQUEST['ipproto'];
 	if (($ipproto == "ipv4") && is_ipaddrv6($host)) {
 		$input_errors[] = gettext("When using IPv4, the target host must be an IPv4 address or hostname.");
@@ -99,8 +89,8 @@ if ($do_speedtest) {
 		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
 	}
 
-	if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
-		$srcip = "--source" . escapeshellarg($ifaddr);
+	if ($ifaddr != "") {
+		$srcip = "--source " . escapeshellarg($ifaddr);
 		if (is_linklocal($host) && !strstr($host, "%") && !empty($ifscope)) {
 			$host .= "%{$ifscope}";
 		}
