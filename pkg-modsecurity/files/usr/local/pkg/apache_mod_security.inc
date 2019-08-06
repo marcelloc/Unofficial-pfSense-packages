@@ -3,7 +3,7 @@
 	apache_mod_security.inc
 	part of pfSense (https://www.pfSense.org/)
 	Copyright (C) 2009, 2010 Scott Ullrich
-	Copyright (C) 2012-2013 Marcello Coutinho
+	Copyright (C) 2012-2019 Marcello Coutinho
 	Copyright (C) 2013 Stephane Lapie <stephane.lapie@asahinet.com>
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
@@ -34,16 +34,13 @@ require_once("globals.inc");
 require_once("notices.inc");
 require_once("service-utils.inc");
 require_once("util.inc");
-require_once("xmlrpc.inc");
 require_once("xmlrpc_client.inc");
 
 $shortcut_section = "apache";
 // Check to find out on which system the package is running
 $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
-if ($pf_version == "2.1" || $pf_version == "2.2")
-	define('APACHEDIR', '/usr/pbi/proxy_mod_security-' . php_uname("m"));
-else
-	define('APACHEDIR', '/usr/local');
+
+define('APACHEDIR', '/usr/local');
 
 define('APACHEVERSION', 'apache24');
 

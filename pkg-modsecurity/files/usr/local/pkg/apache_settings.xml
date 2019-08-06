@@ -83,6 +83,18 @@
 			<tab_level>2</tab_level>
 		</tab>
 	</tabs>
+	<menu>
+		<name>Apache ModSecurity</name>
+		<tooltiptext>Configure Apache mod security</tooltiptext>
+		<section>Services</section>
+		<url>/pkg_edit.php?xml=apache_settings.xml</url>
+	</menu>
+	<service>
+		<name>apache</name>
+		<rcfile>apache24.sh</rcfile>
+		<executable>httpd</executable>
+		<description><![CDATA[Apache mod security]]></description>
+	</service>
 	<fields>
 		<field>
 			<name>General</name>
