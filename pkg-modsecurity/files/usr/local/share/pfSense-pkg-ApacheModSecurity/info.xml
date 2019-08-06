@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+	<package>
+		<name>ApacheModSecurity</name>
+		<descr><![CDATA[Intrusion detection and prevention engine for web applications]]></descr>
+		<pkginfolink/>
+		<version>%%PKGVERSION%%</version>
+		<configurationfile>apache_settings.xml</configurationfile>
+	</package>
+</pfsensepkgs>

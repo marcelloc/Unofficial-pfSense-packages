@@ -1,0 +1,19 @@
+pkg/apache24.template
+pkg/apache_mod_security.template
+pkg/apache_settings.xml
+pkg/apache_balancer.template
+pkg/apache_mod_security_groups.xml
+pkg/apache_virtualhost.xml
+pkg/apache_balancer.xml
+pkg/apache_mod_security_manipulation.xml
+pkg/pkg_apache.inc
+pkg/apache_location.xml
+pkg/apache_mod_security_settings.xml
+pkg/apache_mod_security.inc
+pkg/apache_mod_security_sync.xml
+www/apache_logs_data.php
+www/apache_mod_security_view_logs.php
+www/apache_logs_data.teste.php
+www/apache_view_logs.php
+%%DATADIR%%/info.xml
+@dir /etc/inc/priv

@@ -1,0 +1,16 @@
+name: "pfSense-pkg-ApacheModSecurity"
+version: "0.1"
+origin: www/pkg-modsecurity
+comment: <<EOD
+pfSense Unofficial apache modsecurity package
+EOD
+maintainer: marcellocoutinho@gmail.com
+prefix: /usr/local
+categories: [ www, ]
+licenselogic: single
+licenses: [ APACHE20, ]
+deps: { 
+"modsecurity3-apache": {origin: "security/modsecurity3-apache", version: "0.0.9.b1.19"}
+}
+options: {
+}
