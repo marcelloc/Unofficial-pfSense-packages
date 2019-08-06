@@ -398,8 +398,9 @@ function generate_apache_configuration() {
 			#check if port is in use
 			if($ss_port == $globalbind_port) {
 				#check if it's the same ip or any ip
-				if ($globalbind_ip = "*" || $globalbind_ip == $ss_ip)
+			    if ($globalbind_ip = "*" || $globalbind_ip == $ss_ip) {
 					$already_binded = true;
+			    }
 				$input_errors[] = "Sorry, there is a process already listening on port {$globalbind}";
 				}
 			}
@@ -411,7 +412,7 @@ function generate_apache_configuration() {
 	//reference http://httpd.apache.org/docs/2.4/mod/mpm_common.html
 	$keepalive = ($settings['keepalive'] ? $settings['keepalive'] : "on");
 	$performance_settings = "KeepAlive {$keepalive}\n";
-	$perf_set_array(   'maxkeepalivereq' => "MaxKeepAliveRequests",
+	$perf_set_array = array('maxkeepalivereq' => "MaxKeepAliveRequests",
                 	   'keepalivetimeout' => "KeepAliveTimeout",
                 	   'serverlimit' => "ServerLimit",
                 	   'startservers' => "StartServers",
