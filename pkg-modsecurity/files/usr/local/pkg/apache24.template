@@ -5,7 +5,7 @@
 			$mod_mem_cache = "LoadModule cache_disk_module libexec/". APACHEVERSION ."/mod_cache_disk.so\n";
 		}
 	if($mods_settings['enablemodsecurity']=="on")
-		$mod_security_module= "LoadModule security2_module libexec/". APACHEVERSION ."/mod_security2.so\n";
+		$mod_security_module= "LoadModule security3_module libexec/". APACHEVERSION ."/mod_security3.so\n";
 
 $apache_dir=APACHEDIR;
 $apache_version=APACHEVERSION;

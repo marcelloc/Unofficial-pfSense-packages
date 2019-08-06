@@ -41,7 +41,7 @@
         </copyright>
 	<name>apachesettings</name>
 	<version>1.0</version>
-	<title>Apache</title>
+	<title>Apache reverse proxy: Settings</title>
 	<tabs>
 		<tab>
 			<text>Apache</text>
@@ -331,5 +331,11 @@
 	<custom_php_resync_config_command>
 		apache_mod_security_resync();
 	</custom_php_resync_config_command>
+	<custom_php_install_command>
+		apache_mod_security_install();
+	</custom_php_install_command>
+	<custom_php_deinstall_command>
+		apache_mod_security_deinstall();
+	</custom_php_deinstall_command>
 	<include_file>/usr/local/pkg/apache_mod_security.inc</include_file>	
 </packagegui>

@@ -89,7 +89,28 @@ function apache_mod_security_restart() {
 // Install function
 function apache_mod_security_install() {
 	global $config, $g;
-
+    print "verifying owasp-modsecurity-crs rules \n";
+	$crs_dir = APACHEDIR . "/". MODSECURITY_DIR;
+	if ( ! file_exists($crs_dir)) {
+	    print "\nDownloading owasp-modsecurity-crs rules from SpiderLabs@github...";
+	    $zip_file = "/tmp/owasp.zip";
+	    file_put_contents($zip_file, fopen("https://github.com/SpiderLabs/owasp-modsecurity-crs/archive/v3.1.1.zip", 'r'));
+	    if( file_exists($zip_file) ) {
+	        print "done\n";
+	        $zip = new ZipArchive;
+	        $res = $zip->open($zip_file);
+	        if ($res === TRUE) {
+	            $zip->extractTo('/tmp/');
+	            $zip->close();
+	        } else {
+	            echo "Failed to extract owasp-modsecurity-crs rules\n";
+	        }
+	    } else {
+	        print "failed\n";
+	    }
+	    unlink_if_exists($zip_file);
+	}
+	
 	// We might be reinstalling and a configuration
 	// already exists.
 	generate_apache_configuration();
@@ -134,11 +155,11 @@ function apache_mod_security_resync() {
 	apache_mod_security_install();
 	$dirs=array("base", "experimental","optional", "slr");
 	log_error("apache_mod_security_package: configuration resync is starting.");
-	if (! file_exists(APACHEDIR ."/". MODSECURITY_DIR . "/LICENSE")){
-		exec ("/usr/local/bin/git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git ".APACHEDIR."/".MODSECURITY_DIR);
+	//if (! file_exists(APACHEDIR ."/". MODSECURITY_DIR . "/LICENSE")){
+	//	exec ("/usr/local/bin/git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git ".APACHEDIR."/".MODSECURITY_DIR);
 		//chdir (APACHEDIR."/".MODSECURITY_DIR);
 		//exec ("/usr/local/bin/git checkout -q 2.2.8");
-	}
+	//}
 	$write_config=0;
 	foreach ($dirs as $dir){
 		if ($handle = opendir(APACHEDIR ."/".MODSECURITY_DIR."/{$dir}_rules")) {
