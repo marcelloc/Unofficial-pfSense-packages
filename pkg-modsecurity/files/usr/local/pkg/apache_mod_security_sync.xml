@@ -9,7 +9,7 @@
 /*
 	apache_sync.xml
 	part of pfSense (https://www.pfSense.org/)
-	Copyright (C) 2012 Marcello Coutinho
+	Copyright (C) 2012-2019 Marcello Coutinho
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
 */
@@ -43,7 +43,7 @@
 	</copyright>
 	<name>apachesync</name>
 	<version>1.0</version>
-	<title>Proxy server: XMLRPC Sync</title>
+	<title>Apache</title>
 	<include_file>/usr/local/pkg/apache_mod_security.inc</include_file>	
 	<tabs>
 		<tab>

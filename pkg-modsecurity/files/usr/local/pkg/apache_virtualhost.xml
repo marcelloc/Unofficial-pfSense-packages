@@ -10,7 +10,7 @@
     apache_virtualhost.xml
     part of apache_mod_security package (http://www.pfSense.com)
     Copyright (C)2009, 2010 Scott Ullrich
-    Copyright (C)2012 Marcello Coutinho
+    Copyright (C)2012-2019 Marcello Coutinho
     Copyright (C)2013 Stephane Lapie <stephane.lapie@asahinet.com>
     All rights reserved.
 */
@@ -42,7 +42,7 @@
         </copyright>
 	<name>apachevirtualhost</name>
 	<version>1.0</version>
-	<title>Apache reverse proxy: Site Proxies</title>
+	<title>Apache</title>
 	<menu>
 		<name>Mod_Security+Apache+Proxy</name>
 		<tooltiptext></tooltiptext>
