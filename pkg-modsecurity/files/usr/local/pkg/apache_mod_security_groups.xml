@@ -111,48 +111,36 @@
 		</field>
 
 		<field>
-			<fielddescr>Base Rules</fielddescr>
-			<fieldname>baserules</fieldname>
-			<description><![CDATA[Select Modsecurity Base rules to apply (all are recommended)<br>
+			<fielddescr>General Rules</fielddescr>
+			<fieldname>generalrules</fieldname>
+			<description><![CDATA[Select Modsecurity General rules to apply (all are recommended)<br>
 							Use CTRL + click to select.]]></description>
 	    	<type>select_source</type>
-			<source><![CDATA[$config['installedpackages']['modsecurityfilesbase']['config']]]></source>
+			<source><![CDATA[$config['installedpackages']['modsecuritycatgeneral']['config']]]></source>
 			<source_name>file</source_name>
 			<source_value>file</source_value>
 			<multiple/>
 			<size>10</size>
 		</field>
 		<field>
-			<fielddescr>Optional Rules</fielddescr>
-			<fieldname>optionalrules</fieldname>
-			<description><![CDATA[Select Modsecurity Optional rules to apply<br>
+			<fielddescr>Application Rules</fielddescr>
+			<fieldname>applicationrules</fieldname>
+			<description><![CDATA[Select Modsecurity Application rules to apply<br>
 							Use CTRL + click to select.]]></description>
 	    	<type>select_source</type>
-			<source><![CDATA[$config['installedpackages']['modsecurityfilesoptional']['config']]]></source>
+			<source><![CDATA[$config['installedpackages']['modsecuritycatapplication']['config']]]></source>
 			<source_name>file</source_name>
 			<source_value>file</source_value>
 			<multiple/>
 			<size>10</size>
 		</field>
 		<field>
-			<fielddescr>SLR Rules</fielddescr>
-			<fieldname>slrrules</fieldname>
-			<description><![CDATA[Select Modsecurity SLR rules to apply<br>
+			<fielddescr>Data Leakages Rules</fielddescr>
+			<fieldname>leakagerules</fieldname>
+			<description><![CDATA[Select Modsecurity Data Leakages rules to apply<br>
 							Use CTRL + click to select.]]></description>
 	    	<type>select_source</type>
-			<source><![CDATA[$config['installedpackages']['modsecurityfilesslr']['config']]]></source>
-			<source_name>file</source_name>
-			<source_value>file</source_value>
-			<multiple/>
-			<size>10</size>
-		</field>
-		<field>
-			<fielddescr>Experimental Rules</fielddescr>
-			<fieldname>experimentalrules</fieldname>
-			<description><![CDATA[Select Modsecurity Experimental rules to apply<br>
-							Use CTRL + click to select.]]></description>
-	    	<type>select_source</type>
-			<source><![CDATA[$config['installedpackages']['modsecurityfilesexperimental']['config']]]></source>
+			<source><![CDATA[$config['installedpackages']['modsecuritycatleakages']['config']]]></source>
 			<source_name>file</source_name>
 			<source_value>file</source_value>
 			<multiple/>

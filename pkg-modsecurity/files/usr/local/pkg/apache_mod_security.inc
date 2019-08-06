@@ -140,23 +140,35 @@ function apache_mod_security_deinstall() {
 function apache_mod_security_resync() {
 	global $config, $g;
 	apache_mod_security_install();
-	$dirs = array("base", "experimental","optional", "slr");
 	log_error("apache_mod_security_package: configuration resync is starting.");
-	$write_config=0;
-	foreach ($dirs as $dir) {
-		if ($handle = opendir(APACHEDIR ."/".MODSECURITY_DIR."/{$dir}_rules")) {
-			$write_config++;
-			$config['installedpackages']["modsecurityfiles{$dir}"]['config'] = array();
-			while (false !== ($entry = readdir($handle))) {
-				if (preg_match("/(\S+).conf$/", $entry, $matches))
-					$config["installedpackages"]["modsecurityfiles{$dir}"]["config"][] = array("file"=>$matches[1]);
+	$write_config = 0;
+
+	foreach (glob(APACHEDIR ."/".MODSECURITY_DIR ."/rules/*conf") as $mscf) {
+			$config['installedpackages']["modsecuritycat{$ms_group}"]['config'] = array();
+			if (preg_match("/.*crs.rules.(\S+)(APPLICATION|LEAKAGES)(\S*).conf$/", $mscf, $matches)) {
+			    $ms_group_lower = strtolower($matches[2]);
+			    $mscat_array["modsecuritycat{$ms_group_lower}"]["config"][] = array("file" => $matches[1] . $matches[2] . $matches[3]);
+			} else if (preg_match("/.*crs.rules.(\S+).conf$/", $mscf, $matches)) {
+			    $mscat_array["modsecuritycatgeneral"]["config"][] = array("file" => $matches[1]);
 			}
-			closedir($handle);
-		}
 	}
+	
+	//verify changes
+	print "<PRE>";
+	$ms_groups = array("general", "application", "leakage");
+	foreach ($ms_groups as $ms_group) {
+	    $ms_group_lower = strtolower($ms_group);
+	    if ($config["installedpackages"]["modsecuritycat{$ms_group_lower}"]["config"] != $mscat_array["modsecuritycat{$ms_group}"]["config"]) {
+	     $write_config++;
+	     $config["installedpackages"]["modsecuritycat{$ms_group_lower}"]["config"] = $mscat_array["modsecuritycat{$ms_group}"]["config"];
+	    }
+	}
+	
+	//write if had changes on modsecurity file rules
 	if ($write_config > 0) {
-		write_config();
+		write_config("Updating modsecurity crs rules list on GUI");
 	}
+
 	apache_mod_security_checkconfig();
 	apache_mod_security_restart();
 	log_error("apache_mod_security_package: configuration resync is ending.");
