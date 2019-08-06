@@ -1,34 +1,26 @@
 <?php
 /*
-	apache_mod_security.inc
-	part of pfSense (https://www.pfSense.org/)
-	Copyright (C) 2009, 2010 Scott Ullrich
-	Copyright (C) 2012-2019 Marcello Coutinho
-	Copyright (C) 2013 Stephane Lapie <stephane.lapie@asahinet.com>
-	Copyright (C) 2015 ESF, LLC
-	All rights reserved.
+ * apache_mod_security.inc
+ * part of Unofficial packages for pfSense(R) softwate
+ * Copyright (c) 2011-2019 Marcello Coutinho
+ * Copyright (C) 2009, 2010 Scott Ullrich
+ * Copyright (C) 2013 Stephane Lapie <stephane.lapie@asahinet.com>
+ * Copyright (C) 2015 ESF, LLC
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
 require_once("config.inc");
 require_once("globals.inc");
 require_once("notices.inc");
@@ -38,7 +30,7 @@ require_once("xmlrpc_client.inc");
 
 $shortcut_section = "apache";
 // Check to find out on which system the package is running
-$pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
+$pf_version = substr(trim(file_get_contents("/etc/version")),0,3);
 
 define('APACHEDIR', '/usr/local');
 
@@ -48,16 +40,18 @@ define('APACHEVERSION', 'apache24');
 define ('MODSECURITY_DIR','crs');
 // Rules directory location
 define("RULES_DIRECTORY", APACHEDIR . "/". MODSECURITY_DIR);
-function apache_textarea_decode($base64){
-	return preg_replace("/\r\n/","\n",base64_decode($base64));
+function apache_textarea_decode($base64) {
+	return preg_replace("/\r\n/", "\n", base64_decode($base64));
 }
 
 function apache_get_real_interface_address($iface) {
 	global $config;
-	if ($iface == "All")
+	if ($iface == "All") {
 		return array("*", "");
-	if (preg_match("/\d+\.\d+/",$iface))
+	}
+	if (preg_match("/\d+\.\d+/",$iface)) {
 		return array($iface, "");
+	}
 	$iface = convert_friendly_interface_to_real_interface_name($iface);
 	$line = trim(shell_exec("ifconfig $iface | grep inet | grep -v inet6"));
 	list($dummy, $ip, $dummy2, $netmask) = explode(" ", $line);
@@ -146,27 +140,28 @@ function apache_mod_security_deinstall() {
 function apache_mod_security_resync() {
 	global $config, $g;
 	apache_mod_security_install();
-	$dirs=array("base", "experimental","optional", "slr");
+	$dirs = array("base", "experimental","optional", "slr");
 	log_error("apache_mod_security_package: configuration resync is starting.");
 	$write_config=0;
-	foreach ($dirs as $dir){
+	foreach ($dirs as $dir) {
 		if ($handle = opendir(APACHEDIR ."/".MODSECURITY_DIR."/{$dir}_rules")) {
 			$write_config++;
-			$config['installedpackages']["modsecurityfiles{$dir}"]['config']=array();
+			$config['installedpackages']["modsecurityfiles{$dir}"]['config'] = array();
 			while (false !== ($entry = readdir($handle))) {
-				if (preg_match("/(\S+).conf$/",$entry,$matches))
-					$config["installedpackages"]["modsecurityfiles{$dir}"]["config"][]=array("file"=>$matches[1]);
+				if (preg_match("/(\S+).conf$/", $entry, $matches))
+					$config["installedpackages"]["modsecurityfiles{$dir}"]["config"][] = array("file"=>$matches[1]);
 			}
 			closedir($handle);
 		}
 	}
-	if ($write_config > 0)
+	if ($write_config > 0) {
 		write_config();
+	}
 	apache_mod_security_checkconfig();
 	apache_mod_security_restart();
 	log_error("apache_mod_security_package: configuration resync is ending.");
 
-	if (is_array($config['installedpackages']['apachesync']['config'])){
+	if (is_array($config['installedpackages']['apachesync']['config'])) {
 		$apache_sync = $config['installedpackages']['apachesync']['config'][0];
 		$synconchanges = $apache_sync['synconchanges'];
 		$synctimeout = $apache_sync['synctimeout'] ?: '250';
@@ -341,42 +336,40 @@ function apache_mod_security_checkconfig() {
 function generate_apache_configuration() {
 	global $config, $g;
 	$mod_proxy = "";
-	$write_config=0;
+	$write_config = 0;
 	// check current config
-	if (is_array($config['installedpackages']['apachesettings']))
-		$settings=$config['installedpackages']['apachesettings']['config'][0];
-	else
-		$settings=array();
-
+	if (is_array($config['installedpackages']['apachesettings'])) {
+		$settings = $config['installedpackages']['apachesettings']['config'][0];
+	} else {
+		$settings = array();
+	}
 	log_error("apache_mod_security_package: Re-generating Apache configuration start.");
 
 	// Set global site e-mail
-	if ($settings['globalsiteadminemail']){
+	if ($settings['globalsiteadminemail']) {
 		$global_site_email = $settings['globalsiteadminemail'];
-		} 
-	else {
-		$global_site_email = "admin@admin.com";
+	} else {
+        $global_site_email = "admin@admin.com";
 		$config['installedpackages']['apachesettings']['config'][0]['globalsiteadminemail'] = "admin@admin.com";
 		// update configuration with default value in this case
 		log_error("apache_mod_security_package: WARNING!  Global site Administrator E-Mail address has not been set.  Defaulting to bogus e-mail address.");
 		$write_config ++;
-		}
+	}
 
 	// Set ServerName
-	if($settings['hostname'] != ""){
+	if($settings['hostname'] != "") {
 		$servername = $settings['hostname'];
-		}
-	else {
+	} else {
 		$servername = php_uname('n');
 		$config['installedpackages']['apachesettings']['config'][0]['hostname'] = `hostname`;
 		// update configuration with default value in this case
 		$write_config ++;
-		}
+	}
 
 	//check if servername has an valid ip
-	$ip=gethostbyname(php_uname('n'));
-	if ($ip==php_uname('n')){
-		$error='apache_mod_security_package: Apache cannot start, hostname does not resolv. You can workaround this if you add a dns entry for '.php_uname('n').' or add a Host Overrides entry on services -> Dns Forwarder pointing '.php_uname('n').' to 127.0.0.1.';
+	$ip = gethostbyname(php_uname('n'));
+	if ($ip == php_uname('n')) {
+		$error = 'apache_mod_security_package: Apache cannot start, hostname does not resolv. You can workaround this if you add a dns entry for '.php_uname('n').' or add a Host Overrides entry on services -> Dns Forwarder pointing '.php_uname('n').' to 127.0.0.1.';
 		log_error($error);
 		file_notice("apache_mod_security", $error, "apache_mod_security", "");
 	}
@@ -385,22 +378,23 @@ function generate_apache_configuration() {
 	$ip=$iface_address[0];
 	$globalbind_ip = ($ip ? $ip : "*");
 	$globalbind_port = $settings['globalbindtoport'];
-	if ($globalbind_port == ""){
-		$globalbind_port ="80";
+	if ($globalbind_port == "") {
+		$globalbind_port = "80";
 		$config['installedpackages']['apachesettings']['config'][0]['globalbindtoipport'] = $globalbind_port;
 		$write_config ++;
-		}
-	$global_listen ="{$globalbind_ip}:{$globalbind_port}";
+	}
+	$global_listen = "{$globalbind_ip}:{$globalbind_port}";
 	// update configuration with default value in this case
-	if ($write_config > 0)
+	if ($write_config > 0) {
 		write_config();
+	}
 	
 	// check if any daemon is using apache ip/port
 	exec("/usr/bin/sockstat | grep -v ' httpd ' | awk '{ print $6 }' | grep ':{$globalbind_port}'",$socksstat);
 	unset ($already_binded);
 	if(is_array($socksstat)) {
 		foreach($socksstat as $ss) {
-			list($ss_ip,$ss_port)=explode(":",$ss);
+			list($ss_ip,$ss_port) = explode(":",$ss);
 			#check if port is in use
 			if($ss_port == $globalbind_port) {
 				#check if it's the same ip or any ip
@@ -410,35 +404,30 @@ function generate_apache_configuration() {
 				}
 			}
 		}
-	if(isset($already_binded))
+	if(isset($already_binded)) {
 		log_error("apache_mod_security_package: Could not start daemon on port {$global_listen}. Another process is already bound to this port.");
-	
+	}
 	//performance settings
-	//reference http://httpd.apache.org/docs/2.2/mod/mpm_common.html
-	$keepalive=($settings['keepalive']?$settings['keepalive']:"on");
-	$performance_settings="KeepAlive {$keepalive}\n";
-	if ($settings['maxkeepalivereq'])
-		$performance_settings .= "MaxKeepAliveRequests {$settings['maxkeepalivereq']}\n";
-	if ($settings['keepalivetimeout'])
-		$performance_settings .= "KeepAliveTimeout {$settings['keepalivetimeout']}\n";
-	if ($settings['serverlimit'])
-		$performance_settings .= "ServerLimit {$settings['serverlimit']}\n";
-	if ($settings['startservers'])
-		$performance_settings .= "StartServers {$settings['startservers']}\n";
-	if ($settings['minsparethreads'])
-		$performance_settings .= "MinSpareThreads {$settings['minsparethreads']}\n";
-	if ($settings['maxsparethreads'])
-		$performance_settings .= "MaxSpareThreads {$settings['maxsparethreads']}\n";
-	if ($settings['threadslimit'])
-		$performance_settings .= "ThreadsLimit {$settings['threadslimit']}\n";
-	if ($settings['threadstacksize'])
-		$performance_settings .= "ThreadStackSize {$settings['threadstacksize']}\n";
-	if ($settings['threadsperchild'])
-		$performance_settings .= "ThreadsPerChild {$settings['threadsperchild']}\n";
-	if ($settings['maxclients'])
-		$performance_settings .= "MaxClients {$settings['maxclients']}\n";
-	if ($settings['maxrequestsperchild'])
-		$performance_settings .= "MaxRequestsPerChild {$settings['maxrequestsperchild']}\n";	
+	//reference http://httpd.apache.org/docs/2.4/mod/mpm_common.html
+	$keepalive = ($settings['keepalive'] ? $settings['keepalive'] : "on");
+	$performance_settings = "KeepAlive {$keepalive}\n";
+	$perf_set_array(   'maxkeepalivereq' => "MaxKeepAliveRequests",
+                	   'keepalivetimeout' => "KeepAliveTimeout",
+                	   'serverlimit' => "ServerLimit",
+                	   'startservers' => "StartServers",
+                	   'minsparethreads' => "MinSpareThreads",
+                	   'maxsparethreads' => "MaxSpareThreads",
+                	   'threadslimit' => "ThreadsLimit",
+                	   'threadstacksize' => "ThreadStackSize",
+                	   'threadsperchild' => "ThreadsPerChild",
+                	   'maxclients' => "MaxClients",
+                	   'maxrequestsperchild' => "MaxRequestsPerChild");
+    
+	foreach ($perf_set_array as $perf_key => $perf_value) {
+	    if ($settings[$perf_key] != "") {
+	        $performance_settings .= "$perf_value {$settings[$perf_key]}\n";
+	   }
+	}
 	
 	// Setup mem_cache
 	if(file_exists(APACHEDIR ."/libexec/" . APACHEVERSION . "/mod_memcache.so") && $settings['memcachesize'] != "0") {
@@ -468,31 +457,31 @@ function generate_apache_configuration() {
 	$secreadstatelimit = ($settings['SecReadStateLimit'] ? $settings['SecReadStateLimit'] :"");
 	
 	//Configure balancers/backends
-	if (is_array($config['installedpackages']['apachebalancer'])){
+	if (is_array($config['installedpackages']['apachebalancer'])) {
 		#load conf template
 		include("/usr/local/pkg/apache_balancer.template");
 
 		//write balancer conf
-		file_put_contents(APACHEDIR."/etc/" . APACHEVERSION . "/Includes/balancers.conf",$balancer_config,LOCK_EX);
+		file_put_contents(APACHEDIR."/etc/" . APACHEVERSION . "/Includes/balancers.conf", $balancer_config,LOCK_EX);
 	}
 
 	// configure modsecurity group options
 	//chroot apache http://forums.freebsd.org/showthread.php?t=6858
-	if (is_array($config['installedpackages']['apachemodsecuritygroups'])){
+	if (is_array($config['installedpackages']['apachemodsecuritygroups'])) {
 		unset($mods_group);
 		foreach ($config['installedpackages']['apachemodsecuritygroups']['config'] as $mods_groups) {
 			//RULES_DIRECTORY
-			foreach (split(",",$mods_groups['baserules']) as $baserule){
-				$mods_group[$mods_groups['name']].="  Include ".RULES_DIRECTORY ."/base_rules/{$baserule}.conf\n";
+			foreach (explode(",", $mods_groups['baserules']) as $baserule) {
+				$mods_group[$mods_groups['name']] .= "  Include ".RULES_DIRECTORY ."/base_rules/{$baserule}.conf\n";
 			}
-			foreach (split(",",$mods_groups['optionalrules']) as $baserule){
-				$mods_group[$mods_groups['name']].="  Include ".RULES_DIRECTORY ."/optional_rules/{$baserule}.conf\n";
+			foreach (explode(",", $mods_groups['optionalrules']) as $baserule) {
+				$mods_group[$mods_groups['name']] .= "  Include ".RULES_DIRECTORY ."/optional_rules/{$baserule}.conf\n";
 			}
-			foreach (split(",",$mods_groups['slrrules']) as $baserule){
-				$mods_group[$mods_groups['name']].="  Include ".RULES_DIRECTORY ."/slr_rules/{$baserule}.conf\n";
+			foreach (explode(",", $mods_groups['slrrules']) as $baserule) {
+				$mods_group[$mods_groups['name']] .= "  Include ".RULES_DIRECTORY ."/slr_rules/{$baserule}.conf\n";
 			}
-			foreach (split(",",$mods_groups['experimentalrules']) as $baserule){
-				$mods_group[$mods_groups['name']].="  Include ".RULES_DIRECTORY ."/experimental_rules/{$baserule}.conf\n";
+			foreach (explode(",", $mods_groups['experimentalrules']) as $baserule) {
+				$mods_group[$mods_groups['name']] .= "  Include ".RULES_DIRECTORY ."/experimental_rules/{$baserule}.conf\n";
 			}
 		}
 	}
@@ -500,7 +489,7 @@ function generate_apache_configuration() {
 	//var_dump($mods_group);
 
 	//mod_security settings
-	if (is_array($config['installedpackages']['apachemodsecuritysettings'])){
+	if (is_array($config['installedpackages']['apachemodsecuritysettings'])) {
 		$mods_settings = $config['installedpackages']['apachemodsecuritysettings']['config'][0];
 		$sample_file = RULES_DIRECTORY .'/crs-setup.conf.example';
 		if ($mods_settings['crs10'] == "" && file_exists($sample_file)) {
@@ -534,135 +523,140 @@ function generate_apache_configuration() {
 
 EOF;
 		$default_port=array('http'=>'80', 'https'=> '443');
-		foreach ($config['installedpackages']['apachevirtualhost']['config'] as $virtualhost){
-			if (is_array($virtualhost['row']) && $virtualhost['enable'] == 'on'){
+		foreach ($config['installedpackages']['apachevirtualhost']['config'] as $virtualhost) {
+			if (is_array($virtualhost['row']) && $virtualhost['enable'] == 'on') {
 				$iface_address = apache_get_real_interface_address($virtualhost['interface']);
-				$ip=$iface_address[0];
-				$port=($virtualhost['port'] ? $virtualhost['port'] : $default_port[$virtualhost['proto']]);
-				if (!in_array("{$ip}:{$port}",$namevirtualhosts))
-					$namevirtualhosts[]="{$ip}:{$port}";
-
-				$vh_config.="# {$virtualhost['description']}\n";
-				$vh_config.="<VirtualHost {$ip}:{$port}>\n";
-				$vh_config.=" ServerName ". preg_replace ("/\r\n(\S+)/","\n ServerAlias $1",base64_decode($virtualhost['primarysitehostname'])) ."\n";
-				$vh_config.=" ServerAdmin ".($virtualhost['siteemail'] ? $virtualhost['siteemail'] : $settings['globalsiteadminemail'])."\n";
+				$ip = $iface_address[0];
+				$port = ($virtualhost['port'] ? $virtualhost['port'] : $default_port[$virtualhost['proto']]);
+				if (!in_array("{$ip}:{$port}", $namevirtualhosts)) {
+					$namevirtualhosts[] = "{$ip}:{$port}";
+				}
+				$vh_config .= "# {$virtualhost['description']}\n";
+				$vh_config .= "<VirtualHost {$ip}:{$port}>\n";
+				$vh_config .= " ServerName ". preg_replace ("/\r\n(\S+)/","\n ServerAlias $1",base64_decode($virtualhost['primarysitehostname'])) ."\n";
+				$vh_config .= " ServerAdmin ".($virtualhost['siteemail'] ? $virtualhost['siteemail'] : $settings['globalsiteadminemail'])."\n";
 				#check log
-				switch ($virtualhost['logfile']){
+				switch ($virtualhost['logfile']) {
 					case "default":
-						$vh_config.=" ErrorLog /var/log/httpd-error.log\n";
-						$vh_config.=" CustomLog /var/log/httpd.log combined\n"; 
+						$vh_config .= " ErrorLog /var/log/httpd-error.log\n";
+						$vh_config .= " CustomLog /var/log/httpd.log combined\n"; 
 					break;
 					case "create":
-						if(preg_match("/(\S+)/",base64_decode($virtualhost['primarysitehostname']),$matches))
-						$vh_config.=" ErrorLog /var/log/httpd-{$matches[1]}-error.log\n";
-						$vh_config.=" CustomLog /var/log/httpd-{$matches[1]}.log combined\n"; 
+					    if(preg_match("/(\S+)/", base64_decode($virtualhost['primarysitehostname']), $matches)) {
+						  $vh_config .= " ErrorLog /var/log/httpd-{$matches[1]}-error.log\n";
+						  $vh_config .= " CustomLog /var/log/httpd-{$matches[1]}.log combined\n";
+					    }
 					break;
 				}
 
-				if($virtualhost['preserveproxyhostname'])
+				if ($virtualhost['preserveproxyhostname']) {
 					$vh_config .= " ProxyPreserveHost on\n";
+				}
 
 				#check ssl
-				if(isset($virtualhost["ssl_cert"]) && $virtualhost["ssl_cert"] !="none" && $virtualhost["proto"] == "https") {
-					$vh_config.= " SSLEngine on\n";
-					$vh_config.= " SSLProtocol ". ($virtualhost['ssl_protocol'] ? $virtualhost['ssl_protocol'] : "all -SSLv2") ."\n";
-					$vh_config.= " SSLProxyEngine ". ($virtualhost['ssl_proxy_engine'] ? "on" : "off") ."\n";
-					$vh_config.= " SSLProxyVerify ". ($virtualhost['ssl_proxy_verify'] ? $virtualhost['ssl_proxy_verify'] : "none") ."\n";
-					$vh_config.= " SSLCipherSuite ". ($virtualhost['ssl_cipher_suite'] ? $virtualhost['ssl_cipher_suite'] : "ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL") ."\n";
-					$vh_config.= " SSLHonorCipherOrder ". ($virtualhost['ssl_honor_cipher_order'] ? "on" : "off") ."\n";
+				if (isset($virtualhost["ssl_cert"]) && $virtualhost["ssl_cert"] !="none" && $virtualhost["proto"] == "https") {
+					$vh_config .= " SSLEngine on\n";
+					$vh_config .= " SSLProtocol ". ($virtualhost['ssl_protocol'] ? $virtualhost['ssl_protocol'] : "all -SSLv2") ."\n";
+					$vh_config .= " SSLProxyEngine ". ($virtualhost['ssl_proxy_engine'] ? "on" : "off") ."\n";
+					$vh_config .= " SSLProxyVerify ". ($virtualhost['ssl_proxy_verify'] ? $virtualhost['ssl_proxy_verify'] : "none") ."\n";
+					$vh_config .= " SSLCipherSuite ". ($virtualhost['ssl_cipher_suite'] ? $virtualhost['ssl_cipher_suite'] : "ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL") ."\n";
+					$vh_config .= " SSLHonorCipherOrder ". ($virtualhost['ssl_honor_cipher_order'] ? "on" : "off") ."\n";
 					
 					$svr_cert = lookup_cert($virtualhost["ssl_cert"]);
 					if ($svr_cert != false) {
-						if(base64_decode($svr_cert['crt'])) {
-							file_put_contents(APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert"]}.crt",apache_textarea_decode($svr_cert['crt']),LOCK_EX);
-							$vh_config.= " SSLCertificateFile ". APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert"]}.crt\n";
+						if (base64_decode($svr_cert['crt'])) {
+							file_put_contents(APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert"]}.crt", apache_textarea_decode($svr_cert['crt']), LOCK_EX);
+							$vh_config .= " SSLCertificateFile ". APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert"]}.crt\n";
 							}
-						if(base64_decode($svr_cert['prv'])) {
-							file_put_contents(APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert"]}.key",apache_textarea_decode($svr_cert['prv']),LOCK_EX);
-							$vh_config.= " SSLCertificateKeyFile ". APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert"]}.key\n";
+						if (base64_decode($svr_cert['prv'])) {
+							file_put_contents(APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert"]}.key", apache_textarea_decode($svr_cert['prv']), LOCK_EX);
+							$vh_config .= " SSLCertificateKeyFile ". APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert"]}.key\n";
 			       			}
 						}
-					$svr_ca =lookup_ca($virtualhost["ssl_cert_chain"]);
+					$svr_ca = lookup_ca($virtualhost["ssl_cert_chain"]);
 					if ($svr_ca != false) {
-							file_put_contents(APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert_chain"]}.crt",apache_textarea_decode($svr_ca['crt']),LOCK_EX);
+							file_put_contents(APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert_chain"]}.crt", apache_textarea_decode($svr_ca['crt']), LOCK_EX);
 							$vh_config.= " SSLCertificateChainFile ". APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["ssl_cert_chain"]}.crt\n";
 							}
 					$cli_ca =lookup_ca($virtualhost["reverse_int_ca"]);
 					if ($cli_ca != false) {
-							file_put_contents(APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["reverse_int_ca"]}.crt",apache_textarea_decode($cli_ca['crt']),LOCK_EX);
-							$vh_config.= " SSLCACertificateFile ". APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["reverse_int_ca"]}.crt\n";
+							file_put_contents(APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["reverse_int_ca"]}.crt", apache_textarea_decode($cli_ca['crt']), LOCK_EX);
+							$vh_config .= " SSLCACertificateFile ". APACHEDIR . "/etc/" . APACHEVERSION . "/{$virtualhost["reverse_int_ca"]}.crt\n";
 							}
 				}
 				#Custom Options
-				$vh_config.= apache_textarea_decode($virtualhost['custom'])."\n\n";
+				$vh_config .= apache_textarea_decode($virtualhost['custom']) . "\n\n";
 
 				#Check virtualhost locations
-				foreach ($virtualhost['row'] as $be){
-					if ($be['location'] != "none"){
-						$backend=$apache_location[$be['location']];
+				foreach ($virtualhost['row'] as $be) {
+					if ($be['location'] != "none") {
+						$backend = $apache_location[$be['location']];
 
-						$vh_config.="# {$backend['name']}\n";
-						foreach ($config['installedpackages']['apachebalancer']['config'] as $balancer){
-							if (is_array($balancer['row']) && $balancer['enable'] == 'on' && $balancer['name'] == $backend['balancer']){
-								$vh_config.="# {$balancer['description']}\n";
-								$vh_config.=" <Proxy balancer://{$balancer['name']}>\n";
-								foreach($balancer['row'] as $balancer_server){
-									$balancer_options =($balancer_server['port'] ? ":{$balancer_server['port']}" : "");
+						$vh_config .= "# {$backend['name']}\n";
+						foreach ($config['installedpackages']['apachebalancer']['config'] as $balancer) {
+							if (is_array($balancer['row']) && $balancer['enable'] == 'on' && $balancer['name'] == $backend['balancer']) {
+								$vh_config .= "# {$balancer['description']}\n";
+								$vh_config .= " <Proxy balancer://{$balancer['name']}>\n";
+								foreach($balancer['row'] as $balancer_server) {
+									$balancer_options = ($balancer_server['port'] ? ":{$balancer_server['port']}" : "");
 
-									$balancer_options.=($balancer_server['routeid'] ? " route={$balancer_server['routeid']}" : "");
-									$balancer_options.=($balancer_server['loadfactor'] ? " loadfactor={$balancer_server['loadfactor']}" : "");
-									if (isset($balancer_server['ping']) && $balancer_server['ping']!=""){
-										$balancer_options.= " ping={$balancer_server['ping']}";
-										$balancer_options.=($server['ttl'] ? " ttl={$balancer_server['ttl']}" : "");
+									$balancer_options .= ($balancer_server['routeid'] ? " route={$balancer_server['routeid']}" : "");
+									$balancer_options .= ($balancer_server['loadfactor'] ? " loadfactor={$balancer_server['loadfactor']}" : "");
+									if (isset($balancer_server['ping']) && $balancer_server['ping']!="") {
+										$balancer_options .= " ping={$balancer_server['ping']}";
+										$balancer_options .= ($server['ttl'] ? " ttl={$balancer_server['ttl']}" : "");
 									}
 									$vh_config.="  BalancerMember {$balancer['proto']}://{$balancer_server['host']}{$balancer_options}\n";
 								}
 								#check if stick connections are set
-								if ($balancer['row'][0]['routeid'] !="")
-									$vh_config.="  ProxySet stickysession=ROUTEID\n";
-								$vh_config.=" </Proxy>\n\n";
+								if ($balancer['row'][0]['routeid'] !="") {
+									$vh_config .= "  ProxySet stickysession=ROUTEID\n";
+								}
+								$vh_config .= " </Proxy>\n\n";
 								break;
 							}
 						}
 	
-						$vh_config.=" <Location ".($backend['sitepath'] ? $backend['sitepath'] : "/").">\n";
-						$vh_config.="  ProxyPass        balancer://{$backend['balancer']}".($backend['backendpath'] ? $backend['backendpath'] : "/")."\n";
-						$vh_config.="  ProxyPassReverse balancer://{$backend['balancer']}".($backend['backendpath'] ? $backend['backendpath'] : "/")."\n";
-						if ($backend['compress']== "no")
-							$vh_config.="  SetInputFilter   INFLATE\n  SetOutputFilter  INFLATE\n";
-						if ($backend['modsecgroup']!="" && $backend['modsecgroup']!="none" && $mods_settings['enablemodsecurity']=="on"){
-							$vh_config.=$mods_group[$backend['modsecgroup']];
+						$vh_config .= " <Location ".($backend['sitepath'] ? $backend['sitepath'] : "/").">\n";
+						$vh_config .= "  ProxyPass        balancer://{$backend['balancer']}".($backend['backendpath'] ? $backend['backendpath'] : "/")."\n";
+						$vh_config .= "  ProxyPassReverse balancer://{$backend['balancer']}".($backend['backendpath'] ? $backend['backendpath'] : "/")."\n";
+						if ($backend['compress'] == "no")
+							$vh_config .= "  SetInputFilter   INFLATE\n  SetOutputFilter  INFLATE\n";
+						if ($backend['modsecgroup'] != "" && $backend['modsecgroup'] != "none" && $mods_settings['enablemodsecurity'] == "on"){
+							$vh_config .= $mods_group[$backend['modsecgroup']];
 						}
-						if (is_array($config['installedpackages']['apachemodsecuritymanipulation']) && $mods_settings['enablemodsecurity']=="on"){
-							foreach($config['installedpackages']['apachemodsecuritymanipulation']['config'] as $manipulation){
-								if ($backend['modsecmanipulation'] == $manipulation['name']){
-									if (is_array($manipulation['row']))
-										foreach ($manipulation['row'] as $secrule)
+						if (is_array($config['installedpackages']['apachemodsecuritymanipulation']) && $mods_settings['enablemodsecurity'] == "on"){
+							foreach($config['installedpackages']['apachemodsecuritymanipulation']['config'] as $manipulation) {
+								if ($backend['modsecmanipulation'] == $manipulation['name']) {
+								    if (is_array($manipulation['row'])) {
+								        foreach ($manipulation['row'] as $secrule) {
 											$vh_config.="  {$secrule['type']} {$secrule['value']}\n";
-									}
+								        }
+								    }
 								}
 							}
-						$vh_config.= apache_textarea_decode($backend['custom'])."\n\n";
-						$vh_config.=" </Location>\n\n";
+						}
+						$vh_config .= apache_textarea_decode($backend['custom'])."\n\n";
+						$vh_config .= " </Location>\n\n";
 					}
 				}
-				$vh_config.="</VirtualHost>\n";
+				$vh_config .= "</VirtualHost>\n";
 				}
 			}
 		//write balancer conf
-		file_put_contents(APACHEDIR."/etc/" . APACHEVERSION . "/Includes/virtualhosts.conf",$vh_config,LOCK_EX);
+		file_put_contents(APACHEDIR."/etc/" . APACHEVERSION . "/Includes/virtualhosts.conf", $vh_config, LOCK_EX);
 		}
 	// check/fix perl version on mod_security util files
-	$perl_files= array("httpd-guardian.pl","rules-updater.pl","runav.pl","arachni2modsec.pl","zap2modsec.pl","regression_tests/rulestest.pl");
-	foreach ($perl_files as $perl_file){
-		$file_path=RULES_DIRECTORY."/util/";
-		if (file_exists($file_path.$perl_file)){
-			$script=preg_replace("/#!\S+perl/","#!".APACHEDIR."/bin/perl",file_get_contents($file_path.$perl_file));
-			file_put_contents($file_path.$perl_file,$script,LOCK_EX);
+	$perl_files = array("httpd-guardian.pl","rules-updater.pl","runav.pl","arachni2modsec.pl","zap2modsec.pl","regression_tests/rulestest.pl");
+	foreach ($perl_files as $perl_file) {
+		$file_path = RULES_DIRECTORY."/util/";
+		if (file_exists($file_path.$perl_file)) {
+			$script = preg_replace("/#!\S+perl/", "#!".APACHEDIR."/bin/perl", file_get_contents($file_path.$perl_file));
+			file_put_contents($file_path.$perl_file, $script, LOCK_EX);
 			}
 		}
 	// check/fix spread libs location
-	$perl_libs= array("libspread.a","libspread.so.1");
+	/*$perl_libs = array("libspread.a","libspread.so.1");
 	foreach ($perl_libs as $perl_lib){
 		$file_path=APACHEDIR."/lib/";
 		if (!file_exists("/lib/".$perl_lib) && file_exists("{$file_path}{$perl_lib}")){
@@ -670,10 +664,11 @@ EOF;
 			if ($perl_lib == "libspread.so.1")
 				copy("{$file_path}{$perl_lib}","/lib/libspread.so");
 			}
-	}
+	} */
 	
-	if ($mods_settings!="")
-		$SecGuardianLog="SecGuardianLog \"|".RULES_DIRECTORY."/util/httpd-guardian\"";
+	if ($mods_settings!="") {
+	   $SecGuardianLog="SecGuardianLog \"|".RULES_DIRECTORY."/util/httpd-guardian\"";
+	}
 	
 	//fix http-guardian.pl block bins
 	//$file_path=APACHEDIR.MODSECURITY_DIR."/util/".$perl_lib;
@@ -738,12 +733,12 @@ EOF;
 	// Configure NameVirtualHost directives
 	$aliases = "";
 	//add NameVirtualHost and listening entries to configured virtualhosts 
-	foreach ($namevirtualhosts as $namevirtualhost){
+	foreach ($namevirtualhosts as $namevirtualhost) {
 		// explicit bind if not global ip:port
 		if ($namevirtualhost != $global_listen) {
 			$aliases .= "Listen $namevirtualhost\n";
 			// Automatically add this to configuration
-			$aplisten=split(":",$namevirtualhost);
+			$aplisten = explode(":",$namevirtualhost);
 			$config['installedpackages']['apachesettings']['config'][0]['row'][] = array('ipaddress' => $aplisten[0], 'ipport' => $aplisten[1]);
 		}
 	}
@@ -774,7 +769,7 @@ EOF;
 		foreach($config['installedpackages']['apachemodsecurity']['config'] as $ams) {
 			// Set rowhelper used variables
 			$additionalsitehostnames = "";
-			if (is_array($ams['row'])){
+			if (is_array($ams['row'])) {
 				foreach($ams['row'] as $row) {
 					if ($row['additionalsitehostnames'])
 						$additionalsitehostnames .= "{$row['additionalsitehostnames']} ";
@@ -784,7 +779,7 @@ EOF;
 			$sslproxyengine = ""; 
 			$backend_sites_count = 0;
 			$balancer_members = ""; // not technically needed.
-			if (is_array($ams['row'])){
+			if (is_array($ams['row'])) {
 			  foreach($ams['row'] as $row) {
 				if ($row['webserveripaddr']) {
 					$normalised_ipaddr = "";
@@ -807,18 +802,21 @@ EOF;
 			  }
 			}
 			// Set general items
-			if($ams['siteemail'])
+			if($ams['siteemail']) {
 				$serveradmin = $ams['siteemail'];
-			else 
+			} else {
 				$serveradmin = $global_site_email;
-			if($ams['primarysitehostname'])
+			}
+			if($ams['primarysitehostname']) {
 				$primarysitehostname = $ams['primarysitehostname'];
+			}
 			$sitename = str_replace(" ", "", $ams['sitename']);			
 			// Set local listening directive
-			if($ams['ipaddress'] && $ams['port']) 
+			if($ams['ipaddress'] && $ams['port']) {
 				$local_ip_port = "{$ams['ipaddress']}:{$ams['port']}";
-			else 
+			} else {
 				$local_ip_port = $global_listen;
+			}
 			// Is this item a load balancer
 			if($backend_sites_count>1) {
 				$balancer = true;
@@ -829,14 +827,18 @@ EOF;
 				$sitename = "";			// we are not using sitename in this case
 			}
 			// Set SSL items
-			if($ams['siteurl'])
+			if($ams['siteurl']) {
 				$siteurl = $ams['siteurl'];
-			if($ams['certificatefile'])
+			}
+			if($ams['certificatefile']) {
 				$certificatefile = $ams['certificatefile'];
-			if($ams['certificatekeyfile'])
+			}
+			if($ams['certificatekeyfile']) {
 				$certificatekeyfile = $ams['certificatekeyfile'];
-			if($ams['certificatechainfile'])
+			}
+			if($ams['certificatechainfile']) {
 				$certificatechainfile = $ams['certificatechainfile'];
+			}
 			// Begin VirtualHost
 			$mod_proxy .= "\n<VirtualHost {$local_ip_port}>\n";
 			if($siteurl == "HTTPS" && $certificatefile && $certificatekeyfile) {
@@ -848,27 +850,33 @@ EOF;
 				if ($certificatechainfile)
 					$mod_proxy .= "  SSLCertificateChainFile /usr/local/etc/" . APACHEVERSION . "/$certificatechainfile\n";
 			}
-			if($sslproxyengine)
+			if($sslproxyengine) {
 				$mod_proxy .= "  {$sslproxyengine}\n";
-			if($additionalsitehostnames)
+			}
+			if($additionalsitehostnames) {
 				$mod_proxy .= "  ServerAlias $additionalsitehostnames\n";
-			if($serveradmin)
+			}
+			if($serveradmin) {
 				$mod_proxy .= "  ServerAdmin $serveradmin\n";
-			if($primarysitehostname)
-				$mod_proxy .= "  ServerName $primarysitehostname \n";						
+			}
+			if($primarysitehostname) {
+				$mod_proxy .= "  ServerName $primarysitehostname \n";
+			}
 			if($backend_sites) {
 				$mod_proxy .= "  ProxyPassReverse /{$sitename}  {$backend_sites}\n";
 				$mod_proxy .= "  ProxyPass / {$backend_sites}\n";
 			}
-			if($ams['preserveproxyhostname']) 
+			if($ams['preserveproxyhostname']) {
 				$mod_proxy .= "  ProxyPreserveHost on\n";
+			}
 			$mod_proxy .= "</VirtualHost>\n\n";
 			// End VirtualHost			
 		}
 	}
 
-	if($config['installedpackages']['apachesettings']['config'][0]['modsecuritycustom'])  
+	if($config['installedpackages']['apachesettings']['config'][0]['modsecuritycustom']) {
 		$mod_security_custom = $config['installedpackages']['apachesettings']['config'][0]['modsecuritycustom'];
+	}
 
 	// Process and include rules
 	if(is_dir(RULES_DIRECTORY)) {
