@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-ApacheModSecurity
 PORTVERSION=	0.1
-PORTREVISION=	2
+PORTREVISION=	3
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -13,10 +13,8 @@ COMMENT=	pfSense Unofficial apache modsecurity package
 
 LICENSE=	APACHE20
 
-RUN_DEPENDS=	${LOCALBASE}/libexec/apache24/mod_security3.so:security/modsecurity3-apache \
-		libzip>0:archivers/libzip \
-                php72-zip>0:archivers/php72-zip
-
+RUN_DEPENDS=	${LOCALBASE}/libexec/apache24/mod_security3.so:security/modsecurity3-apache
+           
 NO_BUILD=	yes
 NO_MTREE=	yes
 
