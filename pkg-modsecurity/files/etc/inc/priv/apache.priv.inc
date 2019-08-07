@@ -1,10 +1,10 @@
 <?php
 
 /*
- * wpad.priv.inc
+ * apache.priv.inc
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2017 Marcello Coutinho
+ * Copyright (c) 2017-2019 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,13 +22,12 @@
 
 global $priv_list;
 
-$priv_list['page-services-wpad'] = array();
-$priv_list['page-services-wpadr']['name'] = "WebCfg -Services: Wpad package";
-$priv_list['page-services-wpad']['descr'] = "Allow access to Wpad package GUI";
+$priv_list['page-services-apache'] = array();
+$priv_list['page-services-apache']['name'] = "WebCfg -Services: Apache Modsecurity package";
+$priv_list['page-services-apache']['descr'] = "Allow access to Apache Modsecurity package GUI";
 
-$priv_list['page-services-wpad']['match'] = array();
-$priv_list['page-services-wpad']['match'][] = "pkg.php?xml=wpad.xml*";
-$priv_list['page-services-wpad']['match'][] = "pkg_edit.php?xml=wpad.xml*";
-$priv_list['page-services-wpad']['match'][] = "pkg_edit.php?xml=wpad_sync.xml*";
+$priv_list['page-services-apache']['match'] = array();
+$priv_list['page-services-apache']['match'][] = "apache_*.php";
+$priv_list['page-services-apache']['match'][] = "pkg_edit.php?xml=apache_*.xml*";
 
 ?>

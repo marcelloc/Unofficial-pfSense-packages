@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-ApacheModSecurity
 PORTVERSION=	0.1
-PORTREVISION=	3
+PORTREVISION=	4
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -66,6 +66,8 @@ do-install:
 		${STAGEDIR}${PREFIX}/www
 	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/www/apache_view_logs.php \
 		${STAGEDIR}${PREFIX}/www
+	${INSTALL_DATA} -m 0644 ${FILESDIR}/etc/inc/priv/apache.priv.inc \
+		${STAGEDIR}/etc/inc/priv
 	@${REINPLACE_CMD} -i '' -e "s|%%PKGVERSION%%|${PKGVERSION}|" \
 		${STAGEDIR}${DATADIR}/info.xml
 

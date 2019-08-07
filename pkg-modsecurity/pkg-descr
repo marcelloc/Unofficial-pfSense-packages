@@ -1,3 +1,4 @@
-Wpad package for pfSense.
+modsecurity package for pfSense.
 
-Distribute your wpad file in a separate http nginx process.
+Intrusion detection and prevention engine for web applications.
+

@@ -17,3 +17,5 @@ www/apache_logs_data.teste.php
 www/apache_view_logs.php
 %%DATADIR%%/info.xml
 @dir /etc/inc/priv
+/etc/inc/priv/apache.priv.inc
+
