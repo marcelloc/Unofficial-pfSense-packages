@@ -154,7 +154,6 @@ function apache_mod_security_resync() {
 	}
 	
 	//verify changes
-	print "<PRE>";
 	$ms_groups = array("general", "application", "leakage");
 	foreach ($ms_groups as $ms_group) {
 	    $ms_group_lower = strtolower($ms_group);
@@ -484,22 +483,15 @@ function generate_apache_configuration() {
 		unset($mods_group);
 		foreach ($config['installedpackages']['apachemodsecuritygroups']['config'] as $mods_groups) {
 			//RULES_DIRECTORY
-			foreach (explode(",", $mods_groups['baserules']) as $baserule) {
-				$mods_group[$mods_groups['name']] .= "  Include ".RULES_DIRECTORY ."/base_rules/{$baserule}.conf\n";
-			}
-			foreach (explode(",", $mods_groups['optionalrules']) as $baserule) {
-				$mods_group[$mods_groups['name']] .= "  Include ".RULES_DIRECTORY ."/optional_rules/{$baserule}.conf\n";
-			}
-			foreach (explode(",", $mods_groups['slrrules']) as $baserule) {
-				$mods_group[$mods_groups['name']] .= "  Include ".RULES_DIRECTORY ."/slr_rules/{$baserule}.conf\n";
-			}
-			foreach (explode(",", $mods_groups['experimentalrules']) as $baserule) {
-				$mods_group[$mods_groups['name']] .= "  Include ".RULES_DIRECTORY ."/experimental_rules/{$baserule}.conf\n";
-			}
+		    foreach ($mods_groups as $mod_key => $mod_value) {
+		        if (preg_match("/\w+rules/",$mod_key )) {
+		            foreach (explode(",", $mod_value) as $mst_rule) {
+		                $mods_group[$mods_groups['name']] .= "  Include ". RULES_DIRECTORY . "/rules/{$mst_rule}.conf\n";
+		            }
+		        }
+		    }
 		}
 	}
-	//print "<PRE>";
-	//var_dump($mods_group);
 
 	//mod_security settings
 	if (is_array($config['installedpackages']['apachemodsecuritysettings'])) {
