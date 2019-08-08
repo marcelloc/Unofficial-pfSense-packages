@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-ApacheModSecurity
 PORTVERSION=	0.1
-PORTREVISION=	4
+PORTREVISION=	5
 CATEGORIES=	www
 MASTER_SITES=	# empty
 DISTFILES=	# empty
