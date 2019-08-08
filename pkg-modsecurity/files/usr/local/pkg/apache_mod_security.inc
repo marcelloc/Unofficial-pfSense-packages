@@ -483,10 +483,12 @@ function generate_apache_configuration() {
 		unset($mods_group);
 		foreach ($config['installedpackages']['apachemodsecuritygroups']['config'] as $mods_groups) {
 			//RULES_DIRECTORY
+		    $mods_group[$mods_groups['name']] = "  modsecurity On\n";
+		    #$mods_group[$mods_groups['name']] .= "  modsecurity_rules_file /usr/local/etc/modsecurity/modsecurity.conf\n";
 		    foreach ($mods_groups as $mod_key => $mod_value) {
 		        if (preg_match("/\w+rules/",$mod_key )) {
 		            foreach (explode(",", $mod_value) as $mst_rule) {
-		                $mods_group[$mods_groups['name']] .= "  Include ". RULES_DIRECTORY . "/rules/{$mst_rule}.conf\n";
+		                $mods_group[$mods_groups['name']] .= "  modsecurity_rules_file ". RULES_DIRECTORY . "/rules/{$mst_rule}.conf\n";
 		            }
 		        }
 		    }
