@@ -304,6 +304,11 @@ function grep_log(){
 				check_sid_day($email[3],$grep_day);
 				$stm_queue[$sa[$email[3]]].="update mail_from set msgid='".$email[4]."' where sid='".$email[3]."';\n";
 			}
+			#Sep 19 02:55:06 srvch011 postfix/cleanup[90887]: 98D8D19D4D: milter-reject: END-OF-MESSAGE from mx-outaag173.informz.net[64.129.122.173]: 4.7.0 DKIM key retrieval failed; from=<nde_5708584426.4@informz.net> to=<user.sirname@corp.com> proto=ESMTP helo=<mx-outaag173.informz.net>
+			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.cleanup\W\d+\W+(\w+): milter-reject: END-OF-MESSAGE from \S+: (.*); from=\</",$line,$email)) {
+			    check_sid_day($email[3],$grep_day);
+			    $stm_queue[$sa[$email[3]]].= "update mail_to set status=(select id from mail_status where info='reject'), status_info='".$email[4]."' where from_id in (select id from mail_from where sid='".$email[3]."' and server='".$email[2]."');\n";
+			}
 			#Nov 14 02:40:05 srvch011 postfix/qmgr[46834]: BC5931F4F13: from=<ceag@mx.crmcom.br>, size=32727, nrcpt=1 (queue active)
 			else if(preg_match("/(\w+\s+\d+\s+[0-9,:]+) (\S+) postfix.qmgr\W\d+\W+(\w+): from=\<(.*)\>\W+size=(\d+)/",$line,$email)){
 				check_sid_day($email[3],$grep_day);
