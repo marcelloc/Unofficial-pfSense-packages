@@ -656,7 +656,7 @@ print($form);
 					<tr>
 						<td width="25%" class="listhdrr"><?=gettext("User")?></td>
 						<td width="35%" class="listhdrr"><?=gettext("Certificate Name")?></td>
-						<td width="40%" class="listhdrr"><?=gettext("Export Client Config")?></td>
+						<td width="40%" class="listhdrr"><i class='fa fa-download'> </i> <?=gettext("Export Client Configuration")?></td>
 					</tr>
 				</thead>
 				<tbody>
@@ -983,7 +983,7 @@ function server_changed() {
 		foreach ($groups as $group_id => $group_descr) {
             $mselect .= "<optgroup label= '{$group_descr}'>";
             foreach ($group_itens[$group_id] as $item_cmd => $item_descr) {
-		          $mselect .= "<option value='{$item_cmd},{$j},-1'>{$item_descr}</option>";
+                $mselect .= "<option value='{$item_cmd},{$j},-1'>{$item_descr}</a></option>";
             }
             $mselect .= "</optgroup>";
         }
