@@ -26,11 +26,6 @@ require_once("openvpn-client-export.inc");
 require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 require_once("classes/Form.class.php");
-?> <!-- Latest compiled and minified CSS -->
-<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-<?
 
 global $current_openvpn_version, $current_openvpn_version_rev, $legacy_openvpn_version, $legacy_openvpn_version_rev, $dyndns_split_domain_types;
 
@@ -386,7 +381,12 @@ if (!empty($act)) {
 		exit;
 	}
 }
-
+?>
+<!-- Latest compiled and minified CSS -->
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<?php
 include("head.inc");
 
 if ($input_errors) {
