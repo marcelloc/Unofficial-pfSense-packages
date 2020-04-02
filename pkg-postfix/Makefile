@@ -1,8 +1,8 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-postfix
-PORTVERSION=	3.3.4
-PORTREVISION=	12
+PORTVERSION=	3.4.9
+PORTREVISION=	1	
 CATEGORIES=	mail
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -18,7 +18,7 @@ RUN_DEPENDS=	postfix:mail/postfix-sasl \
 		libspf2>0:mail/libspf \
 		bash:shells/bash \
 		libzip>0:archivers/libzip \
-		php72-zip>0:archivers/php72-zip \
+		php72-zipcd U	>0:archivers/php72-zip \
 		policyd-spf:mail/postfix-policyd-spf-python \
 		postfwd:mail/postfix-postfwd \
 		zip:archivers/zip

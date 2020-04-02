@@ -34,7 +34,7 @@ www/postfix_migrate_config.php
 @dir /usr/local/www/vendor
 @dir /usr/local/www/vendor/datatable
 @dir /usr/local/www/vendor/datatable/css
-www/vendor/datatable/css/jquery.dataTables.min.css
+www/vendor/datatable/css/jquery.dataTables.postfix.css
 www/vendor/datatable/datatables.css
 www/vendor/datatable/datatables.js
 www/vendor/datatable/datatables.min.css

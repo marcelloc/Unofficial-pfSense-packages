@@ -62,7 +62,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.js"></script>
    
 <!--
-<link rel="stylesheet" href="/vendor/datatable/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="/vendor/datatable/css/jquery.dataTables.postfix.css">
 <script src="/vendor/jquery/jquery-1.12.0.min.js" type="text/javascript"></script>
 <script src="/vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="/vendor/datatable/js/jquery.dataTables.min.js" type="text/javascript"></script>
