@@ -18,7 +18,7 @@ RUN_DEPENDS=	postfix:mail/postfix-sasl \
 		libspf2>0:mail/libspf \
 		bash:shells/bash \
 		libzip>0:archivers/libzip \
-		php72-zipcd U	>0:archivers/php72-zip \
+		php72-zip>0:archivers/php72-zip \
 		policyd-spf:mail/postfix-policyd-spf-python \
 		postfwd:mail/postfix-postfwd \
 		zip:archivers/zip
