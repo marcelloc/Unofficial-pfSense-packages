@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-postfix
 PORTVERSION=	3.4.9
-PORTREVISION=	1	
+PORTREVISION=	2	
 CATEGORIES=	mail
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -107,7 +107,7 @@ do-install:
 		${STAGEDIR}${PREFIX}/www
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/shortcuts/pkg_postfix.inc \
 		${STAGEDIR}${PREFIX}/www/shortcuts
-	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/vendor/datatable/css/jquery.dataTables.min.css \
+	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/vendor/datatable/css/jquery.dataTables.postfix.css \
 		${STAGEDIR}${PREFIX}/www/vendor/datatable/css
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/vendor/datatable/datatables.css \
 		${STAGEDIR}${PREFIX}/www/vendor/datatable
@@ -117,7 +117,7 @@ do-install:
 		${STAGEDIR}${PREFIX}/www/vendor/datatable
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/vendor/datatable/datatables.min.js \
 		${STAGEDIR}${PREFIX}/www/vendor/datatable
-	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/vendor/datatable/js/jquery.dataTables.min.js \
+	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/vendor/datatable/js/jquery.dataTables.postfix.js \
 		${STAGEDIR}${PREFIX}/www/vendor/datatable/js
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/widgets/widgets/postfix.widget.php \
 		${STAGEDIR}${PREFIX}/www/widgets/widgets

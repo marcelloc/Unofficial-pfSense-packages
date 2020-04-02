@@ -40,5 +40,5 @@ www/vendor/datatable/datatables.js
 www/vendor/datatable/datatables.min.css
 www/vendor/datatable/datatables.min.js
 @dir /usr/local/www/vendor/datatable/js
-www/vendor/datatable/js/jquery.dataTables.min.js
+www/vendor/datatable/js/jquery.dataTables.postfix.js
 

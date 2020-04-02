@@ -65,7 +65,7 @@ $pf_version=substr(trim(file_get_contents("/etc/version")),0,3);
 <link rel="stylesheet" href="/vendor/datatable/css/jquery.dataTables.postfix.css">
 <script src="/vendor/jquery/jquery-1.12.0.min.js" type="text/javascript"></script>
 <script src="/vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="/vendor/datatable/js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="/vendor/datatable/js/jquery.dataTables.postfix.js" type="text/javascript"></script>
 -->
 <div class="panel panel-default">
         <div class="panel-heading"><h2 class="panel-title"><?=gettext("Search Options"); ?></h2></div>
