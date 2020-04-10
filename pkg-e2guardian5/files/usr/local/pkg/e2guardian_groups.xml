@@ -166,10 +166,12 @@
 				<option><name>Check Server SSLCertificates (off)</name><value>sslcheckcert</value></option>
 				<option><name>Filter ssl sites forging SSL Certificates (off)</name><value>sslmitm</value></option>
 				<option><name>Limit ssl MITM filter to sslgreylist acls (off)</name><value>onlymitmsslgrey</value></option>
+				<option><name>Allow non-tls tunnell connections (off)</name><value>nontls</value></option>
+				<option><name>Allow non-sni tunnell connections (off)</name><value>nonsni</value></option>
 				<option><name>Auto switch to MITM to deliver block page (on)</name><value>automitm</value></option>
 			</options>
 			<multiple/>
-			<size>11</size>
+			<size>13</size>
 		</field>
 		<field>
 			<fielddescr>Pics</fielddescr>

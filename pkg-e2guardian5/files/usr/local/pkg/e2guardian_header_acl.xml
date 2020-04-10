@@ -193,6 +193,16 @@
 			<encoding>base64</encoding>
 		</field>
 		<field>
+			<fielddescr>User Agent</fielddescr>
+			<fieldname>exception_regexpuseragentlist</fieldname>
+			<description><![CDATA[Enter exception User Agent List for this group.<br>
+				Leave empty to load e2guardian defaults]]></description>
+			<type>textarea</type>
+			<cols>80</cols>
+			<rows>10</rows>
+			<encoding>base64</encoding>
+		</field>
+		<field>
 			<name>Banned</name>
 			<type>listtopic</type>
 		</field>
@@ -226,6 +236,26 @@
 			<fielddescr>Config</fielddescr>
 			<fieldname>header_regexplist</fieldname>
 			<description><![CDATA[Enter header regexp replace List for this group.<br>
+				Leave empty to load e2guardian defaults]]></description>
+			<type>textarea</type>
+			<cols>80</cols>
+			<rows>10</rows>
+			<encoding>base64</encoding>
+		</field>
+		<field>
+			<name>Add Header</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<fielddescr>Enable</fielddescr>
+			<fieldname>addheader_enabled</fieldname>
+			<type>checkbox</type>
+			<description></description>
+		</field>
+		<field>
+			<fielddescr>Config</fielddescr>
+			<fieldname>addheader_regexplist</fieldname>
+			<description><![CDATA[Enter header add List for this group.<br>
 				Leave empty to load e2guardian defaults]]></description>
 			<type>textarea</type>
 			<cols>80</cols>

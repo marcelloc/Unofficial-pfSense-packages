@@ -552,8 +552,10 @@ $files = array(
 		"/lists/exceptionmimetypelist",
 		"/lists/bannedmimetypelist",
 		"/lists/headerregexplist",
+        "/lists/addheaderregexplist",
 		"/lists/bannedregexpheaderlist",
         "/lists/exceptionregexpheaderlist",
+        "/lists/exceptionregexpuseragent",
 		"/lists/authplugins/ipgroups",
 		"/lists/contentscanners/exceptionvirusextensionlist",
 		"/lists/contentscanners/exceptionvirusmimetypelist",
@@ -1028,6 +1030,13 @@ $files = array(
 		}
 		file_put_contents($e2guardian_dir . "/lists/exceptionregexpheaderlist." . $e2guardian_header['name'], ($e2guardian_header['exception_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardianheaderacl']['config'][$count]['exception_regexpheaderlist']) : ""), LOCK_EX);
 		
+		//exceptionregexpuseragent
+		if ($e2guardian_header['exception_regexpuseragentlist'] == "" && file_exists($e2guardian_dir . '/lists/exceptionregexpuseragentlist.sample')) {
+		    $config['installedpackages']['e2guardianheaderacl']['config'][$count]['exception_regexpuseragentlist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/exceptionregexpuseragentlist.sample'));
+		    $load_samples++;
+		}
+		file_put_contents($e2guardian_dir . "/lists/exceptionregexpuseragentlist." . $e2guardian_header['name'], ($e2guardian_header['exception_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardianheaderacl']['config'][$count]['exception_regexpuseragentlist']) : ""), LOCK_EX);
+
 		//headerregexplist
 		$aclschedule[$e2guardian_header['name']]['headerregexp'] = $e2guardian_header['aclschedule'];
 		if ($e2guardian_header['header_regexplist'] == "" && file_exists($e2guardian_dir . '/lists/headerregexplist.sample')) {
@@ -1044,6 +1053,14 @@ $files = array(
 		}
 		file_put_contents($e2guardian_dir . "/lists/bannedregexpheaderlist." . $e2guardian_header['name'], ($e2guardian_header['banned_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardianheaderacl']['config'][$count]['banned_regexpheaderlist']) : ""), LOCK_EX);
 
+		//addheaderlist
+		$aclschedule[$e2guardian_header['name']]['addregexpheader'] = $e2guardian_header['aclschedule'];
+		if ($e2guardian_header['addheader_regexplist'] == "" && file_exists($e2guardian_dir . '/lists/addheaderregexplist.sample')) {
+		    $config['installedpackages']['e2guardianheaderacl']['config'][$count]['addheader_regexplist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/addheaderregexplist.sample'));
+		    $load_samples++;
+		}
+		file_put_contents($e2guardian_dir . "/lists/addheaderregexplist." . $e2guardian_header['name'], ($e2guardian_header['addheader_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardianheaderacl']['config'][$count]['addheader_regexplist']) : ""), LOCK_EX);
+		
 		$count++;
 	}
 
@@ -1157,7 +1174,7 @@ $files = array(
 			'mode' => "1",
 			'report_level' =>"global");
 	}
-	$groups = array("scancleancache", "hexdecodecontent", "blockdownloads", "enablepics", "deepurlanalysis", "infectionbypasserrorsonly", "disablecontentscan", "sslcheckcert", "sslmitm", "automitm");
+	$groups = array("scancleancache", "hexdecodecontent", "blockdownloads", "enablepics", "deepurlanalysis", "infectionbypasserrorsonly", "disablecontentscan", "sslcheckcert", "sslmitm", "automitm", "nontls" ,"nonsni");
 	//loop on array
 	$count = 1;
 	$user_xml = "";
@@ -1268,6 +1285,16 @@ break;
 		    $blockdownloads .= "if(true,,750) return setblock";
 		}
 		
+		if ($e2guardian_groups['nontls'] == "on" || $e2guardian_groups['nonsni'] == "on") {
+		    $allowtunnel = "function(checksni)\n";
+		    if ($e2guardian_groups['nontls'] == "off") {
+		      $allowtunnel .= "ifnot(tls,,511) return setblock\n";
+		    } else {
+		      $allowtunnel .= "ifnot(tls,,511) return setexception\n";
+		    }
+		    $allowtunnel .= "ifnot(hassniset,,512) return setexception";
+		}
+		
 		// temp v5 static lists
 		$tlist_dirs = array('contentscanners');
 		foreach ($tlist_dirs as $tlist_dir) {
@@ -1307,6 +1334,7 @@ break;
                         "bannedmimeitypelist",
                         "bannedregexpuseragentlist",
                         "searchregexplist",
+		                "exceptionregexpuseragentlist",
 		                 "localgreysslsitelist",
 			"contentscanners/exceptionvirusextensionlist",
                         "urlredirectregexplist");
@@ -1327,7 +1355,7 @@ break;
 			"urlacl" => array("bannedurl", "greyurl", "exceptionurl", "exceptionregexpurl", "bannedregexpurl", "urlregexp", "exceptionfileurl", "logurl", "logregexpurl"),
 			"contentacl" => array("contentregexp"),
 			"extensionacl" => array("exceptionextension", "exceptionmimetype", "bannedextension", "bannedmimetype"),
-			"headeracl" => array("headerregexp", "bannedregexpheader", "exceptionregexpheader"),
+			"headeracl" => array("headerregexp", "bannedregexpheader", "exceptionregexpheader", "addheaderregexp"),
 			"searchacl" => array("searchlistbanned", "searchlistoveride", "searchlistregexp")
 		);
 

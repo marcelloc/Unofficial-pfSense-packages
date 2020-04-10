@@ -192,7 +192,7 @@
 			<encoding>base64</encoding>
 		</field>
 		<field>
-			<name>Overide</name>
+			<name>Override</name>
 			<type>listtopic</type>
 		</field>
 		<field>

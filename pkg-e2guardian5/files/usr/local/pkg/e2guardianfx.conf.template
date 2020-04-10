@@ -57,6 +57,7 @@ ipsitelist = 'name=banned,messageno=510,path={$e2_dir}/etc/e2guardian/lists/bann
 urllist = 'name=banned,messageno=501,path={$e2_dir}/etc/e2guardian/lists/bannedurllist.g_{$e2guardian_groups['name']}'
 regexpboollist = 'name=banned,messageno=503,path={$e2_dir}/etc/e2guardian/lists/bannedregexpurllist.g_{$e2guardian_groups['name']}'
 regexpboollist = 'name=banneduseragent,messageno=522,path={$e2_dir}/etc/e2guardian/lists/bannedregexpuseragentlist.g_{$e2guardian_groups['name']}'
+regexpboollist = 'name=exceptionuseragent,path={$e2_dir}/etc/e2guardian/lists/exceptionregexpuseragentlist.g_{$e2guardian_groups['name']}'
 
 sitelist = 'name=bannedssl,messageno=520,path={$e2_dir}/etc/e2guardian/lists/bannedsslsitelist.g_{$e2guardian_groups['name']}'
 ipsitelist = 'name=bannedssl,messageno=520,path={$e2_dir}/etc/e2guardian/lists/bannedsslsiteiplist.g_{$e2guardian_groups['name']}'
@@ -167,7 +168,8 @@ maxuploadsize = {$e2guardian_groups['maxuploadsize']}
 #ipsitelist = 'name=log,path={$e2_dir}/etc/e2guardian/lists/logsiteiplist.g_{$e2guardian_groups['name']}'
 #urllist = 'name=log,path={$e2_dir}/etc/e2guardian/lists/logurllist.g_{$e2guardian_groups['name']}'
 #regexpboollist = 'name=log,path={$e2_dir}/etc/e2guardian/lists/logregexpurllist.g_{$e2guardian_groups['name']}'
-
+# used for Youtube add cookies etc
+regexpreplacelist = 'name=addheader,path=/usr/local/etc/e2guardian/lists/addheaderregexplist.g_{$e2guardian_groups['name']}'
 
 
 # Outgoing HTTP header rules:
@@ -238,6 +240,8 @@ regexpreplacelist = 'name=searchterms,path={$e2_dir}/etc/e2guardian/lists/search
 #
 # Banned Search Term list(s) for option 1
 searchlist = 'name=banned,path={$e2_dir}/etc/e2guardian/lists/bannedsearchlist.g_{$e2guardian_groups['name']}'
+searchlist = 'name=override,path={$e2_dir}/etc/e2guardian/lists/searchlistoveridelist.g_{$e2guardian_groups['name']}'
+
 #5.0.2#searchlist = 'name=override,path={$e2_dir}/etc/e2guardian/lists/bannedsearchoveridelist.g_{$e2guardian_groups['name']}'
 
 # Search term limit (for Option 2)
