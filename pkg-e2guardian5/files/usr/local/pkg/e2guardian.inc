@@ -555,7 +555,7 @@ $files = array(
         "/lists/addheaderregexplist",
 		"/lists/bannedregexpheaderlist",
         "/lists/exceptionregexpheaderlist",
-        "/lists/exceptionregexpuseragent",
+        "/lists/exceptionregexpuseragentlist",
 		"/lists/authplugins/ipgroups",
 		"/lists/contentscanners/exceptionvirusextensionlist",
 		"/lists/contentscanners/exceptionvirusmimetypelist",
@@ -1031,6 +1031,7 @@ $files = array(
 		file_put_contents($e2guardian_dir . "/lists/exceptionregexpheaderlist." . $e2guardian_header['name'], ($e2guardian_header['exception_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardianheaderacl']['config'][$count]['exception_regexpheaderlist']) : ""), LOCK_EX);
 		
 		//exceptionregexpuseragent
+		$aclschedule[$e2guardian_header['name']]['exceptionregexpuseragent'] = $e2guardian_header['aclschedule'];
 		if ($e2guardian_header['exception_regexpuseragentlist'] == "" && file_exists($e2guardian_dir . '/lists/exceptionregexpuseragentlist.sample')) {
 		    $config['installedpackages']['e2guardianheaderacl']['config'][$count]['exception_regexpuseragentlist'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/exceptionregexpuseragentlist.sample'));
 		    $load_samples++;
@@ -1355,7 +1356,7 @@ break;
 			"urlacl" => array("bannedurl", "greyurl", "exceptionurl", "exceptionregexpurl", "bannedregexpurl", "urlregexp", "exceptionfileurl", "logurl", "logregexpurl"),
 			"contentacl" => array("contentregexp"),
 			"extensionacl" => array("exceptionextension", "exceptionmimetype", "bannedextension", "bannedmimetype"),
-			"headeracl" => array("headerregexp", "bannedregexpheader", "exceptionregexpheader", "addheaderregexp"),
+			"headeracl" => array("headerregexp", "bannedregexpheader", "exceptionregexpheader", "addheaderregexp", "exceptionregexpuseragent"),
 			"searchacl" => array("searchlistbanned", "searchlistoveride", "searchlistregexp")
 		);
 
