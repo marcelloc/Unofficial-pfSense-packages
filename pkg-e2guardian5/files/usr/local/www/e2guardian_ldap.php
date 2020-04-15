@@ -5,7 +5,7 @@
 /* ========================================================================== */
 /*
 	e2guardian_ldap.php
-	Copyright (C) 2015 Marcello Coutinho
+	Copyright (C) 2015-2020 Marcello Coutinho
 	part of pfSense (http://www.pfSense.com)
 	All rights reserved.
 */
@@ -49,9 +49,8 @@ function explode_dn ($dn, $with_attributes=0) {
 }
 
 function get_ldap_members($group, $user, $password) {
-	global $ldap_host;
-	global $ldap_dn;
-	$LDAPFieldsToFind = array("member");
+	global $ldap_host,$ldap_dn, $argv;
+	$LDAPFieldsToFind = array("member","zimbraMailForwardingAddress");
 	print "{$ldap_host} {$ldap_dn}\n";
 	$ldap = ldap_connect($ldap_host) or die("Could not connect to LDAP");
 
@@ -59,14 +58,21 @@ function get_ldap_members($group, $user, $password) {
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
-	ldap_bind($ldap, $user, $password) or die("Could not bind to LDAP");
+	if (! ldap_bind($ldap, $user, $password) && preg_match ("/cn=/", $user)) {
+	    
+	    ldap_bind($ldap, "$user,$ldap_dn", $password) or die("Could not bind to LDAP");
+	}
 
 	//check if group is just a name or an ldap string
 	$group_cn = (preg_match("/cn=/i", $group)? $group : "cn={$group}");
 
 	$results = ldap_search($ldap, $ldap_dn, $group_cn, $LDAPFieldsToFind);
-
+	
 	$member_list = ldap_get_entries($ldap, $results);
+	if (in_array("debug",$argv)) {
+	    print "ldap_search  $ldap_dn, $group_cn results \n";
+	    var_dump($member_list);
+	}
 	$group_member_details = array();
 	if (is_array($member_list[0])) {
 		foreach ($member_list[0] as $list) {
@@ -110,12 +116,12 @@ if (is_array($config['installedpackages']['e2guardiangroups']['config'])) {
 							$ldap_dn = $server['dn'];
 							$ldap_host = $server['dc'];
 							$mask = ( empty($server['mask']) ? "USER" : $server['mask'] );
-							if (preg_match("/cn/", $server['username'])) {
-								$ldap_username = $server['username'] . "," . $server['dn'];
-							} else {
-								$ldap_username = $server['username'];
+							
+							$result = get_ldap_members($group[$ldap_group_source], $server['username'], $server['password']);
+							if (in_array("debug",$argv)) {
+							    print "get_ldap_members for {$group[$ldap_group_source]}, {$server['username']} results in ...\n";
+							    var_dump($result);
 							}
-							$result = get_ldap_members($group[$ldap_group_source], $ldap_username, $server['password']);
 							if ($group['useraccountcontrol'] !="") {
 								$valid_account_codes = explode(",", $group['useraccountcontrol']);
 							}
