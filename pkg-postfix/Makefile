@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-postfix
 PORTVERSION=	3.4.9
-PORTREVISION=	2	
+PORTREVISION=	3	
 CATEGORIES=	mail
 MASTER_SITES=	# empty
 DISTFILES=	# empty
