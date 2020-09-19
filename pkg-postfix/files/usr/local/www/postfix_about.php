@@ -4,7 +4,7 @@
  * postfix_about.php
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2011-2019 Marcello Coutinho
+ * Copyright (c) 2011-2020 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
