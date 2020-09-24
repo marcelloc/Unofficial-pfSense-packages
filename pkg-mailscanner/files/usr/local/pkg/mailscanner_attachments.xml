@@ -90,10 +90,8 @@
 				<option><name>Find Archive By Content (yes)</name><value>FindArchiveByContent</value></option>
 				<option><name>Unpack Microsoft Documents (yes)</name><value>UnpackMicrosoftDocuments</value></option>
 				<option><name>Zip Attachments (no)</name><value>ZipAttachments</value></option>
-				<option><name>Scan PDF Attachments with PDFiD (no)</name><value>ScanPDF</value></option>
-				<option><name>Deliver Suspicious PDF (no)</name><value>DeliverSuspiciousPDF</value></option>
 				</options>
-				<size>08</size>
+				<size>06</size>
 				<multiple/>
 		</field>
 		<field>

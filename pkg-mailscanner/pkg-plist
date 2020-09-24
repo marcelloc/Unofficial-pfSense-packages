@@ -16,4 +16,4 @@ bin/gpg
 @dir www/widgets/widgets
 @dir /etc/inc/priv
 @dir /etc/inc
-
+@dir /usr/local/lib/MailScanner/CustomFunctions

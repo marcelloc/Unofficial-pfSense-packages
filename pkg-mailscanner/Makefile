@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-mailscanner
 PORTVERSION=	5.1.2
-PORTREVISION=	4
+PORTREVISION=	5
 CATEGORIES=	mail
 MASTER_SITES=	# empty
 DISTFILES=	# empty

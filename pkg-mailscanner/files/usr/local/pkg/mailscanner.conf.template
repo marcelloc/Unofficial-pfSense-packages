@@ -78,19 +78,19 @@ Un7zip Command = /usr/local/bin/7z
 # 
 Un7zip Timeout = 50
 
-
+# Not ported to mailscanner 5.1 yet
 # Used for string scanning a pdf for possible malicious content
 # http://blog.didierstevens.com/programs/pdf-tools/#pdfid
-PDFiD Command = /usr/local/bin/pdfid.py
+#PDFiD Command = /usr/local/bin/pdfid.py
 
 #
-PDFiD Timeout = 50
+#PDFiD Timeout = 50
 
 # Enable pdf scanning using PDFiD
-Scan PDF = {$scan_pdf}
+#Scan PDF = {$scan_pdf}
 
 # Block and replace pdf if possible malicious content is detected
-Deliver Suspicious PDF = {$deliver_suspicious_pdf}
+#Deliver Suspicious PDF = {$deliver_suspicious_pdf}
 
 # Todo: allow PDF but change Subject
 # Subject change only possible when Delivery of Suspicious PDFs is Yes
@@ -505,7 +505,7 @@ Deliver In Background = {$deliver_background}
 Delivery Method = {$mailscanner['deliver_method']}
 Split Exim Spool = {$split_exim_spool}
 Lockfile Dir = /var/spool/MailScanner/incoming/Locks
-Custom Functions Dir = {$mlb}/lib/MailScanner/MailScanner/CustomFunctions
+#Custom Functions Dir = {$mlb}/lib/MailScanner/MailScanner/CustomFunctions
 Lock Type =
 Syslog Socket Type =
 Automatic Syntax Check = {$syntax_check}

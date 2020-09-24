@@ -49,7 +49,7 @@ cpan -i BSD::Resource
 cpan -i HTTP::Date
 cpan -i Encode::Detect::Detector
 cpan -i LWP::UserAgent
-cpan -i Net::Patricia
-cpan -i Mail::SpamAssassin
+#cpan -i Net::Patricia
+#cpan -i Mail::SpamAssassin
 
 fi
