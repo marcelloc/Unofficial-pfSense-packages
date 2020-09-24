@@ -37,7 +37,9 @@ Mar 28 17:15:48.931 [92279] dbg: diag: [...] module not installed: Net::Patricia
 If you decide to complete spamassassin features, run this second script to pfSense be able to compile cpan modules.
 
 cd /root
+
 pkg install gcc8
+
 rehash
 
 fetch https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/pkg-mailscanner/files/install_cpan_modules_24.sh
