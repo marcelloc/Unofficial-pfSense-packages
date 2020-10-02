@@ -23,7 +23,15 @@ fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubuserconte
 
 After fetching the repo file and applying the patch described above, you will be able to see these packages under System -> Package Manager
 
-# CPAN modules - ATTENTION!
+# For 2.4.5 
+Almost all perl dependences are on repository. I'll try to include all on pkg gui install. But if you miss any perl extention, try to install under console
+
+pkg install p5-GeoIP2 p5-IP-Country p5-Net-Patricia
+
+In some cases you may need to link libreadline to an older version to be able run spamasssassin 
+ln -s /usr/local/lib/libreadline.so.8 /usr/local/lib/libreadline.so.7
+
+# CPAN modules - ATTENTION! (For 2.4.4 PfSense Version and/or earlier)
 
 Once you install, some cpan modules will be still missing . I consider they important to spamassassin to work properly but to install it on freebsd or pfSense, you will need gcc and other compile stuff installed.
 
