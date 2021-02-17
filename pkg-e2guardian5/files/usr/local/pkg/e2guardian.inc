@@ -1150,7 +1150,7 @@ $files = array(
 	file_put_contents($e2guardian_dir . "/lists/bannediplist", e2_text_area_decode($config['installedpackages']['e2guardianips']['config'][0]['bannediplist']), LOCK_EX);
 
 	if ($load_samples > 0) {
-		write_config();
+		write_config('e2guardian - Saving default configuration');
 	}
 	
 	//save schedules used on acls and it's current state
@@ -1646,7 +1646,7 @@ EOF;
 		}
 	}
 
-	write_config();
+	write_config('e2guardian - updating package crontab tasks.');
 
 	$dirs = array(
 		E2GUARDIAN_DIR . '/etc/e2guardian/lists/bannedrooms/',
