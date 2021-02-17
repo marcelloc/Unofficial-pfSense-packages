@@ -149,7 +149,7 @@ function sarg_configure_cron() {
 		// update cron
 		if ($cron_found > 0) {
 			$config['cron'] = $new_cron;
-			write_config();
+			write_config('sarg - write package cron tasks.');
 			configure_cron();
 		}
 	}
@@ -407,7 +407,7 @@ function sync_package_sarg() {
 
 	// write config if any file from filesystem was loaded
 	if ($update_conf > 0) {
-		write_config();
+		write_config('sarg - update configuration.');
 	}
 
 	sarg_sync_on_changes();
