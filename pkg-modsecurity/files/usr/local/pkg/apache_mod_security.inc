@@ -397,7 +397,7 @@ function generate_apache_configuration() {
 	$global_listen = "{$globalbind_ip}:{$globalbind_port}";
 	// update configuration with default value in this case
 	if ($write_config > 0) {
-		write_config();
+		write_config('modsecurity - Update package configuration.');
 	}
 	
 	// check if any daemon is using apache ip/port

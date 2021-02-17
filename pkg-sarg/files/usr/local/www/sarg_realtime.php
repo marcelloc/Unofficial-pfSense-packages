@@ -2,7 +2,7 @@
 /*
 	sarg_realtime.php
 	part of pfSense (https://www.pfSense.org/)
-	Copyright (C) 2012 Marcello Coutinho <marcellocoutinho@gmail.com>
+	Copyright (C) 2012-2021 Marcello Coutinho <marcellocoutinho@gmail.com>
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
 
@@ -58,7 +58,7 @@ function get_cmd(){
 			$update_config++;
 		}
 		if ($update_config > 0) {
-			write_config();
+			write_config('sarg - update package configuration.');
 			// write changes to sarg_file
 			$sarg_config = file_get_contents(SARG_DIR . '/etc/sarg/sarg.conf');
 			$pattern[0] = '/realtime_types\s+[A-Z,,]+/';

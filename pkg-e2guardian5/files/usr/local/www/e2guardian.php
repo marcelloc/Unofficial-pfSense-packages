@@ -181,7 +181,7 @@ function read_lists($log_notice=true, $uw="") {
 		}
 		file_put_contents("/usr/local/pkg/e2guardian_" . $edit_xml . "_acl.xml", $edit_file, LOCK_EX);
 	}
-	write_config();
+	write_config('e2guardian - save dynamic xml config options.');
 	if ($log_notice == true && $uw == "") {
 		file_notice("E2guardian",$error,"E2guardian" . gettext("Blacklist applied, check site and URL access lists for categories"), "");
 	} else {

@@ -37,6 +37,6 @@ foreach ($domains as $domain) {
 	unset($config['installedpackages']['postfixdkim']);
 	
 }
-write_config();
+write_config('postfix - update package configuration');
 
 ?>

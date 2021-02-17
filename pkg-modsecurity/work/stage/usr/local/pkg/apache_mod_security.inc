@@ -155,7 +155,7 @@ function apache_mod_security_resync() {
 		}
 	}
 	if ($write_config > 0)
-		write_config();
+		write_config('modsecurity - update package configuration.');
 	apache_mod_security_checkconfig();
 	apache_mod_security_restart();
 	log_error("apache_mod_security_package: configuration resync is ending.");
@@ -387,7 +387,7 @@ function generate_apache_configuration() {
 	$global_listen ="{$globalbind_ip}:{$globalbind_port}";
 	// update configuration with default value in this case
 	if ($write_config > 0)
-		write_config();
+		write_config('modsecurity - update package configuration.');
 	
 	// check if any daemon is using apache ip/port
 	exec("/usr/bin/sockstat | grep -v ' httpd ' | awk '{ print $6 }' | grep ':{$globalbind_port}'",$socksstat);
@@ -759,7 +759,7 @@ EOF;
 	}
 
 	// update configuration with actual ip bindings
-	write_config($pkg['addedit_string']);
+	write_config("modsecurity - " . $pkg['addedit_string']);
 
 
 	// Setup mod_proxy entries $mod_proxy

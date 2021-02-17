@@ -406,7 +406,7 @@ Language Strings = %report-dir%/languages.conf
 	}
 	#exit;
 	if($load_samples > 0)
-		write_config();
+		write_config('mailscanner - Load sample configuration.');
 
 /*
 Phishing Safe Sites File = %etc-dir%/phishing.safe.sites.conf
@@ -532,7 +532,7 @@ Country Sub-Domains List = %etc-dir%/country.domains.conf
 	#rint "pre".$sa_temp;exit;
 	$config['installedpackages']['msantispam']['config'][0]['sa_pref_file']=base64_encode($sa_temp);
 	check_mailscanner_cron();
-	write_config();
+	write_config('mailscanner - update package configuration.');
 
 	file_put_contents($mailscanner_dir."/MailScanner.conf", $mc, LOCK_EX);
 	file_put_contents($mailscanner_dir."/filename.rules.conf",ms_text_area_decode($config['installedpackages']['msattachments']['config'][0]['filename_rules']),LOCK_EX);

@@ -83,7 +83,7 @@ function sync_package_filer() {
 
 		/* Write config if any file from filesystem was loaded. */
 		if ($update_conf > 0) {
-			write_config();
+			write_config('filer - update configuration');
 		}
 	}
 

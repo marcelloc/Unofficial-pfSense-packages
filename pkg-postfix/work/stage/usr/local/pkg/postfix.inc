@@ -3,7 +3,7 @@
  * postfix.inc
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2011-2019 Marcello Coutinho
+ * Copyright (c) 2011-2021 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1037,7 +1037,7 @@ function postfix_php_deinstall_command() {
 	if (is_array($config['installedpackages']['postfix'])) {
 		$config['installedpackages']['postfix']['config'][0]['enable_postfix'] = "";
 	}
-	write_config();
+	write_config('postfix - disable service on uninstall.');
 	sync_package_postfix();
 	unlink_if_exists("/usr/local/etc/rc.d/postfix.sh");
 	unlink_if_exists("/etc/aliases");
