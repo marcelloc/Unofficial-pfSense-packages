@@ -12,7 +12,11 @@ Feedbacks and contributions are always welcome.
 
 You can enable unoffical repo running the commands below via SSH for pfSense 2.3 or higher
 
+2.4 version
 fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial.conf
+
+2.5 version
+fetch -q -o /usr/local/etc/pkg/repos/Unofficial.conf https://raw.githubusercontent.com/marcelloc/Unofficial-pfSense-packages/master/Unofficial_no_ssl.conf
 
 After fetching the repo file and applying the patch described above, you will be able to see these packages under System -> Package Manager
 
@@ -22,3 +26,4 @@ To install unofficial/extra packages on pfSense 2.4.4 or higher, you need to app
 
 Video tutorial to enable Unofficial repo in portuguese, but easy to follow without sound
 https://www.youtube.com/watch?v=NuhxsyatYAs
+
