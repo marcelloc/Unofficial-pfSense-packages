@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	pfSense-pkg-postfix
-PORTVERSION=	3.4.9
+PORTVERSION=	3.5.8
 PORTREVISION=	3	
 CATEGORIES=	mail
 MASTER_SITES=	# empty
@@ -11,15 +11,15 @@ EXTRACT_ONLY=	# empty
 MAINTAINER=	marcellocoutinho@gmail.com
 COMMENT=	pfSense package Postfix Forwarder.
 
-RUN_DEPENDS=	postfix:mail/postfix-sasl \
+RUN_DEPENDS=	postfix-sasl>0:mail/postfix-sasl \
 		p5-perl-ldap>0:net/p5-perl-ldap \
 		opendkim:mail/opendkim \
 		pflogsumm:mail/pflogsumm \
 		libspf2>0:mail/libspf \
 		bash:shells/bash \
 		libzip>0:archivers/libzip \
-		php72-zip>0:archivers/php72-zip \
-		policyd-spf:mail/postfix-policyd-spf-python \
+		php74-zip>0:archivers/php74-zip \
+		postfix-policyd-spf-perl>=2:mail/postfix-policyd-spf-perl \
 		postfwd:mail/postfix-postfwd \
 		zip:archivers/zip
 
@@ -39,6 +39,7 @@ do-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/pkg
 	${MKDIR} ${STAGEDIR}${PREFIX}/www/shortcuts
 	${MKDIR} ${STAGEDIR}/etc/inc/priv
+	${MKDIR} ${STAGEDIR}/usr/lib
 	${MKDIR} ${STAGEDIR}${PREFIX}/www/widgets/widgets
 	${MKDIR} ${STAGEDIR}${PREFIX}/www
 	${MKDIR} ${STAGEDIR}${PREFIX}/www/vendor
@@ -47,6 +48,10 @@ do-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/www/vendor/datatable/css
 	${MKDIR} ${STAGEDIR}${PREFIX}/bin
 	${MKDIR} ${STAGEDIR}${DATADIR}
+	${INSTALL_DATA} ${FILESDIR}/usr/lib/libblacklist.so.0 \
+		${STAGEDIR}/usr/lib/libblacklist.so.0
+	${INSTALL_DATA} ${FILESDIR}/usr/lib/libmilter.so.6 \
+		${STAGEDIR}/usr/lib/libmilter.so.6
 	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/postfix.priv.inc \
 		${STAGEDIR}/etc/inc/priv
 	${INSTALL_DATA} ${FILESDIR}${DATADIR}/info.xml \
