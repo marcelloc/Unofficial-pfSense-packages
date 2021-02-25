@@ -2,7 +2,7 @@
 
 PORTNAME=	pfSense-pkg-mailscanner
 PORTVERSION=	5.1.2
-PORTREVISION=	5
+PORTREVISION=	6
 CATEGORIES=	mail
 MASTER_SITES=	# empty
 DISTFILES=	# empty
@@ -19,7 +19,7 @@ RUN_DEPENDS=	MailScanner:mail/mailscanner \
 		rsync:net/rsync \
 		gcc:lang/gcc \
 		re2c:devel/re2c \
-		php72-zip>0:archivers/php72-zip
+		php74-zip>0:archivers/php74-zip
 
 USE_PERL5=	run
 USES=		perl5
@@ -68,8 +68,6 @@ do-install:
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/mailscanner_about.php \
 		${STAGEDIR}${PREFIX}/www
-	${INSTALL_DATA} -m 0755 ${FILESDIR}${PREFIX}/bin/gpg \
-		${STAGEDIR}${PREFIX}/bin
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/www/shortcuts/pkg_mailscanner.inc \
 		${STAGEDIR}${PREFIX}/www/shortcuts
 .include <bsd.port.mk>
