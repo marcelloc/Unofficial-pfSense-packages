@@ -1,0 +1,11 @@
+--- /usr/local/lib/python3.7/site-packages/speedtest.orig.py  2021-04-11 19:09:01.919309000 -0300
++++ /usr/local/lib/python3.7/site-packages/speedtest.py 2021-04-11 19:09:48.620495000 -0300
+@@ -1171,7 +1171,7 @@
+             client = get_attributes_by_tag_name(root, 'client')
+
+         ignore_servers = list(
+-            map(int, server_config['ignoreids'].split(','))
++           map(int, (server_config['ignoreids'].split(',') if len(server_config['ignoreids']) else []) )
+         )
+
+         ratio = int(upload['ratio'])
