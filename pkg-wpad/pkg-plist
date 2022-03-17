@@ -4,6 +4,7 @@ pkg/wpad_sync.xml
 pkg/wpad_script.template
 pkg/wpad_nginx.template
 pkg/wpad_index.template
+www/shortcuts/pkg_wpad.inc
 /etc/inc/priv/wpad.priv.inc
 %%DATADIR%%/info.xml
 @dir /etc/inc/priv
