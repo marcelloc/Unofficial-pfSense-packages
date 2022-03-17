@@ -30,6 +30,7 @@ $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 if ($pfs_version == "2.3" ) {
 	require_once("xmlrpc.inc");
 }
+$shortcut_section = "wpad";
 
 function wpad_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
@@ -62,7 +63,8 @@ function wpad_get_real_interface_address($iface) {
 
 
 function wpad_check($wpad_index, $nginx) {
-	
+    
+    wpad_checkwpadnx();
 	$wdir = "/usr/local/www/wpad{$wpad_index}";
 	$ndir = "/usr/local/etc/nginx"; 
 	if (!is_dir($wdir)) {
@@ -102,16 +104,28 @@ function wpad_check($wpad_index, $nginx) {
 	//nginx start stop script
 	$start  = "if [ -f /var/run/nginx_wpad{$wpad_index}.pid ];then\n\t";
 	$start .= "cat /var/run/nginx_wpad{$wpad_index}.pid | xargs ps ||\n\t";
-	$start .= "/usr/local/sbin/nginx -c {$wpad_cf}\nelse\n\t";
-	$start .= "/usr/local/sbin/nginx -c {$wpad_cf}\nfi\n";
+       $start .= "/usr/local/sbin/wpadnx -c {$wpad_cf}\nelse\n\t";
+       $start .= "/usr/local/sbin/wpadnx -c {$wpad_cf}\nfi\n";
 	$start .= "chmod go+rw /var/run/php-fpm.socket";
-	//$stop = "/bin/ps -ax | /usr/bin/grep \"nginx -c {$wpad_cf}\" | /usr/bin/grep -v grep | /usr/bin/awk '{print $1}' | /usr/bin/xargs kill"; 
+       //$stop = "/bin/ps -ax | /usr/bin/grep \"wpadnx -c {$wpad_cf}\" | /usr/bin/grep -v grep | /usr/bin/awk '{print $1}' | /usr/bin/xargs kill";
 	$stop  = "if [ -f /var/run/nginx_wpad{$wpad_index}.pid ]\n\tthen\n\t";
 	$stop .= "kill `cat /var/run/nginx_wpad{$wpad_index}.pid`\nfi";
 	if (file_exists("/usr/local/etc/rc.d/nginx_wpad{$wpad_index}.sh")) {
 		system("/usr/local/etc/rc.d/nginx_wpad{$wpad_index}.sh stop");
 	}
 	write_rcfile(array("file" => "nginx_wpad{$wpad_index}.sh", "start" => $start, "stop" => $stop));
+}
+
+function wpad_checkwpadnx() {
+    $file2 = "/usr/local/sbin/wpadnx";
+    $file1 = "/usr/local/sbin/nginx";
+    //todo check if file2 and file1 has the same md5
+    if (! file_exists($file2)) {
+        if (file_exists($file1)) {
+            copy($file1, $file2);
+            chmod($file2,0755);
+        }
+    }  
 }
 
 function wpad_symlink($file1,$file2) {

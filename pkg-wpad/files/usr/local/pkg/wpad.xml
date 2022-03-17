@@ -36,6 +36,12 @@
 		<section>Services</section>
 		<configfile>wpad.xml</configfile>
 	</menu>
+	<service>
+		<name>wpad</name>
+		<rcfile>nginx_wpad0.sh</rcfile>
+		<executable>wpadnx</executable>
+		<description><![CDATA[Wpad http service]]></description>
+    </service>
 	<tabs>
 		<tab>
 			<text>Files</text>
