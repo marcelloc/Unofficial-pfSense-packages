@@ -1,0 +1,20 @@
+--- /etc/inc/pkg-utils.inc	2022-06-14 21:12:59.219956000 +0000
++++ /etc/inc/pkg-utils.orig.inc	2022-06-14 21:12:10.695879000 +0000
+@@ -403,7 +403,7 @@
+ 	if ($base_packages) {
+ 		$repo_param = "";
+ 	} else {
+-		$repo_param = "-r {$g['product_name']}";
++		$repo_param = "";
+ 	}
+ 
+ 	/*
+@@ -500,7 +500,7 @@
+ 			    $err);
+ 			if (!$base_packages &&
+ 			    rtrim($out) != $g['product_name']) {
+-				continue;
++				//continue with Unofficial packages;
+ 			}
+ 
+ 			$pkg_info['installed'] = true;

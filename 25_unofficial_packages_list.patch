@@ -14,7 +14,7 @@
                         if (!$base_packages &&
                             rtrim($out) != $g['product_name']) {
 -                               continue;
-+                               //continue;
++                               //continue with Unofficial packages;
                         }
 
                         $pkg_info['installed'] = true;
