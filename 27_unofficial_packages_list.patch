@@ -1,4 +1,4 @@
---- pkg-utils.inc       2023-03-26 21:45:23.658662000 +0000
+--- /etc/inc/pkg-utils.orig.inc       2023-03-26 21:45:23.658662000 +0000
 +++ /etc/inc/pkg-utils.inc      2023-03-26 21:47:12.306872000 +0000
 @@ -387,7 +387,7 @@
         if ($base_packages) {
@@ -9,7 +9,7 @@
         }
 
         /*
-@@ -484,7 +484,7 @@
+@@ -486,7 +486,7 @@
                             $err);
                         if (!$base_packages &&
                             rtrim($out) != g_get('product_name')) {
