@@ -32,21 +32,25 @@ $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 require_once("xmlrpc_client.inc");
 
 /*Chamadas array*/
-
-function bp_in_array($field, $array) {
+if (! function_exists("bp_in_array")) {
+ function bp_in_array($field, $array) {
     if (is_array($array)) {
         return in_array($field,$array);
     } else {
         return false;
     }
+ }
 }
 
-function bp_array_key_exists($field, $array) {
+if (! function_exists("bp_array_key_exists")) {
+
+ function bp_array_key_exists($field, $array) {
     if (is_array($array)) {
         return array_key_exists($field,$array);
     } else {
         return false;
     }
+ }
 }
 
 if (version_compare(PHP_VERSION, "7.3") < 0 && !function_exists("is_countable")) {
@@ -72,6 +76,9 @@ if ($_POST['clear_cert_cache'] == 'clear_cert_cache') {
 }
 
 function e2g_delTree($dir) {
+    if (! is_dir($dir)) {
+	return false;
+	}
     //at least two slashes, two dirs and 10 char long
     if(preg_match("@/\w+/\w+@", $dir) && strlen($dir) > 10) {
         $files = array_diff(scandir($dir), array('.', '..'));
