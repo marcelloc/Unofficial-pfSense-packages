@@ -1,9 +1,9 @@
-<?php
+git <?php
 /*
  * e2guardian.inc
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2015-2017 Marcello Coutinho
+ * Copyright (c) 2015-2023 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +30,24 @@ require_once("filter.inc");
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 
 require_once("xmlrpc_client.inc");
+
+/*Chamadas array*/
+
+function bp_in_array($field, $array) {
+    if (is_array($array)) {
+        return in_array($field,$array);
+    } else {
+        return false;
+    }
+}
+
+function bp_array_key_exists($field, $array) {
+    if (is_array($array)) {
+        return array_key_exists($field,$array);
+    } else {
+        return false;
+    }
+}
 
 if (version_compare(PHP_VERSION, "7.3") < 0 && !function_exists("is_countable")) {
     function is_countable($var): bool{
@@ -74,7 +92,7 @@ function e2_text_area_decode($text) {
 
 function e2g_check_sched($iface_sched){
 	global $config, $e2g_sched_in_use;
-	$a_schedules = &$config['schedules']['schedule'];
+	$a_schedules = $config['schedules']/*['schedule']*/;
 	$e2g_scd = true;
 	foreach ($a_schedules as $schedule){
 		if ($schedule['name'] == $iface_sched && $iface_sched <> 'Always active') {
@@ -181,7 +199,7 @@ function e2g_generate_rules($type) {
 	$proxy_ifaces = array_map('convert_friendly_interface_to_real_interface_name', $proxy_ifaces);
 	// Transparent Proxy Interface(s)
 	if ($e2g_conf['transparent_proxy'] == "on") {
-	    if (! in_array('lo0',$proxy_ifaces)) {
+	    if (! bp_in_array('lo0',$proxy_ifaces)) {
 	        $proxy_ifaces[] = 'lo0';
 	    }
 		$transparent_ifaces = explode(",", $e2g_conf['transparent_active_interface']);
@@ -218,7 +236,7 @@ function e2g_generate_rules($type) {
 			/* Bypass Proxy for Private Address Destination - RFC1918 */
 			if ($e2g_conf['private_subnet_proxy_off'] == 'on') {
 				foreach ($transparent_ifaces as $iface) {
-					$pf_transparent_rule_port = (in_array($iface, $ssl_ifaces) ? "{80,443}" : "80");
+					$pf_transparent_rule_port = (bp_in_array($iface, $ssl_ifaces) ? "{80,443}" : "80");
 					$rules .= "no rdr on $iface proto tcp from any to { 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8 } port {$pf_transparent_rule_port}\n";
 				}
 				/* Handle PPPOE case */
@@ -241,7 +259,7 @@ function e2g_generate_rules($type) {
 				}
 				$exempt_ip = substr($exempt_ip, 2);
 				foreach ($transparent_ifaces as $iface) {
-					$pf_transparent_rule_port = (in_array($iface, $ssl_ifaces) ? "{80,443}" : "80");
+					$pf_transparent_rule_port = (bp_in_array($iface, $ssl_ifaces) ? "{80,443}" : "80");
 					$rules .= "no rdr on $iface proto tcp from { $exempt_ip } to any port {$pf_transparent_rule_port}\n";
 				}
 				/* Handle PPPOE case */
@@ -264,7 +282,7 @@ function e2g_generate_rules($type) {
 				}
 				$exempt_dest = substr($exempt_dest, 2);
 				foreach ($transparent_ifaces as $iface) {
-					$pf_transparent_rule_port = (in_array($iface, $ssl_ifaces) ? "{80,443}" : "80");
+					$pf_transparent_rule_port = (bp_in_array($iface, $ssl_ifaces) ? "{80,443}" : "80");
 					$rules .= "no rdr on $iface proto tcp from any to { $exempt_dest } port {$pf_transparent_rule_port}\n";
 				}
 				/* Handle PPPOE case */
@@ -275,7 +293,7 @@ function e2g_generate_rules($type) {
 			/* Transparent Proxy Interface(s) */
 			foreach ($transparent_ifaces as $t_iface) {
 				$rules .= "rdr on $t_iface proto tcp from any to ! 127.0.0.1 port 80 -> 127.0.0.1 port {$port}\n";
-				if (in_array($t_iface, $ssl_ifaces)) {
+				if (bp_in_array($t_iface, $ssl_ifaces)) {
 					$rules .= "rdr on $t_iface proto tcp from any to ! 127.0.0.1 port 443 -> 127.0.0.1 port {$ssl_port}\n";
 				}
 			}
@@ -725,7 +743,7 @@ $files = array(
 		$config['installedpackages']['e2guardianblacklist']['config'][0] = array(
 			'liston' => 'both',
 			'cron' => '02days',
-			'url' => "http://www.shallalist.de/Downloads/shallalist.tar.gz",
+			'url' => "https://web.archive.org/web/20210502020725/http://www.shallalist.de/Downloads/shallalist.tar.gz", //"http://www.shallalist.de/Downloads/shallalist.tar.gz",
  			'enable_custom_script' => "",
 			'update_script' => "");
 	}
@@ -1091,7 +1109,7 @@ $files = array(
 
 	//Antivirus ACL
 	//create a default setup if not exists
-	if (!is_array($config['installedpackages']['e2guardianantivirusacl']['config'])) {
+	/*if (!is_array($config['installedpackages']['e2guardianantivirusacl']['config'])) {
 		$config['installedpackages']['e2guardianantivirusacl']['config'][0] = array();
 	}
 
@@ -1116,14 +1134,14 @@ $files = array(
 		$load_samples++;
 	}
 	file_put_contents($e2guardian_dir . "/lists/contentscanners/exceptionvirusurllist", ($e2guardian_antivirus['url_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardianantivirusacl']['config'][0]['url_list']) : ""), LOCK_EX);
-
+	
 	//exceptionvirusextensionlist
 	if ($e2guardian_antivirus['extension_list'] == "" && file_exists($e2guardian_dir . '/lists/contentscanners/exceptionvirusextensionlist.sample')) {
 		$config['installedpackages']['e2guardianantivirusacl']['config'][0]['extension_list'] = base64_encode(file_get_contents($e2guardian_dir . '/lists/contentscanners/exceptionvirusextensionlist.sample'));
 		$load_samples++;
 	}
 	file_put_contents($e2guardian_dir . "/lists/contentscanners/exceptionvirusextensionlist", ($e2guardian_antivirus['extension_enabled'] ? e2_text_area_decode($config['installedpackages']['e2guardianantivirusacl']['config'][0]['extension_list']):""), LOCK_EX);
-
+	*/
 	//log report
 	$rf = "/usr/local/share/e2guardian/languages/{$reportlanguage}/template.html";
 	if(file_exists($rf) && !file_exists("$rf.sample")) {
@@ -1941,8 +1959,8 @@ function e2guardian_validate_input($post, &$input_errors) {
 	}
 
 
-	if ( is_array($post['scan_options']) && in_array('logclienthostnames', $post['scan_options']) && 
-	    !in_array('reverseclientiplookups', $post['scan_options'])) {
+	if ( is_array($post['scan_options']) && bp_in_array('logclienthostnames', $post['scan_options']) && 
+	    !bp_in_array('reverseclientiplookups', $post['scan_options'])) {
 		$input_errors[] = "Scan option 'Log client hostnames' needs 'Reverse client ip lookups' to be selected as well.";
 	}
 	if (is_array($post['group_options']) && sizeof ($post['group_options']) > 0) {
@@ -2036,7 +2054,7 @@ function e2guardian_validate_input($post, &$input_errors) {
                         $a_ifaces = $post['interface'] ?: array();
                         $s_ifaces = $post['transparent_active_interface'];
                         foreach ($s_ifaces as $s_iface) {
-                                if (!in_array($s_iface, $a_ifaces)) {
+                                if (!bp_in_array($s_iface, $a_ifaces)) {
                                         $err_iface = convert_friendly_interface_to_friendly_descr($s_iface);
                                         $input_errors[] = "'Transparent proxy Interface(s)' may only contain interfaces also selected in 'Proxy Interface(s)' above. '{$err_iface}' is not valid.";
                                         unset($err_iface);
@@ -2059,7 +2077,7 @@ function e2guardian_validate_input($post, &$input_errors) {
 		} else if ($key == "group_options") {
 			$acls = array("pics", "phrase", "site", "url", "extension", "header", "content", "search");
 			foreach ($acls as $gacl) {
-				if (!array_key_exists($gacl . "acl", $post)) {
+				if (!bp_array_key_exists($gacl . "acl", $post)) {
 					$input_errors[] = ucfirst($gacl) . " must has at least one acl assigned.";
 				}
 			}
@@ -2198,5 +2216,7 @@ function e2guardian_do_xmlrpc_sync($sync_to_ip, $port, $protocol, $username, $pa
 	$resp = $rpc_client->xmlrpc_exec_php($execcmd, $synctimeout);
 
 }
+
+
 
 ?>

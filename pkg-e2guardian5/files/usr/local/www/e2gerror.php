@@ -1,5 +1,5 @@
 <?php
-
+include('/usr/local/pkg/e2guardian.inc');
 // Created by Marcello Coutinho based on Pfsensation (GitHub @Forid786) template.html
 
 // you can translate via gettext or directly on these vars
@@ -46,9 +46,9 @@ $hashflag = $in['HASH']; # hash flag - can be undefined; 1 = generate GBYPASS; 2
 
 $bypass = $deniedurl;
 $prefix = (preg_match("/\?/",$deniedurl) ? "&" : "?");
-if ( array_key_exists('GBYPASS',$in)) {
+if ( bp_array_key_exists('GBYPASS',$in)) {
 	$bypass .= $prefix . "GBYPASS=" . $in['GBYPASS'];
-} else if ( array_key_exists('GIBYPASS',$in)) {
+} else if ( bp_array_key_exists('GIBYPASS',$in)) {
 	$bypass .= $prefix . "GIBYPASS=" . $in['GIBYPASS'];
 }
 $user_info = "-";
