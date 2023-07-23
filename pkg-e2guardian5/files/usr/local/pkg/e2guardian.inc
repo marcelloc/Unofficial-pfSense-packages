@@ -1,4 +1,4 @@
-git <?php
+<?php
 /*
  * e2guardian.inc
  *
