@@ -9,7 +9,7 @@
  * e2guardian_blacklist.xml
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2015-2017 Marcello Coutinho
+ * Copyright (c) 2015-2023 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -136,6 +136,7 @@
 			<description><![CDATA[Enter FTP, HTTP or LOCAL (pfSense) URL blacklist archive.<br>
 				File must be in tar.gz or tgz format.]]></description>
 			<type>input</type>
+			<default_value>https://web.archive.org/web/20210502020725/http://www.shallalist.de/Downloads/shallalist.tar.gz</default_value>
 			<size>80</size>
 		</field>
 		<field>
