@@ -5,7 +5,7 @@
 /* ========================================================================== */
 /*
 	e2guardian_ldap.php
-	Copyright (C) 2015-2020 Marcello Coutinho
+	Copyright (C) 2015-2023 Marcello Coutinho
 	part of pfSense (http://www.pfSense.com)
 	All rights reserved.
 */
@@ -151,7 +151,8 @@ if (is_array($config['installedpackages']['e2guardiangroups']['config'])) {
 				}
 				if (empty($members)) {
 					if (!is_null($config['installedpackages']['e2guardianusers']['config'][0][strtolower($group['name'])])) {
-						$config['installedpackages']['e2guardianusers']['config'][0][strtolower($group['name'])] = NULL;
+						//$config['installedpackages']['e2guardianusers']['config'][0][strtolower($group['name'])] = NULL;
+						config_set_path("installedpackages/e2guardianusers/config/0/" . strtolower($group['name']),NULL);
 						$apply_config++;
 					}
 				} else {
@@ -159,7 +160,8 @@ if (is_array($config['installedpackages']['e2guardiangroups']['config'])) {
 					asort($import_users);
 					$members = base64_encode(implode("\n", $import_users));
 					if ($config['installedpackages']['e2guardianusers']['config'][0][strtolower($group['name'])] != $members) {
-						$config['installedpackages']['e2guardianusers']['config'][0][strtolower($group['name'])] = $members;
+						//$config['installedpackages']['e2guardianusers']['config'][0][strtolower($group['name'])] = $members;
+					    config_set_path("installedpackages/e2guardianusers/config/0/" . strtolower($group['name']),$members);
 						$apply_config++;
 					}
 				}

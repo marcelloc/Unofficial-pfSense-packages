@@ -3,7 +3,7 @@
  * squid_antivirus.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2015-2017 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2015-2023 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -156,10 +156,10 @@ function e2guardian_antivirus_upgrade_config() {
 	global $config;
 	/* unset broken antivirus settings */
 	if (is_array($config['installedpackages']['squidantivirus'])) {
-		unset($config['installedpackages']['squidantivirus']['config'][0]['squidclamav']);
-		unset($config['installedpackages']['squidantivirus']['config'][0]['c-icap_conf']);
-		unset($config['installedpackages']['squidantivirus']['config'][0]['c-icap_magic']);
-		unset($config['installedpackages']['squidantivirus']['config'][0]['freshclam_conf']);
+	    config_del_path("installedpackages/squidantivirus/config/0/squidclamav");
+	    config_del_path("installedpackages/squidantivirus/config/0/c-icap_conf");
+	    config_del_path("installedpackages/squidantivirus/config/0/c-icap_magic");
+	    config_del_path("installedpackages/squidantivirus/config/0/freshclam_conf");
 	}
 }
 
@@ -557,7 +557,8 @@ function e2guardian_antivirus_get_raw_config() {
 			$conffile = SQUID_LOCALBASE . "/etc" . "{$confdir}" . "/{$rawfile}.pfsense";
 			if (file_exists($conffile)) {
 				if ($config['installedpackages']['squidantivirus']['config'][0][$confopt] == "") {
-					$config['installedpackages']['squidantivirus']['config'][0][$confopt] =  base64_encode(str_replace("\r", "", file_get_contents("{$conffile}")));
+					//$config['installedpackages']['squidantivirus']['config'][0][$confopt] =  base64_encode(str_replace("\r", "", file_get_contents("{$conffile}")));
+					config_set_path("installedpackages/squidantivirus/config/0/$confopt",base64_encode(str_replace("\r", "", file_get_contents($conffile))));
 					log_error("[squid] Successfully loaded '{$conffile}' configuration file");
 					$loaded = true;
 				}
@@ -565,7 +566,8 @@ function e2guardian_antivirus_get_raw_config() {
 			} else {
 				squid_antivirus_install_config_files();
 				if (file_exists($conffile)) {
-					$config['installedpackages']['squidantivirus']['config'][0][$confopt] =  base64_encode(str_replace("\r", "", file_get_contents("{$conffile}")));
+					//$config['installedpackages']['squidantivirus']['config'][0][$confopt] =  base64_encode(str_replace("\r", "", file_get_contents("{$conffile}")));
+					config_set_path("installedpackages/squidantivirus/config/0/$confopt",base64_encode(str_replace("\r", "", file_get_contents($conffile))));
 					log_error("[squid] Successfully loaded '{$conffile}' configuration file");
 					$loaded = true;
 				} else {
@@ -588,7 +590,8 @@ function e2guardian_antivirus_toggle_raw_config($state) {
 		$opts = array("clamav_url", "clamav_safebrowsing", "clamav_dbregion", "clamav_dbservers");
 		foreach ($opts as $opt) {
 			if (isset($config['installedpackages']['squidantivirus']['config'][0][$opt])) {
-				unset($config['installedpackages']['squidantivirus']['config'][0][$opt]);
+			    config_del_path("installedpackages/squidantivirus/config/0/$opt");
+				//unset($config['installedpackages']['squidantivirus']['config'][0][$opt]);
 				log_error("[squid] Loaded '{$opt}' raw configuration file...");
 			}
 		}
@@ -599,11 +602,13 @@ function e2guardian_antivirus_toggle_raw_config($state) {
 		$opts = array("raw_squidclamav_conf", "raw_cicap_conf", "raw_cicap_magic", "raw_freshclam_conf", "raw_clamd_conf");
 		foreach ($opts as $opt) {
 			if (isset($config['installedpackages']['squidantivirus']['config'][0][$opt])) {
-				unset($config['installedpackages']['squidantivirus']['config'][0][$opt]);
+				//unset($config['installedpackages']['squidantivirus']['config'][0][$opt]);
+				config_del_path("installedpackages/squidantivirus/config/0/$opt");
 				log_error("[squid] Unloaded '{$opt}' raw configuration.");
 			}
 		}
-		$config['installedpackages']['squidantivirus']['config'][0]['enable_advanced'] = "disabled";
+		//$config['installedpackages']['squidantivirus']['config'][0]['enable_advanced'] = "disabled";
+		config_set_path("installedpackages/squidantivirus/config/0/enable_advanced","disabled");
 	}
 }
 
@@ -851,7 +856,8 @@ function e2guardian_validate_antivirus($post, &$input_errors) {
 
 	/* Load the raw config files if manual configuration is enabled */
 	if ($post['load_advanced'] == 'Load Advanced') {
-		$config['installedpackages']['squidantivirus']['config'][0]['enable_advanced'] = "enabled";
+		//$config['installedpackages']['squidantivirus']['config'][0]['enable_advanced'] = "enabled";
+		config_set_path("installedpackages/squidantivirus/config/0/enable_advanced", "enabled");
 		squid_antivirus_toggle_raw_config(true);
 		return;
 	}
