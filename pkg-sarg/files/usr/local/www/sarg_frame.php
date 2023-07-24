@@ -79,6 +79,8 @@ if ($report != "" ) {
 	$replace[3] = 'img src="/sarg-images/temp/$1.' . $rand . '.png';
 	$pattern[4] = '/<head>/';
 	$replace[4] = '<head><META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE"><META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">';
+        $pattern[5] = "/tt.html/";
+        $replace[5] = "tt.html&";
 
 	// look for graph files inside reports. 
 	if (preg_match_all('/img src="([a-zA-Z0-9._-]+).png/', $report, $images)) {
