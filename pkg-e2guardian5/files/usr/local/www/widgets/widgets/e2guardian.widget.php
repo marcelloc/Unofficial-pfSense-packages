@@ -29,14 +29,14 @@ require_once("service-utils.inc");
 function e2g_open_table($thead=""){
 	echo "<table border=1 class='table table-striped table-hover table-condensed'>\n";
 	echo "<thead><tr>".$thead."</tr></thread>";
-        echo "<tbody>\n";
+    echo "<tbody>\n";
 }
 
 function e2g_open_table_header(){
 	global $dbc;
 	//$h="<th style='text-align:center;'>Date</th>"; //print"<tr>";
-        foreach ($dbc as $c){
-        	$h .= "<th style='text-align:center;'>".ucfirst($c)."</th>";
+    foreach ($dbc as $c) {
+        $h .= "<th style='text-align:center;'>".ucfirst($c)."</th>";
 	}
 	e2g_open_table($h);
 }
@@ -47,28 +47,33 @@ function e2g_close_table(){
 }
 
 function e2guardian_show_dstats($count = 5) {
-	exec("/usr/bin/tail -{$count} /var/log/e2guardian/dstats.log",$dstats);
-	for ($d = ($count -1); $d >= 0; $d--) {
-		print "<tr>\n";
-		$dstat = preg_replace("/\s+/"," ",$dstats[$d]);
-		$fields = explode(" ",$dstat);
-		//$fields[0] = date('r', $fields[0]);
-		print "<th style='text-align:right;'><a>" . date('H:i',$fields[0]) . "</a></th>\n";
-		for ($i = 2; $i < 11; $i++) {
-			print "<th style='text-align:right;'><a>" . number_format($fields[$i],0,"",".") . "</a></th>\n";
-		}
-		print "</tr>\n";
-	}
+    $count2 = $count +1000;
+    $log = "/var/log/e2guardian/dstats.log";
+    exec("/usr/bin/head -1 $log",$dstats);
+    exec("/usr/bin/tail -{$count2} $log | grep -v Httpw | tail -{$count}",$dstats);
+    for ($d = ($count -1); $d >= 0; $d--) {
+        print "<tr>\n";
+        $dstat = preg_replace("/\s+/"," ",$dstats[$d]);
+        $fields = explode(" ",$dstat);
+        if (is_numeric($fields[3])) {
+            //$fields[0] = date('r', $fields[0]);
+            print "<th style='text-align:right;'><a>" . date('H:i',$fields[0]) . "</a></th>\n";
+            for ($i = 2; $i < 11; $i++) {
+                print "<th style='text-align:right;'><a>" . number_format($fields[$i],0,"",".") . "</a></th>\n";
+            }
+            print "</tr>\n";
+        }
+    }
 }
-
-
+    
 $pfb_table=array();
 
 ?><div id='e2guardian'><?php
 global $config;
 
-
-$size = $config['installedpackages']['e2guardian']['config'][0]['widget_count'];
+if (is_array($config['installedpackages']['e2guardian']['config'])) {
+    $size = $config['installedpackages']['e2guardian']['config'][0]['widget_count'];
+}
 
 $dbc = array('time','busy','httpwQ','logQ','conx','conx/s','reqs','reqs/s','maxfd','LCcnt');
 $curr_time = time();
