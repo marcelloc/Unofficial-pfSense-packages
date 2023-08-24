@@ -1485,7 +1485,8 @@ break;
 		include("/usr/local/pkg/e2guardianfx.conf.template");
 		file_put_contents($e2guardian_dir . "/e2guardianf" . $count . ".conf", $dgf, LOCK_EX);
 
-		if ($config['installedpackages']['e2guardianusers']['config'][0][$e2guardian_group_name] != "") {
+		if (is_array($config['installedpackages']['e2guardianusers']) &&
+		    $config['installedpackages']['e2guardianusers']['config'][0][$e2guardian_group_name] != "") {
 			$import_users = explode("\n", base64_decode($config['installedpackages']['e2guardianusers']['config'][0][$e2guardian_group_name]));
 			asort($import_users);
 			$config['installedpackages']['e2guardianusers']['config'][0][$e2guardian_group_name] = base64_encode(implode("\n", $import_users));
@@ -1497,7 +1498,8 @@ break;
 				}
 			}
 		}
-		if ($config['installedpackages']['e2guardianips']['config'][0][$e2guardian_group_name] != "") {
+		if (is_array($config['installedpackages']['e2guardianips']) &&
+		    $config['installedpackages']['e2guardianips']['config'][0][$e2guardian_group_name] != "") {
 			$import_ips = explode("\n", base64_decode($config['installedpackages']['e2guardianips']['config'][0][$e2guardian_group_name]));
 			asort($import_ips);
 			$config['installedpackages']['e2guardianips']['config'][0][$e2guardian_group_name] = base64_encode(implode("\n", $import_ips));
@@ -1919,8 +1921,8 @@ function e2guardian_start($via_rpc = "no", $install_process = false, $force_star
 			$synctimeout = $e2_sync['synctimeout'];
 			switch ($synconchanges) {
 				case "manual":
-					if (is_array($e2_sync[row])) {
-						$rs = $e2_sync[row];
+					if (is_array($e2_sync['row'])) {
+						$rs = $e2_sync['row'];
 					} else {
 						log_error("[E2guardian] xmlrpc sync is enabled but there is no hosts to push on e2guardian config.");
 						return;
