@@ -1,20 +1,20 @@
---- /etc/inc/pkg-utils.orig	2018-09-24 17:51:32.458825000 -0300
+--- /etc/inc/pkg-utils.inc	2018-09-24 17:51:32.458825000 -0300
 +++ /etc/inc/pkg-utils.inc	2018-09-24 17:51:54.387033000 -0300
-@@ -388,7 +388,7 @@
- 	if ($base_packages) {
- 		$repo_param = "";
- 	} else {
+@@ -387,7 +387,7 @@
+	if ($base_packages) {
+		$repo_param = "";
+	} else {
 -		$repo_param = "-r {$g['product_name']}";
 +		$repo_param = "";
- 	}
- 
- 	/*
-@@ -485,7 +485,7 @@
- 			    $err);
- 			if (!$base_packages &&
- 			    rtrim($out) != $g['product_name']) {
--				continue;
-+				//continue;
- 			}
- 
- 			$pkg_info['installed'] = true;
+	}
+
+	/*
+@@ -486,7 +486,7 @@
+			    $err);
+			if (!$base_packages &&
+			    rtrim($out) != g_get('product_name')) {
+-			continue;
++			//continue;
+			}
+
+			$pkg_info['installed'] = true;
