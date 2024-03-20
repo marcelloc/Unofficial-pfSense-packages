@@ -3,7 +3,7 @@
 	sarg.inc
 	part of pfSense (https://www.pfSense.org/)
 	Copyright (C) 2007 Joao Henrique F. Freitas
-	Copyright (C) 2012-2013 Marcello Coutinho
+	Copyright (C) 2012-2024 Marcello Coutinho
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
 
@@ -37,6 +37,25 @@ if ($pfs_version == "2.3" ) {
     require_once("xmlrpc.inc");
 }
 require_once("xmlrpc_client.inc");
+if (! function_exists("bp_in_array")) {
+ function bp_in_array($field, $array) {
+   if (is_array($array)) {
+	return in_array($field,$array);
+    } else {
+        return false;
+    }
+  }
+}
+
+if (! function_exists("bp_array_key_exists")) {
+  function bp_array_key_exists($field, $array) {
+	if (is_array($array)) {
+	        return array_key_exists($field,$array);
+    	} else {
+        	return false;
+    	}
+   }
+}
 
 $pf_version = substr(trim(file_get_contents("/etc/version")), 0, 3);
 define('SARG_DIR', '/usr/local');
@@ -174,7 +193,8 @@ function run_sarg($id = -1) {
 
 	
 	$log_files = array('e2guardian' => '/var/log/e2guardian/access.log',
-	                   'squid' => '/var/squid/logs/access.log');
+	                   'squid' => '/var/squid/logs/access.log',
+			   'userauth' => '/var/log/userauth.sarg');
 	
 	$cmd = SARG_DIR . "/bin/sarg";
 	if (is_array($config['installedpackages']['sarg']['config'])) {
@@ -315,6 +335,9 @@ function sync_package_sarg() {
 				}
 			}
 			break;
+		case 'userauth':
+			$access_log = '/var/log/userauth.sarg';
+			break;
 	}
 	$sarg_title = ucfirst($sarg['proxy_server']);
 	if (!file_exists($access_log) && $access_log != "") {
@@ -450,6 +473,20 @@ function sarg_validate_input($post, &$input_errors) {
 		}
 	}
 
+	# check squid
+	if ($_POST["proxy_server"] == "userauth") {
+		if (!isset($config['installedpackages']['wmi']) || !is_array($config['installedpackages']['wmi'])) {
+			$input_errors[] = 'UserAuth package is not installed';
+		} else {
+		    if (empty($config['installedpackages']['wmi']['config'][0]['enable'])) {
+			$input_errors[] = 'UserAuth is not enabled';
+		    }
+
+		    if (empty($config['installedpackages']['wmi']['config'][0]['lpflog'])) {
+			$input_errors[] = 'UserAuth logging is not enabled';
+		    }
+		}
+	}
 	if ($_POST['description'] != "" && !preg_match("@^[a-zA-Z0-9 _/.-]+$@", $_POST['description'])) {
 		$input_errors[] = "Do not use special characters in description";
 	}
