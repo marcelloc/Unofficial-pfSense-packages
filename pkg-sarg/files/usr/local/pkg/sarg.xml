@@ -9,7 +9,7 @@
 /*
 	sarg.xml
 	part of pfSense (https://www.pfSense.org/)
-	Copyright (C) 2012-2013 Marcello Coutinho
+	Copyright (C) 2012-2024 Marcello Coutinho
 	Copyright (C) 2015 ESF, LLC
 	All rights reserved.
 */
@@ -42,7 +42,7 @@
 	]]>
 	</copyright>
 	<name>sarg</name>
-	<version>0.6.6</version>
+	<version>0.6.7</version>
 	<title>Status: Sarg Settings</title>
 	<include_file>/usr/local/pkg/sarg.inc</include_file>
 	<menu>
@@ -88,6 +88,7 @@
  				<option><name>E2guardian</name><value>e2guardian</value></option>
  				<option><name>Squidguard</name><value>squidguard</value></option>
  				<option><name>Squid</name><value>squid</value></option>
+				<option><name>Userauth</name><value>userauth</value></option>
  			</options>
 		</field>
 		<field>
