@@ -659,7 +659,7 @@ enablessl = {$enablessl}
 #Generated cert start time (in unix time) - optional
 # defaults to 1417872951 = 6th Dec 2014
 # generatedcertstart = 1417872951 
-
+generatedcertstart = 1733011200
 #Generated cert end time (in unix time) - optional
 # defaults to generatedcertstart + 10 years
 #genratedcertend =
