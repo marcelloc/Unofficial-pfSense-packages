@@ -4,7 +4,7 @@
  * wpad.inc
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2017 Marcello Coutinho
+ * Copyright (c) 2017-2025 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -119,13 +119,15 @@ function wpad_check($wpad_index, $nginx) {
 function wpad_checkwpadnx() {
     $file2 = "/usr/local/sbin/wpadnx";
     $file1 = "/usr/local/sbin/nginx";
-    //todo check if file2 and file1 has the same md5
-    if (! file_exists($file2)) {
-        if (file_exists($file1)) {
-            copy($file1, $file2);
-            chmod($file2,0755);
-        }
-    }  
+    if (file_exists($file1) && file_exists($file2)) {
+	if ( hash_file('sha256', $file1) !== hash_file('sha256', $file2)) {
+    		copy($file1, $file2);
+		chmod($file2,0755);
+	}
+    } else {
+    	copy($file1, $file2);
+    	chmod($file2,0755);
+    }
 }
 
 function wpad_symlink($file1,$file2) {
