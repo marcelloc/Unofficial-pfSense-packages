@@ -236,7 +236,7 @@
 			<type>select</type>
 			<options>
 				<option><name>E2guardian format -space delimited (default)</name><value>1</value></option>
-				<option><name>CSV-style format</name><value>2</value></option>
+				<option><name>Userauth Integration/CSV-style format</name><value>2</value></option>
 				<option><name>Squid Log File Format</name><value>3</value></option>
 				<option><name>Tab delimited</name><value>4</value></option>
 			<!--	Removed on 4.1

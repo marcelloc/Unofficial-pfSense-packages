@@ -168,6 +168,9 @@ if ($_POST) {
 						}
 					
                     break;
+			case 2:
+			 print "e2guardian logs are saved as <b>Webfilter</b> under Status -> Conexti Filterlog";
+		    break;
 				default:
 					print "e2guardian log format selected is not implemented yet";
 					break;

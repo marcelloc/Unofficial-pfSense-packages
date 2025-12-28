@@ -171,95 +171,108 @@
 				<option><name>Auto switch to MITM to deliver block page (on)</name><value>automitm</value></option>
 			</options>
 			<multiple/>
+			<default_value>scancleancache,infectionbypasserrorsonly</default_value>
 			<size>13</size>
 		</field>
 		<field>
+                        <fielddescr>ACLs</fielddescr>
+                        <fieldname>siteacl</fieldname>
+                        <description><![CDATA[Site Access Lists.]]></description>
+                        <type>select_source</type>
+                        <source><![CDATA[$config['installedpackages']['e2guardiansiteacl']['config']]]></source>
+                        <source_name>name</source_name>
+                        <source_value>name</source_value>
+                        <multiple/>
+			<default_value>Default</default_value>
+                        <combinefields>begin</combinefields>
+                        <size>9</size>
+                </field>
+               <field>
+                        <fielddescr>URL</fielddescr>
+                        <fieldname>urlacl</fieldname>
+                        <description><![CDATA[URL Access Lists.]]></description>
+                        <type>select_source</type>
+                        <source><![CDATA[$config['installedpackages']['e2guardianurlacl']['config']]]></source>
+                        <source_name>name</source_name>
+			<default_value>Default</default_value>
+                        <source_value>name</source_value>
+                        <multiple/>
+                        <size>9</size>
+                </field>
+                <field>
+                        <fielddescr>Extension</fielddescr>
+                        <fieldname>extensionacl</fieldname>
+                        <description><![CDATA[Extension Access Lists.]]></description>
+                        <type>select_source</type>
+                        <source><![CDATA[$config['installedpackages']['e2guardianfileacl']['config']]]></source>
+                        <source_name>name</source_name>
+			<default_value>Default</default_value>
+                        <source_value>name</source_value>
+                        <multiple/>
+                        <size>9</size>
+                </field>
+		<field>
 			<fielddescr>Pics</fielddescr>
 			<fieldname>picsacl</fieldname>
-			<description><![CDATA[Select Pics Access List to apply on this group.]]></description>
+			<description><![CDATA[Pics Access List.]]></description>
 			<type>select_source</type>
 			<source><![CDATA[$config['installedpackages']['e2guardianpicsacl']['config']]]></source>
 			<source_name>name</source_name>
 			<source_value>name</source_value>
+			<combinefields>end</combinefields>
+			<default_value>Default</default_value>
 			<multiple/>
-			<size>5</size>
+			<size>9</size>
 		</field>
 		<field>
-			<fielddescr>Phrase</fielddescr>
+			<fielddescr>ACLs</fielddescr>
 			<fieldname>phraseacl</fieldname>
-			<description><![CDATA[Select Phrase ACL to apply on this group.]]></description>
+			<description><![CDATA[Phrase Access Lists.]]></description>
 			<type>select_source</type>
 			<source><![CDATA[$config['installedpackages']['e2guardianphraseacl']['config']]]></source>
 			<source_name>name</source_name>
 			<source_value>name</source_value>
+			<combinefields>begin</combinefields>
 			<multiple/>
-			<size>5</size>
-		</field>
-		<field>
-			<fielddescr>Site</fielddescr>
-			<fieldname>siteacl</fieldname>
-			<description><![CDATA[Select Site Access Lists to apply on this group.]]></description>
-			<type>select_source</type>
-			<source><![CDATA[$config['installedpackages']['e2guardiansiteacl']['config']]]></source>
-			<source_name>name</source_name>
-			<source_value>name</source_value>
-			<multiple/>
-			<size>5</size>
-		</field>
-		<field>
-			<fielddescr>URL</fielddescr>
-			<fieldname>urlacl</fieldname>
-			<description><![CDATA[Select URL Access Lists to apply on this group.]]></description>
-			<type>select_source</type>
-			<source><![CDATA[$config['installedpackages']['e2guardianurlacl']['config']]]></source>
-			<source_name>name</source_name>
-			<source_value>name</source_value>
-			<multiple/>
-			<size>5</size>
-		</field>
-		<field>
-			<fielddescr>Extension</fielddescr>
-			<fieldname>extensionacl</fieldname>
-			<description><![CDATA[Select Extension Access Lists to apply on this group.]]></description>
-			<type>select_source</type>
-			<source><![CDATA[$config['installedpackages']['e2guardianfileacl']['config']]]></source>
-			<source_name>name</source_name>
-			<source_value>name</source_value>
-			<multiple/>
-			<size>5</size>
+			<size>9</size>
+			<default_value>Default</default_value>
 		</field>
 		<field>
 			<fielddescr>Header</fielddescr>
 			<fieldname>headeracl</fieldname>
-			<description><![CDATA[Select Header Access Lists to apply on this group.]]></description>
+			<description><![CDATA[Header Access Lists.]]></description>
 			<type>select_source</type>
 			<source><![CDATA[$config['installedpackages']['e2guardianheaderacl']['config']]]></source>
 			<source_name>name</source_name>
+			<default_value>Default</default_value>
 			<source_value>name</source_value>
 			<multiple/>
-			<size>5</size>
+			<size>9</size>
 		</field>
 		<field>
 			<fielddescr>Content</fielddescr>
 			<fieldname>contentacl</fieldname>
-			<description><![CDATA[Select Content Access Lists to apply on this group.]]></description>
+			<description><![CDATA[Content Access Lists.]]></description>
 			<type>select_source</type>
 			<source><![CDATA[$config['installedpackages']['e2guardiancontentacl']['config']]]></source>
 			<source_name>name</source_name>
 			<source_value>name</source_value>
+			<default_value>Default</default_value>
 			<multiple/>
-			<size>5</size>
+			<size>9</size>
 		</field>
 		<field>
 			<fielddescr>Search</fielddescr>
 			<fieldname>searchacl</fieldname>
-			<description><![CDATA[Select Search Access lists to apply on this group.]]></description>
+			<description><![CDATA[Search Access lists.]]></description>
 			<type>select_source</type>
 			<source><![CDATA[$config['installedpackages']['e2guardiansearchacl']['config']]]></source>
 			<source_name>name</source_name>
 			<source_value>name</source_value>
+			<default_value>Default</default_value>
+			<combinefields>end</combinefields>
 			<multiple/>
-			<size>5</size>
+			<size>9</size>
 		</field>
 		<field>
 			<name>Values</name>
@@ -468,4 +481,7 @@
 	<custom_php_resync_config_command>
 		sync_package_e2guardian();
 	</custom_php_resync_config_command>
+	<custom_php_after_form_command>
+		e2g_fix_divs();
+	</custom_php_after_form_command>
 </packagegui>

@@ -3,7 +3,7 @@
  * e2guardian.inc
  *
  * part of Unofficial packages for pfSense(R) softwate
- * Copyright (c) 2015-2023 Marcello Coutinho
+ * Copyright (c) 2015-2025 Marcello Coutinho
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,9 @@ require_once("pkg-utils.inc");
 require_once("services.inc");
 require_once("util.inc");
 require_once("filter.inc");
+require_once("util.inc");
+require_once("filter.inc");
+require_once("certs.inc");
 $pfs_version = substr(trim(file_get_contents("/etc/version")),0,3);
 
 require_once("xmlrpc_client.inc");
@@ -92,6 +95,40 @@ function e2g_delTree($dir) {
         return false;
     }
 } 
+
+if (!function_exists("e2g_fix_divs")) {
+function e2g_fix_divs() {
+    print <<<EOF
+<script type="text/javascript">
+//<![CDATA[
+document.addEventListener('DOMContentLoaded', function() {
+// Seleciona todas as divs com a classe 'col-sm-2'
+const divs = document.querySelectorAll('.col-sm-2');
+
+// Itera sobre as divs
+divs.forEach(div => {
+  // Verifica se a div contem um form com select de name especifico
+  const select = div.querySelector('form select[name="cnticatfwd[]"], form select[name="snicatfwd[]"], form select[name="cnticatallow[]"], form select[name="cnticatdeny[]"], form select[name="snicatdeny[]"], form select[name="snicatallow[]"]');
+  
+  if (select) {
+    // Altera a classe para 'col-sm-3' se atender a condicao do select
+    div.classList.remove('col-sm-2');
+    div.classList.add('col-sm-3');
+  } else if (div.innerHTML.trim() === '' || div.childElementCount === 0) {
+    // Altera a classe para 'col-sm-0' se a div estiver vazia
+    div.classList.remove('col-sm-2');
+    div.classList.add('col-sm-0');
+  }
+
+});
+
+});
+
+//]]>
+</script>
+EOF;
+}
+}
 
 function e2_text_area_decode($text) {
 	return preg_replace('/\r\n/', "\n", base64_decode($text));
@@ -353,6 +390,24 @@ function e2g_generate_rules($type) {
 function sync_package_e2guardian($via_rpc = "no", $install_process = false) {
 	global $config, $g, $savemsg, $e2g_sched_in_use;
 
+	$lib_files = array('/usr/lib/libssl.so','/lib/libcrypto.so');
+	foreach ($lib_files as $lib) {
+   	  if (!file_exists("$lib.35") && file_exists("$lib.30")) {
+             symlink("$lib.30", "$lib.35");
+   	  }
+        }
+
+	$conf_files = ['preauth.story','site.story','common.story','downloadmanagers/default.conf','lists/authexceptionsitelist','lists/authexceptionurllist'];
+        foreach ($conf_files as $conf_file) {
+          if (!file_exists("/usr/local/etc/e2guardian/$conf_file")){
+	    if (file_exists("/usr/local/etc/e2guardian/$conf_file.sample")) {
+              copy("/usr/local/etc/e2guardian/$conf_file.sample","/usr/local/etc/e2guardian/$conf_file");
+            } else {
+	      file_put_contents("/usr/local/etc/e2guardian/$conf_file","",LOCK_EX);
+	    }
+          }
+        }
+
 	// detect boot process
 	if (is_array($_POST)) {
 		if (preg_match("/\w+/", $_POST['__csrf_magic'])) {
@@ -587,7 +642,18 @@ $files = array(
 		"/lists/contentscanners/exceptionvirussitelist",
 		"/lists/contentscanners/exceptionvirusurllist",
 		"/lists/exceptioniplist",
-		"/lists/pics");
+		"/lists/pics",
+		"/lists/common/nomitmsitelist",
+		"/lists/common/nomitmsiteiplist",
+		"/lists/common/browserregexplist",
+		"/lists/bannedtimelist",
+		"/lists/blankettimelist",
+		"/lists/responseheaderregexplist",
+		"/lists/common/nologurllist",
+		"/lists/common/nologsitelist",
+		"/lists/common/nologregexpurllist",
+		"/lists/common/nologextensionlist",
+		"/lists/common/searchexceptionregexplist");
 
 	$e2guardian_dir = E2GUARDIAN_DIR . "/etc/e2guardian";
 
@@ -597,6 +663,9 @@ $files = array(
         }
 
 	foreach ($files as $file) {
+		if (!file_exists($e2guardian_dir . $file)) {
+            touch($e2guardian_dir . $file);
+        }
 		if (!file_exists($e2guardian_dir . $file.'.sample')) {
 			$new_file = "";
 			$install_file = file($e2guardian_dir . $file);
@@ -612,7 +681,7 @@ $files = array(
 	$load_samples = 0;
 
 	#ssl men-in-the-middle feature
-	$dirs = array("/var/log/e2guardian", "/var/log/e2guardian/stats", "/etc/ssl/demoCA", "/etc/ssl/demoCA/private", "/etc/ssl/demoCA/crl", "/etc/ssl/demoCA/certs", $e2guardian_dir . "/ssl/generatedcerts", $e2guardian_dir . "/ssl/generatedlinks");
+	$dirs = array("/var/log/e2guardian", "/var/log/e2guardian/stats", "/etc/ssl/demoCA", "/etc/ssl/demoCA/private", "/etc/ssl/demoCA/crl", "/etc/ssl/demoCA/certs", $e2guardian_dir . "/ssl/generatedcerts", $e2guardian_dir . "/ssl/generatedlinks", $e2guardian_dir . "/lists/common");
 	foreach ($dirs as $dir) {
 		if (!is_dir($dir)) {
 			mkdir ($dir, 0755, true);
@@ -1615,11 +1684,70 @@ EOF;
 		if ($real_ifaces[$i][0]) {
 			$filterip .= "filterip = " . $real_ifaces[$i][0] . "\n";
 		}
-		$filterports .= "filterports = " . $filterport . "\n";
+		//$filterports .= "filterports = " . $filterport . "\n";
 	}
 	$filterip = ($filterip == "" ? "filterip = " : $filterip);
 	$filterports = ($filterports == "" ? "filterports = $filterport" : $filterports);
+	$filterports = ($filterports == "" ? "filterports = $filterport" : $filterports);
 	$ssl_proxy_port = $e2guardian['ssl_proxy_port'] ? $e2guardian['ssl_proxy_port'] : "8081";
+
+    // SSL MITM Paths
+    if ($e2guardian['enablessl'] == 'on' || $e2guardian['ssl_mitm'] == 'on') {
+        $ca_pem_path = $e2guardian['cacertificatepath'] ?: '/usr/local/etc/e2guardian/ca.pem';
+        $ca_key_path = $e2guardian['caprivatekeypath'] ?: '/usr/local/etc/e2guardian/ca.key';
+        
+        // Try to export CA from pfSense config if file missing
+        if (!file_exists($ca_pem_path) || !file_exists($ca_key_path)) {
+            $ca_found = false;
+            if (is_array($config['ca'])) {
+                foreach ($config['ca'] as $ca) {
+                    if (stripos($ca['descr'], 'e2guardian') !== false) {
+                        file_put_contents($ca_pem_path, base64_decode($ca['crt']));
+                        file_put_contents($ca_key_path, base64_decode($ca['prv']));
+                        $ca_found = true;
+                        break;
+                    }
+                }
+            }
+            
+            // If still no CA, look for the first internal CA
+            if (!$ca_found && is_array($config['ca'])) {
+                 foreach ($config['ca'] as $ca) {
+                    if ($ca['prv']) { // Has private key
+                        file_put_contents($ca_pem_path, base64_decode($ca['crt']));
+                        file_put_contents($ca_key_path, base64_decode($ca['prv']));
+                        $ca_found = true;
+                        break;
+                    }
+                }
+            }
+
+            // Create self-signed if absolutely nothing found (last resort fallback)
+            if (!$ca_found) {
+                 // Basic self-signed gen
+                 $subj = "/C=US/ST=State/L=Locality/O=e2guardian/CN=e2guardianCA";
+                 exec("/usr/bin/openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 -keyout {$ca_key_path} -out {$ca_pem_path} -subj \"{$subj}\"");
+            }
+        }
+
+        $ca_pem = "cacertificatepath = '" . $ca_pem_path . "'";
+        $ca_pk = "caprivatekeypath = '" . $ca_key_path . "'";
+        $cert_key = "certprivatekeypath = '" . ($e2guardian['certprivatekeypath'] ?: '/usr/local/etc/e2guardian/cert.key') . "'";
+        
+        // Ensure cert key exists (create dummy if missing to start service)
+         if (!file_exists($e2guardian['certprivatekeypath'] ?: '/usr/local/etc/e2guardian/cert.key')) {
+             $cert_key_path = $e2guardian['certprivatekeypath'] ?: '/usr/local/etc/e2guardian/cert.key';
+              exec("/usr/bin/openssl genrsa -out {$cert_key_path} 2048");
+         }
+
+        $generatedcertpath = "generatedcertpath = '" . ($e2guardian['generatedcertpath'] ?: $e2guardian_dir . '/ssl/generatedcerts/') . "'";
+    } else {
+        $ca_pem = "#cacertificatepath = ''";
+        $ca_pk = "#caprivatekeypath = ''";
+        $cert_key = "#certprivatekeypath = ''";
+        $generatedcertpath = "#generatedcertpath = ''";
+    }
+
 	include("/usr/local/pkg/e2guardian.conf.template");
 
 

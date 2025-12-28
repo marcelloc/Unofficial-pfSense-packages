@@ -109,7 +109,7 @@
 				<option><name>Ident</name><value>ident.conf</value></option>
 				<option><name>Ip Address</name><value>ip.conf</value></option>
 				<option><name>Proxy-Header</name><value>proxy-header.conf</value></option>
-				<option><name>DNS</name><value>dnsauth.conf</value></option>
+				<option><name>Userauth/DNS</name><value>dnsauth.conf</value></option>
 				<option><name>none</name><value>none</value></option>
 			</options>
 			<multiple/>
